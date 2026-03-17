@@ -1,0 +1,3092 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Engineering Service — ระบบใบขอใช้บริการ ศูนย์วิศวกรรม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN SYSTEM — PRODUCTION GRADE
+═══════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1a5fa8;--blue2:#e6f1fb;--blue3:#b5d4f4;--blue-dark:#0e4080;
+  --green:#2e7d32;--green2:#eaf3de;
+  --amber:#9a6200;--amber2:#fff8e6;
+  --red:#a32d2d;--red2:#fcebeb;
+  --gray:#6b7280;--gray2:#f3f4f6;--gray3:#e5e7eb;--gray4:#d1d5db;
+  --white:#ffffff;--body:#f0f4f8;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.15);
+  --radius:8px;--radius-lg:12px;--radius-xl:16px;
+  --font:'Sarabun',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937;min-height:100vh}
+
+/* ═══ LOGIN SCREEN ═══ */
+#login-screen{
+  position:fixed;inset:0;z-index:999;
+  transition:opacity .2s;
+  background:linear-gradient(135deg,#0e4080 0%,#1a5fa8 50%,#2176c7 100%);
+  display:flex;align-items:center;justify-content:center;
+  animation:bgShift 8s ease infinite alternate;
+}
+@keyframes bgShift{from{background-position:0% 50%}to{background-position:100% 50%}}
+.login-card{
+  background:#fff;border-radius:20px;padding:40px 44px;width:400px;max-width:94vw;
+  box-shadow:0 24px 80px rgba(0,0,0,.3);
+  animation:slideUp .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo-icon{width:44px;height:44px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.login-logo-text{font-size:20px;font-weight:700;color:#111827}
+.login-logo-sub{font-size:12px;color:var(--gray);margin-top:1px}
+.login-title{font-size:22px;font-weight:700;color:#111827;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--gray);margin-bottom:24px}
+.login-field{margin-bottom:14px}
+.login-label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px}
+.login-input-wrap{position:relative;display:flex;align-items:center}
+.login-input{width:100%;padding:11px 14px;font-size:13px;border:1.5px solid var(--gray3);border-radius:8px;font-family:var(--font);outline:none;color:#1f2937}
+.login-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,168,.12)}
+.login-input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(163,45,45,.1)}
+.login-input.success{border-color:var(--green)}
+.login-domain{position:absolute;right:12px;font-size:12px;color:var(--gray);pointer-events:none;font-family:var(--mono)}
+.login-hint{font-size:11px;color:var(--gray);margin-top:5px}
+.login-error{font-size:12px;color:var(--red);margin-top:5px;display:none;font-weight:600}
+.login-not-found{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-top:8px;display:none;animation:fadeIn .2s ease}
+.login-not-found-title{font-size:13px;font-weight:700;color:#991b1b;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.login-not-found-body{font-size:12px;color:#7f1d1d;line-height:1.7}
+.login-not-found-contact{margin-top:10px;background:#fff;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;border:1px solid #fca5a5}
+.login-not-found-contact-avatar{width:28px;height:28px;border-radius:50%;background:#a32d2d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.login-not-found-contact-info{font-size:11px;color:#374151;line-height:1.5}
+.login-user-preview{background:var(--blue2);border:1px solid var(--blue3);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:none;align-items:center;gap:12px;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.login-user-avatar{width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.login-user-name{font-size:13px;font-weight:700;color:#111827}
+.login-user-role{font-size:11px;color:var(--blue);font-weight:600;margin-top:2px}
+.login-user-dept{font-size:11px;color:var(--gray)}
+.login-btn{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.login-btn:hover{background:var(--blue-dark)}
+.login-btn:disabled{background:#93c5fd;cursor:not-allowed}
+.login-demo-note{font-size:11px;color:var(--gray);text-align:center;margin-top:14px;line-height:1.6}
+.login-field+.login-field{margin-top:0}
+
+
+/* ═══ APP SHELL ═══ */
+#app-shell{display:none}
+
+/* NAV */
+.nav{
+  background:var(--blue);height:54px;display:flex;align-items:center;padding:0 16px;gap:10px;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)
+}
+.nav-logo{color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap;text-decoration:none}
+.nav-logo-badge{background:rgba(255,255,255,.2);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:400}
+.nav-sep{width:1px;height:24px;background:rgba(255,255,255,.25);margin:0 4px;flex-shrink:0}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{color:rgba(255,255,255,.75);padding:6px 14px;font-size:13px;background:none;border:none;cursor:pointer;border-radius:6px;white-space:nowrap;transition:.15s;font-family:var(--font)}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.12)}
+.nav-tab.active{color:#fff;background:rgba(255,255,255,.22);font-weight:600}
+.nav-badge{background:rgba(255,100,100,.85);color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;margin-left:4px;font-weight:700}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.notif-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;transition:.15s}
+.notif-btn:hover{background:rgba(255,255,255,.25)}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid var(--blue);display:none}
+.notif-dot.active{display:block}
+.nav-user{color:rgba(255,255,255,.9);font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:8px;transition:.15s}
+.nav-user:hover{background:rgba(255,255,255,.12)}
+.avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;flex-shrink:0;border:2px solid rgba(255,255,255,.4)}
+.logout-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--font);transition:.15s}
+.logout-btn:hover{background:rgba(255,255,255,.25)}
+
+/* NOTIFICATION PANEL */
+.notif-panel{
+  position:fixed;top:58px;right:12px;width:360px;background:#fff;border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);z-index:150;display:none;overflow:hidden;
+  border:1px solid var(--gray3);max-height:70vh;
+}
+.notif-panel.open{display:block;animation:dropIn .2s ease}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.notif-header{padding:12px 16px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between;background:var(--gray2)}
+.notif-title{font-size:13px;font-weight:700;color:#111827}
+.notif-clear{font-size:11px;color:var(--blue);cursor:pointer;border:none;background:none;font-family:var(--font)}
+.notif-list{overflow-y:auto;max-height:calc(70vh - 50px)}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--gray3);cursor:pointer;transition:.12s}
+.notif-item:hover{background:var(--gray2)}
+.notif-item.unread{background:var(--blue2)}
+.notif-item-title{font-size:13px;font-weight:600;color:#111827;margin-bottom:2px}
+.notif-item-sub{font-size:12px;color:var(--gray)}
+.notif-item-time{font-size:10px;color:#9ca3af;margin-top:3px}
+.notif-empty{padding:30px;text-align:center;color:var(--gray);font-size:13px}
+
+/* LAYOUT */
+.app{display:flex;height:calc(100vh - 54px);overflow:hidden}
+.sidebar{width:210px;background:#fff;border-right:1px solid var(--gray3);flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column}
+.sb-section{padding:8px 0}
+.sb-label{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.6px}
+.sb-item{padding:8px 16px;font-size:13px;color:#4b5563;cursor:pointer;display:flex;align-items:center;gap:9px;border-left:3px solid transparent;transition:.12s}
+.sb-item:hover{background:var(--gray2);color:#1f2937}
+.sb-item.active{background:var(--blue2);color:var(--blue);border-left-color:var(--blue);font-weight:600}
+.sb-count{margin-left:auto;background:var(--blue);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px}
+.sb-count.amber{background:#d97706}.sb-count.green{background:var(--green)}.sb-count.red{background:var(--red)}
+.sb-divider{height:1px;background:var(--gray3);margin:4px 0}
+.content{flex:1;overflow-y:auto;padding:20px}
+.page{display:none}.page.active{display:block}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow);border-top:3px solid var(--gray3);transition:.2s;cursor:default}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.stat-card.blue{border-top-color:var(--blue)}.stat-card.amber{border-top-color:#d97706}
+.stat-card.green{border-top-color:var(--green)}.stat-card.red{border-top-color:var(--red)}
+.stat-card.indigo{border-top-color:#4f46e5}
+.stat-num{font-size:30px;font-weight:700;line-height:1;font-family:var(--mono)}
+.stat-card.blue .stat-num{color:var(--blue)}.stat-card.amber .stat-num{color:#d97706}
+.stat-card.green .stat-num{color:var(--green)}.stat-card.red .stat-num{color:var(--red)}
+.stat-card.indigo .stat-num{color:#4f46e5}
+.stat-lbl{font-size:12px;color:var(--gray);margin-top:5px}
+.stat-icon{float:right;opacity:.12;margin-top:-4px}
+
+/* TABLE CARD */
+.table-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
+.toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--gray3);flex-wrap:wrap}
+.search-wrap{flex:1;position:relative;min-width:200px;max-width:340px}
+.search-wrap input{width:100%;padding:8px 10px 8px 34px;font-size:13px;border:1.5px solid var(--gray3);border-radius:8px;outline:none;font-family:var(--font)}
+.search-wrap input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,168,.1)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray);pointer-events:none}
+.filter-sel{padding:8px 10px;font-size:13px;border:1.5px solid var(--gray3);border-radius:8px;font-family:var(--font);outline:none;background:#fff}
+.filter-sel:focus{border-color:var(--blue)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--gray);text-align:left;background:var(--gray2);border-bottom:1px solid var(--gray3);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+.tbl td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--gray3);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:#f9fafb;cursor:pointer}
+.doc-link{color:var(--blue);font-weight:600;display:flex;align-items:flex-start;gap:5px;text-decoration:none}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-draft{background:#f3f4f6;color:#4b5563}
+.b-dept{background:#fff8e6;color:#9a6200;border:1px solid #fcd34d}
+.b-recv{background:#e6f1fb;color:#1a5fa8;border:1px solid #93c5fd}
+.b-owner{background:#fff8e6;color:#9a6200;border:1px solid #fcd34d}
+.b-assign{background:#e6f1fb;color:#1a5fa8;border:1px solid #93c5fd}
+.b-wip{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.b-done{background:#eaf3de;color:#2e7d32;border:1px solid #86efac}
+.b-closed{background:#f3f4f6;color:#374151;border:1px solid #d1d5db}
+.b-reject{background:#fcebeb;color:#a32d2d;border:1px solid #fca5a5}
+.b-urgent-high{background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+.b-urgent-med{background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-title{font-size:18px;font-weight:700;color:#111827}
+.sec-sub{font-size:13px;color:var(--gray);margin-top:2px}
+
+/* BUTTONS */
+.btn{padding:8px 16px;font-size:13px;border-radius:7px;cursor:pointer;border:none;font-family:var(--font);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:.15s;white-space:nowrap}
+.btn:hover{opacity:.88;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-warning{background:#d97706;color:#fff}
+.btn-sec{background:#fff;color:#374151;border:1.5px solid var(--gray3)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center}
+
+/* WORKFLOW BANNER */
+.wf-banner{background:#fff;border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:thin}
+.wf-step{font-size:11px;padding:4px 10px;border-radius:16px;white-space:nowrap;color:var(--gray);transition:.2s}
+.wf-step.done{background:var(--green2);color:var(--green);font-weight:600}
+.wf-step.current{background:var(--blue2);color:var(--blue);font-weight:700;box-shadow:0 0 0 2px rgba(26,95,168,.3)}
+.wf-step.pending{background:var(--gray2);color:#9ca3af}
+.wf-arr{color:#d1d5db;font-size:12px;padding:0 3px;flex-shrink:0}
+
+/* FORM */
+.form-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.form-header{padding:14px 20px;background:var(--gray2);border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
+.form-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.form-body{padding:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:600;color:#374151}
+.form-label .req{color:var(--red)}
+.form-input,.form-select,.form-textarea{padding:9px 11px;font-size:13px;border:1.5px solid var(--gray3);border-radius:7px;font-family:var(--font);outline:none;color:#1f2937;width:100%;transition:.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,168,.1)}
+.form-input[readonly]{background:var(--gray2);color:var(--gray)}
+.form-textarea{resize:vertical;min-height:72px}
+.form-footer{padding:12px 20px;background:var(--gray2);border-top:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.form-section-title{font-size:12px;font-weight:700;color:var(--blue);border-bottom:2px solid var(--blue2);padding-bottom:5px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+
+/* SERVICE CHECKBOXES */
+.svc-box{border:1.5px solid #c7e0f4;background:#f0f7ff;border-radius:10px;padding:14px}
+.svc-title{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.svc-item{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;padding:2px}
+.svc-item input{width:15px;height:15px;cursor:pointer;accent-color:var(--blue)}
+
+/* DETAIL */
+.detail-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.detail-section{background:#fff;border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow)}
+.detail-section-title{font-size:12px;font-weight:700;color:var(--blue);border-bottom:2px solid var(--blue2);padding-bottom:6px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px}
+.detail-row{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray2)}
+.detail-row:last-child{border-bottom:none}
+.detail-lbl{min-width:145px;font-size:12px;color:var(--gray);font-weight:600;padding-top:2px;flex-shrink:0}
+.detail-val{font-size:13px;color:#1f2937;word-break:break-word}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--gray3)}
+.tl-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;border:2px solid}
+.tl-dot.done{background:var(--green2);color:var(--green);border-color:#86efac}
+.tl-dot.current{background:var(--blue2);color:var(--blue);border-color:var(--blue3);box-shadow:0 0 0 3px rgba(26,95,168,.15)}
+.tl-dot.pending{background:var(--gray2);color:#9ca3af;border-color:var(--gray3)}
+.tl-dot.reject{background:var(--red2);color:var(--red);border-color:#fca5a5}
+.tl-content{flex:1;padding-top:4px}
+.tl-title{font-size:13px;font-weight:600;color:#1f2937}
+.tl-sub{font-size:12px;color:var(--gray);margin-top:2px}
+.tl-date{font-size:11px;color:#9ca3af;margin-top:2px;font-family:var(--mono)}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--gray2);border-radius:8px;height:10px;overflow:hidden;margin:8px 0}
+.progress-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),#3b82f6);transition:width .6s ease}
+.progress-bar.done{background:linear-gradient(90deg,var(--green),#22c55e)}
+
+/* ACTION PANEL */
+.action-panel{background:#fff;border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:16px;border-left:4px solid var(--blue)}
+.action-panel.green{border-left-color:var(--green)}.action-panel.amber{border-left-color:#d97706}.action-panel.red{border-left-color:var(--red)}
+.action-title{font-size:13px;font-weight:700;color:#1f2937;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.action-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(3px)}
+.modal{background:#fff;border-radius:var(--radius-xl);padding:28px;width:460px;max-width:94vw;box-shadow:var(--shadow-lg);animation:popIn .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1f2937;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md);animation:toastIn .3s cubic-bezier(.34,1.56,.64,1)}
+.toast.success{background:#166534;border-left:4px solid #22c55e}
+.toast.error{background:#7f1d1d;border-left:4px solid #f87171}
+.toast.warn{background:#78350f;border-left:4px solid #fbbf24}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:12px;color:var(--gray);border-top:1px solid var(--gray3)}
+.pg-btns{display:flex;gap:4px}
+.pg-btn{min-width:28px;height:28px;border:1.5px solid var(--gray3);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:var(--font);padding:0 6px}
+.pg-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pg-btn:hover:not(.active){background:var(--gray2)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:52px 20px;color:var(--gray)}
+.empty svg{margin-bottom:12px;opacity:.3}
+.empty p{font-size:14px}
+.empty small{font-size:12px;color:#9ca3af;margin-top:6px;display:block}
+
+/* CHART BAR */
+.chart-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.chart-bar-label{min-width:170px;font-size:12px;color:#374151}
+.chart-bar-track{flex:1;height:22px;background:var(--gray2);border-radius:6px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),#60a5fa);min-width:0;transition:width .5s ease}
+.chart-bar-val{min-width:32px;font-size:13px;font-weight:700;color:var(--blue);font-family:var(--mono)}
+
+/* DASHBOARD */
+.dash-section{margin-bottom:20px}
+.dash-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dash-card{background:#fff;border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.dash-card-title{font-size:13px;font-weight:700;color:#111827;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;gap:7px}
+.recent-list{display:flex;flex-direction:column;gap:0}
+.recent-item{padding:10px 0;border-bottom:1px solid var(--gray3);display:flex;align-items:center;gap:10px;cursor:pointer;transition:.12s}
+.recent-item:last-child{border-bottom:none}
+.recent-item:hover{opacity:.75}
+.recent-no{font-size:11px;font-weight:700;color:var(--blue);font-family:var(--mono);min-width:100px}
+.recent-title{font-size:13px;color:#1f2937;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-meta{font-size:11px;color:var(--gray);text-align:right;flex-shrink:0}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .dash-grid2{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .stat-row{grid-template-columns:1fr}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .search-wrap{max-width:100%}
+  .login-role-grid{grid-template-columns:1fr}
+}
+
+/* COMBOBOX (type + select) */
+.combo-wrap{position:relative}
+.combo-input{width:100%;padding:9px 36px 9px 11px;font-size:13px;border:1.5px solid var(--gray3);border-radius:7px;font-family:var(--font);outline:none;color:#1f2937;background:#fff;cursor:text;transition:.15s}
+.combo-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,168,.1)}
+.combo-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--gray);pointer-events:none;font-size:11px}
+.combo-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;background:#fff;border:1.5px solid var(--blue3);border-radius:8px;box-shadow:var(--shadow-md);z-index:500;max-height:200px;overflow-y:auto;display:none}
+.combo-dropdown.open{display:block;animation:dropIn .15s ease}
+.combo-option{padding:9px 12px;font-size:13px;cursor:pointer;transition:.1s;display:flex;align-items:center;justify-content:space-between}
+.combo-option:hover{background:var(--blue2);color:var(--blue)}
+.combo-option.selected{background:var(--blue2);color:var(--blue);font-weight:600}
+.combo-option-new{padding:9px 12px;font-size:13px;cursor:pointer;color:var(--blue);font-weight:600;border-top:1px solid var(--gray3);display:flex;align-items:center;gap:6px}
+.combo-option-new:hover{background:var(--blue2)}
+.combo-empty{padding:9px 12px;font-size:12px;color:var(--gray)}
+.perm-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.perm-table th{padding:7px 10px;background:var(--blue);color:#fff;font-weight:600;text-align:center;white-space:nowrap}
+.perm-table th:first-child{text-align:left;background:var(--blue-dark)}
+.perm-table td{padding:6px 10px;border:1px solid var(--gray3);text-align:center}
+.perm-table tr:nth-child(even) td{background:var(--gray2)}
+.perm-table td:first-child{text-align:left;font-weight:600;color:#374151;background:#fff}
+.perm-check{color:var(--green);font-size:15px;font-weight:700}
+.perm-dash{color:#d1d5db;font-size:13px}
+.perm-highlight td{background:var(--blue2)!important}
+.perm-highlight td:first-child{background:var(--blue2)!important}
+
+/* PRINT */
+@media print{
+  .nav,.sidebar,.toolbar,.action-panel,.modal-overlay,.pagination,.btn-primary,.btn-success,.btn-danger,.btn-warning,.notif-panel,#login-screen,#app-shell .role-info-bar{display:none!important}
+  .content{padding:0;overflow:visible}
+  .form-card,.detail-section{box-shadow:none;border:1px solid #ccc}
+}
+
+/* ROLE INFO BAR */
+.role-info-bar{background:linear-gradient(90deg,var(--blue2),#fff);border:1px solid var(--blue3);border-radius:var(--radius);padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:12px}
+.role-badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
+</style></head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M7 9h10M7 13h7M7 17h5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-logo-text">Engineering Service</div>
+        <div class="login-logo-sub">ศูนย์วิศวกรรม — ระบบใบขอใช้บริการ</div>
+      </div>
+    </div>
+    <div class="login-title">เข้าสู่ระบบ</div>
+    <div class="login-sub">ใช้อีเมลบริษัท KBS เพื่อเข้าใช้งานระบบ</div>
+
+    <div class="login-field">
+      <label class="login-label">อีเมลบริษัท</label>
+      <div class="login-input-wrap">
+        <input class="login-input" id="login-email-inp" type="text"
+          autocomplete="off" spellcheck="false"
+          placeholder="ชื่ออีเมล เช่น firstname.l">
+        <span class="login-domain">@kbs.co.th</span>
+      </div>
+      <div class="login-hint">กรอกเฉพาะชื่อก่อน @</div>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-not-found" id="login-not-found" style="display:none"></div>
+    </div>
+    <div class="login-field" id="login-password-field" style="display:none">
+      <div id="login-pw-existing" style="display:none">
+        <label class="login-label">รหัสผ่าน</label>
+        <div class="login-input-wrap">
+          <input class="login-input" id="login-password-inp" type="password"
+            autocomplete="current-password" placeholder="กรอกรหัสผ่าน"
+            onkeydown="if(event.key==='Enter')_doLoginSubmit()">
+        </div>
+        <div style="text-align:right;margin-top:4px">
+          <span onclick="_showChangePassword()" style="font-size:11px;color:var(--blue);cursor:pointer;text-decoration:underline">เปลี่ยนรหัสผ่าน</span>
+        </div>
+      </div>
+      <div id="login-pw-new" style="display:none">
+        <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#92400e">
+          🔑 ครั้งแรกเข้าระบบ — กรุณาตั้งรหัสผ่าน (อย่างน้อย 6 ตัว มีตัวอักษรภาษาอังกฤษและตัวเลข)
+        </div>
+        <label class="login-label">ตั้งรหัสผ่านใหม่ <span class="req">*</span></label>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:6px">ต้องมีอย่างน้อย 6 ตัว ประกอบด้วยตัวอักษรภาษาอังกฤษและตัวเลข</div>
+        <div class="login-input-wrap" style="margin-bottom:8px">
+          <input class="login-input" id="login-password-new" type="password"
+            autocomplete="new-password" placeholder="เช่น Eng1234 (ตัวอักษร+ตัวเลข)"
+            onkeydown="if(event.key==='Enter')document.getElementById('login-password-confirm').focus()">
+        </div>
+        <label class="login-label">ยืนยันรหัสผ่าน <span class="req">*</span></label>
+        <div class="login-input-wrap">
+          <input class="login-input" id="login-password-confirm" type="password"
+            autocomplete="new-password" placeholder="กรอกรหัสผ่านอีกครั้ง"
+            onkeydown="if(event.key==='Enter')_doLoginSubmit()">
+        </div>
+      </div>
+      <div id="login-pass-error" style="display:none;color:var(--red);font-size:12px;font-weight:600;margin-top:6px"></div>
+    </div>
+
+    <div class="login-user-preview" id="login-preview" style="display:none">
+      <div class="login-user-avatar" id="preview-avatar"></div>
+      <div>
+        <div class="login-user-name" id="preview-name"></div>
+        <div class="login-user-role" id="preview-role"></div>
+        <div class="login-user-dept" id="preview-dept"></div>
+      </div>
+    </div>
+
+    <button class="login-btn" id="login-btn" disabled>เข้าสู่ระบบ →</button>
+    <div class="login-demo-note">เฉพาะอีเมล <b>@kbs.co.th</b> เท่านั้น</div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══ -->
+<div id="app-shell">
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="18" height="18" fill="none" stroke="#fff" stroke-width="1.7" viewBox="0 0 18 18">
+      <rect x="2" y="2" width="14" height="14" rx="2.5"/>
+      <path d="M5 7h8M5 10h5M5 13h3"/>
+    </svg>
+    Engineering Service
+    <span class="nav-logo-badge">ศูนย์วิศวกรรม</span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goPage('browse')">📋 รายการ</button>
+    <button class="nav-tab" onclick="goPage('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="goPage('form',null)">+ สร้างใบขอ</button>
+    <button class="nav-tab" onclick="goPage('approve')">
+      รออนุมัติ<span class="nav-badge" id="nb-pending">0</span>
+    </button>
+    <button class="nav-tab" onclick="goPage('report')">รายงาน</button>
+    <button class="nav-tab nav-tab-admin" onclick="goPage('users')" style="display:none">👥 จัดการผู้ใช้</button>
+    <button class="nav-tab nav-tab-admin" onclick="goPage('master')" style="display:none">⚙️ Master Data</button>
+  </div>
+  <div class="nav-right">
+    <button class="notif-btn" onclick="toggleNotif()" title="การแจ้งเตือน">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 20 20">
+        <path d="M10 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 4 14h12a1 1 0 0 0 .707-1.707L16 11.586V8a6 6 0 0 0-6-6zM10 18a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2z"/>
+      </svg>
+      <div class="notif-dot" id="notif-dot"></div>
+    </button>
+    <div class="nav-user">
+      <div class="avatar" id="nav-avatar">?</div>
+      <div style="line-height:1.3">
+        <div id="nav-username" style="font-size:12px;font-weight:600;color:#fff"></div>
+        <div id="nav-role-label" style="font-size:10px;color:rgba(255,255,255,.6)"></div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">ออกจากระบบ</button>
+  </div>
+</nav>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <span class="notif-title">🔔 การแจ้งเตือน</span>
+    <button class="notif-clear" onclick="clearNotifs()">ล้างทั้งหมด</button>
+  </div>
+  <div class="notif-list" id="notif-list"></div>
+</div>
+
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-section">
+    <div class="sb-label">ภาพรวม</div>
+    <div class="sb-item" onclick="goPage('dashboard')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1" y="1" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="sb-label">ใบขอของฉัน</div>
+    <div class="sb-item active" onclick="filterStatus('');goPage('browse')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="1.5" width="12" height="12" rx="2"/><path d="M4 5h7M4 8h5M4 11h3"/></svg>
+      ทั้งหมด <span class="sb-count" id="sb-all">0</span>
+    </div>
+    <div class="sb-item" onclick="filterStatus('Draft');goPage('browse')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M2 4h11M2 8h7M2 11h5"/></svg>
+      Draft <span class="sb-count amber" id="sb-draft">0</span>
+    </div>
+    <div class="sb-item" onclick="filterStatus('InProgress');goPage('browse')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 4v3.5l2.5 1.5"/></svg>
+      กำลังดำเนินการ <span class="sb-count" id="sb-wip">0</span>
+    </div>
+    <div class="sb-item" onclick="filterStatus('Completed');goPage('browse')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M3 8l3 3 6-6"/></svg>
+      เสร็จสิ้น <span class="sb-count green" id="sb-done">0</span>
+    </div>
+    <div class="sb-item" onclick="filterStatus('Rejected');goPage('browse')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"/><path d="M5 10l5-5M10 10L5 5"/></svg>
+      ปฏิเสธ <span class="sb-count red" id="sb-reject">0</span>
+    </div>
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section">
+    <div class="sb-label">การดำเนินการ</div>
+    <div class="sb-item" onclick="goPage('approve')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"/><path d="M5 7.5l2 2 3-3"/></svg>
+      รออนุมัติ <span class="sb-count amber" id="sb-pending">0</span>
+    </div>
+    <div class="sb-item" onclick="goPage('report')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="5" width="3" height="8.5" rx="1"/><rect x="6" y="2" width="3" height="11.5" rx="1"/><rect x="10.5" y="7" width="3" height="6.5" rx="1"/></svg>
+      สถิติ/รายงาน
+    </div>
+  </div>
+  <div class="sb-divider sb-item-admin" style="display:none"></div>
+  <div class="sb-section sb-item-admin" style="display:none">
+    <div class="sb-label">Admin</div>
+    <div class="sb-item" onclick="goPage('users')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="5" cy="4" r="2.5"/><path d="M1 13c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5"/><circle cx="11.5" cy="5" r="2"/><path d="M11.5 9c1.5 0 2.5.8 2.5 2"/></svg>
+      จัดการผู้ใช้
+    </div>
+    <div class="sb-item" onclick="goPage('master')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="2"/><path d="M7.5 1v2M7.5 12v2M1 7.5h2M12 7.5h2M3.5 3.5l1.2 1.2M10.3 10.3l1.2 1.2M3.5 11.5l1.2-1.2M10.3 4.7l1.2-1.2"/></svg>
+      Master Data
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- ═══ DASHBOARD PAGE ═══ -->
+  <div class="page" id="page-dashboard">
+    <div class="sec-header">
+      <div>
+        <div class="sec-title">📊 Dashboard</div>
+        <div class="sec-sub" id="dash-sub">ภาพรวมสถานะงานทั้งหมด</div>
+      </div>
+      <button class="btn btn-sec btn-sm" onclick="exportListCSV()">⬇ Export CSV</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card blue">
+        <svg class="stat-icon" width="32" height="32" fill="none" stroke="#1a5fa8" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9h10M7 13h7M7 17h5"/></svg>
+        <div class="stat-num" id="s-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div>
+      </div>
+      <div class="stat-card amber">
+        <svg class="stat-icon" width="32" height="32" fill="none" stroke="#d97706" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="stat-num" id="s-pending">0</div><div class="stat-lbl">รออนุมัติ</div>
+      </div>
+      <div class="stat-card indigo">
+        <svg class="stat-icon" width="32" height="32" fill="none" stroke="#4f46e5" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+        <div class="stat-num" id="s-wip">0</div><div class="stat-lbl">กำลังดำเนินการ</div>
+      </div>
+      <div class="stat-card green">
+        <svg class="stat-icon" width="32" height="32" fill="none" stroke="#2e7d32" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>
+        <div class="stat-num" id="s-done">0</div><div class="stat-lbl">เสร็จ/ปิดงาน</div>
+      </div>
+    </div>
+    <div class="dash-grid2 dash-section">
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><rect x="1" y="4" width="2.5" height="9" rx=".5"/><rect x="5.5" y="1" width="2.5" height="12" rx=".5"/><rect x="10" y="5.5" width="2.5" height="7.5" rx=".5"/></svg>
+          สถิติตามสถานะ
+        </div>
+        <div id="dash-bars"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4 5h6M4 8h4"/></svg>
+          ใบขอล่าสุด
+        </div>
+        <div class="recent-list" id="dash-recent"></div>
+      </div>
+    </div>
+    <div class="dash-grid2">
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6"/><path d="M7 4v3.5l2.5 1.5"/></svg>
+          ความเร่งด่วน
+        </div>
+        <div id="dash-urgency"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><path d="M2 10l3-3 2 2 4-5"/></svg>
+          งานตามประเภท
+        </div>
+        <div id="dash-jobtype"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BROWSE PAGE ═══ -->
+  <div class="page active" id="page-browse">
+    <div class="role-info-bar" id="role-info-bar">
+      <span id="role-info-badge" class="role-badge"></span>
+      <span id="role-info-text" style="color:#374151;flex:1"></span>
+      <button onclick="goPage('permissions')" style="background:none;border:1px solid var(--blue3);color:var(--blue);padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--font);font-weight:600">สิทธิ์ของฉัน</button>
+    </div>
+    <div class="sec-header">
+      <div>
+        <div class="sec-title">ใบขอใช้บริการ</div>
+        <div class="sec-sub" id="browse-sub">ศูนย์วิศวกรรม</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sec btn-sm" onclick="exportListCSV()">⬇ Export CSV</button>
+        <button class="btn btn-primary" onclick="goPage('form',null)" id="btn-new" style="display:none">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 13 13"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+          สร้างใบขอ
+        </button>
+      </div>
+    </div>
+    <div class="wf-banner">
+      <span class="wf-step" id="wf0">Draft</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf1">รออนุมัติ Manager</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf2">Admin รับงาน</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf3">รออนุมัติ OwnerMgr</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf4">มอบหมาย</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf5">ดำเนินการ</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf6">งานเสร็จ</span><span class="wf-arr">›</span>
+      <span class="wf-step" id="wf7">ปิดงาน</span>
+    </div>
+    <div class="table-card">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4.5"/><line x1="9.5" y1="9.5" x2="13" y2="13"/></svg>
+          <input type="text" id="search-inp" placeholder="ค้นหาชื่องาน, เลขที่, ผู้ขอ..." oninput="currentPage=1;renderList()">
+        </div>
+        <select class="filter-sel" id="filter-status" onchange="currentPage=1;renderList()">
+          <option value="">ทุกสถานะ</option>
+          <option value="Draft">Draft</option>
+          <option value="PendingDeptApproval">รออนุมัติ Manager</option>
+          <option value="OwnerReceive">Admin รับงาน</option>
+          <option value="PendingOwnerApproval">รออนุมัติ Owner Mgr</option>
+          <option value="Assigned">มอบหมายแล้ว</option>
+          <option value="InProgress">กำลังดำเนินการ</option>
+          <option value="Completed">งานเสร็จ</option>
+          <option value="Closed">ปิดงาน</option>
+          <option value="Rejected">ปฏิเสธ</option>
+        </select>
+        <select class="filter-sel" id="filter-urgency" onchange="currentPage=1;renderList()">
+          <option value="">ทุกความเร่งด่วน</option>
+          <option value="เร่งด่วนมาก">เร่งด่วนมาก</option>
+          <option value="เร่งด่วน">เร่งด่วน</option>
+          <option value="ปกติ">ปกติ</option>
+        </select>
+        <select class="filter-sel" id="filter-type" onchange="currentPage=1;renderList()">
+          <option value="">ทุกประเภท</option>
+          <option value="คำขอใช้บริการ">คำขอใช้บริการ</option>
+          <option value="ขอแบบเพื่อนำไปใช้งาน/แก้ไข">ขอแบบเพื่อนำไปใช้งาน/แก้ไข</option>
+          <option value="ขอแก้ไขแบบ">ขอแก้ไขแบบ</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>เลขที่</th><th>ชื่องาน</th><th>วันที่</th>
+            <th>ผู้ขอ / หน่วยงาน</th><th>ประเภท</th>
+            <th>ความเร่งด่วน</th><th>สถานะ</th>
+            <th id="th-del" style="display:none"></th>
+          </tr></thead>
+          <tbody id="list-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span id="pg-info">0 รายการ</span>
+        <div class="pg-btns" id="pg-btns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FORM PAGE ═══ -->
+  <div class="page" id="page-form">
+    <div class="sec-header">
+      <div>
+        <div class="sec-title" id="form-title">สร้างใบขอใช้บริการใหม่</div>
+        <div class="sec-sub">กรอกข้อมูลให้ครบถ้วนแล้วบันทึก Draft หรือส่งคำร้องทันที</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sec" onclick="goPage('browse')">← กลับ</button>
+        <button class="btn btn-sec btn-sm" onclick="window.print()">🖨 พิมพ์</button>
+      </div>
+    </div>
+    <div id="form-status-banner"></div>
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-title">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 18 18"><rect x="2.5" y="1.5" width="13" height="15" rx="2" fill="#dbeafe" stroke="#1a5fa8"/><path d="M5 6h8M5 9h6M5 12h4" stroke="#1a5fa8"/></svg>
+          แบบฟอร์มร้องขอใช้บริการ ศูนย์วิศวกรรม
+        </div>
+        <span id="form-badge"></span>
+      </div>
+      <div class="form-body">
+        <!-- ── ส่วนบน: ข้อมูลใบขอ + ผู้ขอ ── -->
+        <div class="form-grid" style="margin-bottom:20px">
+          <!-- ซ้าย: ข้อมูลใบขอ -->
+          <div>
+            <div class="form-section-title">📄 ข้อมูลใบขอ</div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">เลขที่ใบขอ</label>
+              <input class="form-input" id="f-no" readonly placeholder="(กำหนดอัตโนมัติ)">
+            </div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">วันที่ยื่น</label>
+              <input type="date" class="form-input" id="f-date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">สถานะปัจจุบัน</label>
+              <input class="form-input" id="f-status-show" readonly>
+            </div>
+          </div>
+          <!-- ขวา: ผู้ขอใช้บริการ -->
+          <div>
+            <div class="form-section-title">👤 ส่วนที่ 1 — ผู้ขอใช้บริการ</div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">ผู้ขอ</label>
+              <input class="form-input" id="f-requester" readonly>
+            </div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">หน่วยงาน / แผนก</label>
+              <input class="form-input" id="f-dept" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Manager Approver Email <span class="req">*</span></label>
+              <div style="position:relative">
+                <input class="form-input" id="f-dept-approver" placeholder="username@kbs.co.th"
+                  oninput="lookupApprover(this.value)" style="padding-right:100px">
+                <span id="f-approver-name" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--green);font-weight:600;pointer-events:none"></span>
+              </div>
+              <div style="font-size:11px;color:var(--gray);margin-top:3px">ผู้จัดการฝ่ายของท่านที่มีสิทธิ์อนุมัติคำร้องนี้</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ส่วนที่ 2: รายละเอียดคำร้อง ── -->
+        <div class="form-section-title">📝 ส่วนที่ 2 — รายละเอียดคำร้อง</div>
+        <div class="form-grid">
+          <!-- ซ้าย: ชื่องาน/สถานที่/รายละเอียด -->
+          <div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">ชื่องาน <span class="req">*</span></label>
+              <input class="form-input" id="f-title" placeholder="ระบุชื่องาน/โครงการ">
+            </div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">วัตถุประสงค์ <span class="req">*</span></label>
+              <textarea class="form-textarea" id="f-objective" placeholder="ระบุวัตถุประสงค์ของการขอใช้บริการ..." style="min-height:80px"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">สถานที่ดำเนินงาน <span class="req">*</span></label>
+              <input class="form-input" id="f-location" placeholder="เช่น อาคาร 1, โรงงาน 2, โกดัง 14">
+            </div>
+            <div class="form-group">
+              <label class="form-label">รายละเอียด / เหตุผลความจำเป็น <span class="req">*</span></label>
+              <textarea class="form-textarea" id="f-desc" placeholder="อธิบายรายละเอียดงานและเหตุผลที่ต้องดำเนินการ..." style="min-height:100px"></textarea>
+            </div>
+          </div>
+          <!-- ขวา: ประเภทงาน + ความเร่งด่วน + service checkboxes (dynamic) -->
+          <div>
+            <div class="form-group" style="margin-bottom:10px">
+              <label class="form-label">ประเภทงาน <span class="req">*</span></label>
+              <select class="form-select" id="f-jobtype" onchange="onJobTypeChange(this.value)">
+                <option value="คำขอใช้บริการ">1. คำขอใช้บริการ</option>
+                <option value="ขอแบบเพื่อนำไปใช้งาน/แก้ไข">2. ขอแบบเพื่อนำไปใช้งาน / แก้ไข</option>
+                <option value="ขอแก้ไขแบบ">3. ขอแก้ไขแบบ</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label class="form-label">ความเร่งด่วน <span class="req">*</span></label>
+              <select class="form-select" id="f-urgency">
+                <option value="">-- เลือกความเร่งด่วน --</option>
+                <option>ปกติ</option>
+                <option>เร่งด่วน</option>
+                <option>เร่งด่วนมาก</option>
+              </select>
+            </div>
+            <!-- Dynamic service checkboxes -->
+            <div class="svc-box" id="svc-box-container">
+              <div class="svc-title" id="svc-box-title">ประเภทของการบริการที่ต้องการ <span class="req">*</span></div>
+              <div id="svc-checkboxes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="btn btn-sec" onclick="goPage('browse')">ยกเลิก</button>
+        <div style="display:flex;gap:8px" id="form-action-area">
+          <button class="btn btn-sec" id="btn-save-draft" onclick="saveDraft()">💾 บันทึก Draft</button>
+          <button class="btn btn-primary" id="btn-submit" onclick="submitRequest()">📤 ส่งคำร้อง</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DETAIL PAGE ═══ -->
+  <div class="page" id="page-detail">
+    <div class="sec-header">
+      <div>
+        <div class="sec-title" id="detail-req-no">รายละเอียดใบขอ</div>
+        <div class="sec-sub" id="detail-title-sub"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sec" onclick="goPage('browse')">← กลับ</button>
+        <button class="btn btn-sec btn-sm" onclick="exportPDF()">📄 PDF</button>
+        <button class="btn btn-sec btn-sm" onclick="window.print()">🖨 พิมพ์</button>
+      </div>
+    </div>
+    <div id="detail-action-panel"></div>
+    <div class="detail-grid">
+      <div>
+        <div class="detail-section">
+          <div class="detail-section-title">ข้อมูลใบขอ</div>
+          <div id="detail-info"></div>
+        </div>
+        <div class="detail-section" style="margin-top:14px">
+          <div class="detail-section-title">ความคืบหน้า</div>
+          <div id="detail-progress"></div>
+        </div>
+      </div>
+      <div>
+        <div class="detail-section">
+          <div class="detail-section-title">Workflow Timeline</div>
+          <div class="timeline" id="detail-timeline"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ APPROVE PAGE ═══ -->
+  <div class="page" id="page-approve">
+    <div class="sec-header">
+      <div class="sec-title">✅ รายการรออนุมัติ</div>
+    </div>
+    <div class="table-card">
+      <table class="tbl">
+        <thead><tr>
+          <th>เลขที่</th><th>ชื่องาน</th><th>ผู้ขอ</th>
+          <th>วันที่</th><th>ความเร่งด่วน</th><th>สถานะ</th><th>การดำเนินการ</th>
+        </tr></thead>
+        <tbody id="approve-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ REPORT PAGE ═══ -->
+  <div class="page" id="page-report">
+    <div class="sec-header">
+      <div class="sec-title">📈 รายงาน / สถิติ</div>
+    </div>
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+      <div class="stat-card blue"><div class="stat-num" id="r-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div></div>
+      <div class="stat-card green"><div class="stat-num" id="r-closed">0</div><div class="stat-lbl">ปิดงานแล้ว</div></div>
+      <div class="stat-card red"><div class="stat-num" id="r-reject">0</div><div class="stat-lbl">ปฏิเสธ</div></div>
+    </div>
+    <div class="dash-grid2">
+      <div class="table-card" style="padding:20px">
+        <div style="font-weight:700;margin-bottom:14px;font-size:13px">📊 สถิติตามสถานะ</div>
+        <div id="report-bars"></div>
+      </div>
+      <div class="table-card" style="padding:20px">
+        <div style="font-weight:700;margin-bottom:14px;font-size:13px">📋 สถิติตามประเภทงาน</div>
+        <div id="report-jobtype"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MANAGE USERS PAGE (Admin only) ═══ -->
+  <div class="page" id="page-users">
+    <div class="sec-header">
+      <div><div class="sec-title">👥 จัดการผู้ใช้งานระบบ</div><div class="sec-sub">เพิ่ม / แก้ไข / ลบ User และกำหนด Role</div></div>
+      <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มผู้ใช้ใหม่</button>
+    </div>
+    <div class="table-card">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4.5"/><line x1="9.5" y1="9.5" x2="13" y2="13"/></svg>
+          <input type="text" id="user-search" placeholder="ค้นหาชื่อ / อีเมล..." oninput="renderUserTable()">
+        </div>
+        <select class="filter-sel" id="user-role-filter" onchange="renderUserTable()">
+          <option value="">ทุก Role</option>
+          <option value="Requester">Requester</option>
+          <option value="ManagerApprover">Manager Approver</option>
+          <option value="Owner">Owner</option>
+          <option value="OwnerManager">Owner Manager</option>
+          <option value="Engineer">Engineer</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>ชื่อ-สกุล</th><th>อีเมล (@kbs.co.th)</th><th>Role</th><th>แผนก/หน่วยงาน</th><th>จัดการ</th>
+          </tr></thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MASTER DATA PAGE (Admin only) ═══ -->
+  <div class="page" id="page-master">
+    <div class="sec-header">
+      <div><div class="sec-title">⚙️ Master Data</div><div class="sec-sub">จัดการข้อมูลหลักของระบบ</div></div>
+    </div>
+    <div class="dash-grid2">
+      <div class="dash-card">
+        <div class="dash-card-title">🏢 หน่วยงาน / แผนก</div>
+        <div id="master-dept-list" style="margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px">
+          <input id="new-dept-inp" class="form-input" placeholder="ชื่อหน่วยงานใหม่..." style="flex:1">
+          <button class="btn btn-primary btn-sm" onclick="addMasterItem('dept')">+ เพิ่ม</button>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">🔧 ประเภทงาน</div>
+        <div id="master-jobtype-list" style="margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px">
+          <input id="new-jobtype-inp" class="form-input" placeholder="ประเภทงานใหม่..." style="flex:1">
+          <button class="btn btn-primary btn-sm" onclick="addMasterItem('jobtype')">+ เพิ่ม</button>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">📋 ประเภทบริการ</div>
+        <div id="master-svc-list" style="margin-bottom:12px"></div>
+        <div style="display:flex;gap:8px">
+          <input id="new-svc-inp" class="form-input" placeholder="ประเภทบริการใหม่..." style="flex:1">
+          <button class="btn btn-primary btn-sm" onclick="addMasterItem('svc')">+ เพิ่ม</button>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">📊 สถิติระบบ</div>
+        <div id="master-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PERMISSIONS PAGE ═══ -->
+  <div class="page" id="page-permissions">
+    <div class="sec-header">
+      <div><div class="sec-title">🔐 สิทธิ์การใช้งานระบบ</div><div class="sec-sub">ตารางสิทธิ์แยกตาม Role และ Workflow 8 ขั้นตอน</div></div>
+      <button class="btn btn-sec btn-sm" onclick="goPage('browse')">← กลับ</button>
+    </div>
+
+    <!-- My Permissions Summary -->
+    <div class="detail-section" style="margin-bottom:16px">
+      <div class="detail-section-title">สิทธิ์ของท่าน — <span id="perm-my-role" style="color:var(--blue)"></span></div>
+      <div id="perm-my-list" style="display:flex;flex-wrap:wrap;gap:8px;padding-top:6px"></div>
+    </div>
+
+    <!-- Full Permission Matrix -->
+    <div class="table-card" style="padding:20px;margin-bottom:16px;overflow-x:auto">
+      <div style="font-weight:700;margin-bottom:12px;font-size:13px">📋 ตาราง Permission Matrix</div>
+      <table class="perm-table">
+        <thead><tr>
+          <th>ฟังก์ชัน</th>
+          <th>Requester</th><th>Mgr Approver</th><th>Admin</th>
+          <th>Owner</th><th>Owner Mgr</th><th>Engineer</th>
+        </tr></thead>
+        <tbody id="perm-matrix-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Workflow Steps -->
+    <div class="table-card" style="padding:20px;overflow-x:auto">
+      <div style="font-weight:700;margin-bottom:12px;font-size:13px">🔄 Workflow 8 ขั้นตอน</div>
+      <table class="wf-table">
+        <thead><tr><th>#</th><th>Status</th><th>ชื่อแสดง</th><th>Role ที่ดำเนินการ</th><th>Action</th><th>Status ถัดไป</th></tr></thead>
+        <tbody>
+          <tr><td><span class="step-num">1</span></td><td><code>Draft</code></td><td>แบบร่าง</td><td>Requester</td><td>ส่งคำร้อง (Submit)</td><td>Pending Dept Approval</td></tr>
+          <tr><td><span class="step-num">2</span></td><td><code>PendingDeptApproval</code></td><td>รออนุมัติหน่วยงาน</td><td>Manager Approver</td><td>อนุมัติ / ไม่อนุมัติ</td><td>Owner Receive / Rejected</td></tr>
+          <tr><td><span class="step-num">3</span></td><td><code>OwnerReceive</code></td><td>รอ Admin รับงาน</td><td><span class="badge b-reject" style="font-size:11px">Admin</span></td><td>รับงาน (Receive)</td><td>Pending Owner Approval</td></tr>
+          <tr><td><span class="step-num">4</span></td><td><code>PendingOwnerApproval</code></td><td>รอ Owner Mgr อนุมัติ</td><td>Owner Manager</td><td>อนุมัติ</td><td>Assigned</td></tr>
+          <tr><td><span class="step-num">5</span></td><td><code>Assigned</code></td><td>มอบหมายงานแล้ว</td><td>Owner</td><td>มอบหมายวิศวกร (Assign)</td><td>In Progress</td></tr>
+          <tr><td><span class="step-num">6</span></td><td><code>InProgress</code></td><td>กำลังดำเนินการ</td><td>Engineer</td><td>Update / Upload / Complete</td><td>Completed</td></tr>
+          <tr><td><span class="step-num">7</span></td><td><code>Completed</code></td><td>งานเสร็จแล้ว</td><td>Owner</td><td>ตรวจสอบ / ปิดงาน</td><td>Closed</td></tr>
+          <tr><td><span class="step-num" style="background:var(--gray)">8</span></td><td><code>Closed</code></td><td>ปิดงานแล้ว</td><td>Admin</td><td>ดูข้อมูลย้อนหลัง</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;font-size:11px;color:var(--gray);padding:8px 12px;background:var(--amber2);border-radius:6px;border-left:3px solid #fcd34d">
+        ⚠️ Admin สามารถข้ามขั้นตอนได้ทุก Status — Role อื่นต้องทำตามลำดับเท่านั้น
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</div><!-- /app -->
+
+</div><!-- /app-shell -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">ดำเนินการ</div>
+    <div id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-sec" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn" id="modal-confirm-btn" onclick="confirmModal()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
+// ════════════════════════════════════════════════
+//  DATA STORE
+// ════════════════════════════════════════════════
+const STORE_KEY = 'engservice_prod_v1';
+const HIST_KEY  = 'engservice_hist_v1';
+const NOTIF_KEY = 'engservice_notif_v1';
+
+function loadJobs(){try{const d=localStorage.getItem(STORE_KEY);if(d)return JSON.parse(d);}catch(e){}return getSampleData();}
+function saveJobs(j){try{localStorage.setItem(STORE_KEY,JSON.stringify(j));}catch(e){}}
+function loadHist(){try{const d=localStorage.getItem(HIST_KEY);if(d)return JSON.parse(d);}catch(e){}return getSampleHistory();}
+function saveHist(h){try{localStorage.setItem(HIST_KEY,JSON.stringify(h));}catch(e){}}
+function loadNotifs(){try{const d=localStorage.getItem(NOTIF_KEY);if(d)return JSON.parse(d);}catch(e){}return [];}
+function saveNotifs(n){try{localStorage.setItem(NOTIF_KEY,JSON.stringify(n));}catch(e){}}
+
+// ════════════════════════════════════════════════
+//  SAMPLE DATA
+// ════════════════════════════════════════════════
+function d(day,month){const y=2026;return`${String(day).padStart(2,'0')}/${String(month).padStart(2,'0')}/${y}`;}
+function getSampleData(){
+  return [
+    {id:42,requestNo:'ENG-2026-0042',title:'งานย้ายปั๊มโซดาไฟมาใช้งานที่ CJR Tank',date:d(14,3),
+     requesterName:'ธัญญาศิริ สุ่มมาตย์',requesterEmail:'thanya.s@kbs.co.th',requesterDept:'ฝ่ายผลิต',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'คำขอใช้บริการ',serviceTypes:'ออกแบบ, ควบคุมงาน',
+     urgency:'เร่งด่วน',location:'อาคารโรงงาน 1',description:'ย้ายปั๊มโซดาไฟจากจุดเดิม',
+     status:'PendingDeptApproval',progressPercent:0,progressNote:'',deptApproveResult:'',ownerApproveResult:'',completedDate:'',closedDate:'',notes:''},
+    {id:41,requestNo:'ENG-2026-0041',title:'ติดตั้งปั๊ม Condensate heater และ Condensate หม้อต้ม',date:d(14,3),
+     requesterName:'ธัญญาศิริ สุ่มมาตย์',requesterEmail:'thanya.s@kbs.co.th',requesterDept:'ฝ่ายผลิต',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'somchai.w@kbs.co.th',assignedEngineerName:'สมชาย วิศวกร',
+     jobType:'คำขอใช้บริการ',serviceTypes:'เขียนแบบ, ประเมินราคา',urgency:'ปกติ',location:'โรงงาน 2',
+     description:'ติดตั้งปั๊มใหม่ระบบ condensate',status:'InProgress',progressPercent:65,progressNote:'ติดตั้งปั๊มเสร็จแล้ว กำลังเดินท่อ',
+     deptApproveResult:'อนุมัติ',ownerApproveResult:'อนุมัติ',completedDate:'',closedDate:'',notes:''},
+    {id:40,requestNo:'ENG-2026-0040',title:'งานเทคอนกรีตข้างอาคารเคี่ยว ปัน',date:d(12,3),
+     requesterName:'พนิดา อ่องพิมาย',requesterEmail:'panida.a@kbs.co.th',requesterDept:'ฝ่ายผลิต',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'vichai.c@kbs.co.th',assignedEngineerName:'วิชัย ช่างใจดี',
+     jobType:'คำขอใช้บริการ',serviceTypes:'ควบคุมงาน, ประเมินราคา',urgency:'ปกติ',location:'ข้างอาคารเคี่ยว',
+     description:'เทคอนกรีตปรับพื้นที่',status:'Completed',progressPercent:100,progressNote:'งานเสร็จสมบูรณ์',
+     deptApproveResult:'อนุมัติ',ownerApproveResult:'อนุมัติ',completedDate:d(15,3),closedDate:'',notes:''},
+    {id:39,requestNo:'ENG-2026-0039',title:'ระบบระบายน้ำฝนบริเวณโกดัง 14',date:d(12,3),
+     requesterName:'อโนมา สุภาชัยวัฒน์',requesterEmail:'anoma.s@kbs.co.th',requesterDept:'อาชีวอนามัย',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'คำขอใช้บริการ',serviceTypes:'ออกแบบ, เขียนแบบ',
+     urgency:'เร่งด่วน',location:'โกดัง 14',description:'ออกแบบระบบระบายน้ำ',status:'OwnerReceive',
+     progressPercent:0,progressNote:'',deptApproveResult:'อนุมัติ',ownerApproveResult:'',completedDate:'',closedDate:'',notes:''},
+    {id:38,requestNo:'ENG-2026-0038',title:'โครงการติดตั้งหม้อปั่นใหม่ 1 หม้อ',date:d(12,3),
+     requesterName:'มิถุนา หล่อสุพรรณเพร',requesterEmail:'mithuna.l@kbs.co.th',requesterDept:'ฝ่ายผลิต',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'ขอแบบเพื่อนำไปใช้งาน/แก้ไข',serviceTypes:'ออกแบบ, ควบคุมงาน, ประเมินราคา',
+     urgency:'ปกติ',location:'อาคารผลิต',description:'จัดซื้อและติดตั้งหม้อปั่นใหม่',status:'Closed',
+     progressPercent:100,progressNote:'ส่งมอบงานเรียบร้อย',deptApproveResult:'อนุมัติ',ownerApproveResult:'อนุมัติ',
+     completedDate:d(14,3),closedDate:d(15,3),notes:'ส่งมอบงานเรียบร้อย'},
+    {id:37,requestNo:'ENG-2026-0037',title:'ติดตั้งปั๊มน้ำ service เพิ่ม 1 ตัว',date:d(11,3),
+     requesterName:'ธัญญาศิริ สุ่มมาตย์',requesterEmail:'thanya.s@kbs.co.th',requesterDept:'ฝ่ายผลิต',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'คำขอใช้บริการ',serviceTypes:'ออกแบบ, ติดตั้ง',
+     urgency:'เร่งด่วนมาก',location:'อาคาร Service',description:'ติดตั้งปั๊มน้ำ service เพิ่ม',
+     status:'PendingOwnerApproval',progressPercent:0,progressNote:'',deptApproveResult:'อนุมัติ',ownerApproveResult:'',completedDate:'',closedDate:'',notes:''},
+    {id:36,requestNo:'ENG-2026-0036',title:'เสา H-Beam สำหรับชั้นวางของ',date:d(20,2),
+     requesterName:'พีรพัฒน์ อุบล',requesterEmail:'peeraphon.u@kbs.co.th',requesterDept:'IT (KPP)',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'คำขอใช้บริการ',serviceTypes:'ออกแบบ, เขียนแบบ',
+     urgency:'ปกติ',location:'คลังสินค้า',description:'ต้องการเสา H-Beam รองรับโครงสร้าง',
+     status:'Draft',progressPercent:0,progressNote:'',deptApproveResult:'',ownerApproveResult:'',completedDate:'',closedDate:'',notes:''},
+    {id:35,requestNo:'ENG-2026-0035',title:'ปูกระเบื้องกั้นห้องบ้านพักพนักงาน',date:d(17,2),
+     requesterName:'เพ็ญสุดา เพียงกระโทก',requesterEmail:'pensuda.p@kbs.co.th',requesterDept:'HR',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'',assignedEngineerName:'',jobType:'คำขอใช้บริการ',serviceTypes:'ควบคุมงาน',
+     urgency:'ปกติ',location:'บ้านพักพนักงาน',description:'ปรับปรุงพื้นบ้านพัก',
+     status:'Rejected',progressPercent:0,progressNote:'',deptApproveResult:'ไม่อนุมัติ: ไม่อยู่ในขอบเขตงานวิศวกรรม',ownerApproveResult:'',completedDate:'',closedDate:'',notes:''},
+    {id:34,requestNo:'ENG-2026-0034',title:'ซ่อมหลังคารั่วอาคาร 3',date:d(10,3),
+     requesterName:'อโนมา สุภาชัยวัฒน์',requesterEmail:'anoma.s@kbs.co.th',requesterDept:'อาชีวอนามัย',
+     deptApproverEmail:'sompong.t@kbs.co.th',ownerEmail:'lavitra.t@kbs.co.th',ownerManagerEmail:'manager.eng@kbs.co.th',
+     assignedEngineerEmail:'somchai.w@kbs.co.th',assignedEngineerName:'สมชาย วิศวกร',
+     jobType:'ขอแก้ไขแบบ',serviceTypes:'ออกแบบ, ควบคุมงาน',
+     urgency:'เร่งด่วนมาก',location:'อาคาร 3',description:'หลังคารั่วทำให้เครื่องจักรเสียหาย',
+     status:'InProgress',progressPercent:40,progressNote:'ดำเนินการซ่อมแซมบางส่วน',deptApproveResult:'อนุมัติ',ownerApproveResult:'อนุมัติ',completedDate:'',closedDate:'',notes:''},
+  ];
+}
+function getSampleHistory(){
+  return [
+    {requestNo:'ENG-2026-0042',step:'PendingDeptApproval',date:'14/03/2026 09:15',by:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',note:'ส่งคำร้องเพื่ออนุมัติ'},
+    {requestNo:'ENG-2026-0041',step:'Draft',date:'14/03/2026 08:00',by:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',note:'สร้างใบขอ'},
+    {requestNo:'ENG-2026-0041',step:'PendingDeptApproval',date:'14/03/2026 08:05',by:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',note:'ส่งคำร้อง'},
+    {requestNo:'ENG-2026-0041',step:'OwnerReceive',date:'14/03/2026 09:00',by:'สมพงษ์ Dept Head',role:'DeptApprover',note:'อนุมัติ'},
+    {requestNo:'ENG-2026-0041',step:'PendingOwnerApproval',date:'14/03/2026 10:00',by:'ลวิตรา ธรรมตะคุ',role:'Owner',note:'รับงาน'},
+    {requestNo:'ENG-2026-0041',step:'Assigned',date:'14/03/2026 11:00',by:'ผู้จัดการ',role:'OwnerManager',note:'อนุมัติให้ดำเนินการ'},
+    {requestNo:'ENG-2026-0041',step:'InProgress',date:'14/03/2026 13:00',by:'ลวิตรา ธรรมตะคุ',role:'Owner',note:'มอบหมายให้ สมชาย วิศวกร'},
+    {requestNo:'ENG-2026-0040',step:'Draft',date:'12/03/2026 08:00',by:'พนิดา อ่องพิมาย',role:'Requester',note:'สร้างใบขอ'},
+    {requestNo:'ENG-2026-0040',step:'PendingDeptApproval',date:'12/03/2026 08:30',by:'พนิดา อ่องพิมาย',role:'Requester',note:'ส่งคำร้อง'},
+    {requestNo:'ENG-2026-0040',step:'OwnerReceive',date:'12/03/2026 09:00',by:'หัวหน้าฝ่าย',role:'DeptApprover',note:'อนุมัติ'},
+    {requestNo:'ENG-2026-0040',step:'PendingOwnerApproval',date:'12/03/2026 10:00',by:'ลวิตรา ธรรมตะคุ',role:'Owner',note:'รับงาน'},
+    {requestNo:'ENG-2026-0040',step:'Assigned',date:'13/03/2026 09:00',by:'ผู้จัดการ',role:'OwnerManager',note:'อนุมัติ'},
+    {requestNo:'ENG-2026-0040',step:'InProgress',date:'13/03/2026 10:00',by:'ลวิตรา ธรรมตะคุ',role:'Owner',note:'มอบหมายให้ วิชัย'},
+    {requestNo:'ENG-2026-0040',step:'Completed',date:'15/03/2026 16:00',by:'วิชัย ช่างใจดี',role:'Engineer',note:'งานเสร็จสมบูรณ์'},
+  ];
+}
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let jobs = loadJobs();
+let hist = loadHist();
+let notifs = loadNotifs();
+let currentRole = null;
+let currentUser = null;
+let selectedJob = null;
+let modalAction = null;
+let currentPage = 1;
+const PAGE_SIZE = 8;
+
+// ═══ LOGIN BRIDGE: called by HEAD login script to set main script variables ═══
+function _loginBridge(role, name, email, dept){
+  currentRole    = role;
+  currentUser    = {name:name, email:email, dept:dept};
+  loginFoundUser = {name:name, role:role, dept:dept, emailUser:email.replace('@kbs.co.th','')};
+}
+
+const STATUS_LABEL = {
+  Draft:'Draft',PendingDeptApproval:'รออนุมัติ Manager',
+  OwnerReceive:'Admin รับงาน',PendingOwnerApproval:'รออนุมัติ Owner Mgr',
+  Assigned:'มอบหมายแล้ว',InProgress:'กำลังดำเนินการ',
+  Completed:'งานเสร็จ',Closed:'ปิดงาน',Rejected:'ปฏิเสธ'
+};
+const STATUS_BADGE_CLS = {
+  Draft:'b-draft',PendingDeptApproval:'b-dept',OwnerReceive:'b-recv',
+  PendingOwnerApproval:'b-owner',Assigned:'b-assign',InProgress:'b-wip',
+  Completed:'b-done',Closed:'b-closed',Rejected:'b-reject'
+};
+const ROLE_USERS = {
+  Requester:       {name:'ธัญญาศิริ สุ่มมาตย์',  email:'thanya.s@kbs.co.th',    dept:'ฝ่ายผลิต'},
+  ManagerApprover: {name:'สมพงษ์ ธุรกิจดี',       email:'sompong.t@kbs.co.th',   dept:'ฝ่ายผลิต'},
+  Admin:           {name:'ลวิตรา ธรรมตะคุ',       email:'lavitra.t@kbs.co.th',   dept:'ศูนย์วิศวกรรม'},
+  Owner:           {name:'วิภา เจริญกิจ',          email:'vipa.c@kbs.co.th',      dept:'ศูนย์วิศวกรรม'},
+  OwnerManager:    {name:'ผู้จัดการ วิศวกรรม',    email:'manager.eng@kbs.co.th', dept:'ผู้บริหาร'},
+  Engineer:        {name:'สมชาย วิศวกร',           email:'somchai.w@kbs.co.th',   dept:'ศูนย์วิศวกรรม'},
+};
+
+// Email → user directory (username part before @)
+const USER_DIRECTORY = {
+  'lavitra.t':   {name:'ลวิตรา ธรรมตะคุ',     role:'Admin',           dept:'ศูนย์วิศวกรรม'},
+  'thanya.s':    {name:'ธัญญาศิริ สุ่มมาตย์',  role:'Requester',       dept:'ฝ่ายผลิต'},
+  'sompong.t':   {name:'สมพงษ์ ธุรกิจดี',      role:'ManagerApprover', dept:'ฝ่ายผลิต'},
+  'manager.eng': {name:'ผู้จัดการ วิศวกรรม',   role:'OwnerManager',    dept:'ผู้บริหาร'},
+  'somchai.w':   {name:'สมชาย วิศวกร',         role:'Engineer',        dept:'ศูนย์วิศวกรรม'},
+  'admin.sys':   {name:'Admin ระบบ',           role:'Admin',           dept:'IT'},
+  'vipa.c':      {name:'วิภา เจริญกิจ',         role:'Owner',           dept:'ศูนย์วิศวกรรม'},
+  'panida.a':    {name:'พนิดา อ่องพิมาย',      role:'Requester',       dept:'ฝ่ายผลิต'},
+  'anoma.s':     {name:'อโนมา สุภาชัยวัฒน์',   role:'Requester',       dept:'อาชีวอนามัย'},
+  'pensuda.p':   {name:'เพ็ญสุดา เพียงกระโทก', role:'Requester',       dept:'HR'},
+  'mithuna.l':   {name:'มิถุนา หล่อสุพรรณเพร', role:'Requester',       dept:'ฝ่ายผลิต'},
+  'vichai.c':    {name:'วิชัย ช่างใจดี',        role:'Engineer',        dept:'ศูนย์วิศวกรรม'},
+  'mgr.prod':    {name:'ผู้จัดการ ฝ่ายผลิต',   role:'ManagerApprover', dept:'ฝ่ายผลิต'},
+};
+
+// ════════════════════════════════════════════════
+//  PERMISSION MATRIX
+// ════════════════════════════════════════════════
+const PERMISSIONS = {
+  createJob:    ['Requester','Admin'],
+  editJob:      ['Requester','Admin'],
+  viewJob:      ['Requester','ManagerApprover','Owner','OwnerManager','Engineer','Admin'],
+  approveDept:  ['ManagerApprover','Admin'],
+  receiveJob:   ['Admin'],
+  approveOwner: ['OwnerManager','Admin'],
+  assignEng:    ['Owner','Admin'],
+  updateProgress:['Engineer','Admin'],
+  uploadFiles:  ['Engineer','Admin'],
+  completeJob:  ['Engineer','Admin'],
+  closeJob:     ['Owner','Admin'],
+  manageUsers:  ['Admin'],
+  manageMaster: ['Admin'],
+};
+
+function can(action){ return PERMISSIONS[action]?.includes(currentRole)||false; }
+
+// Status → Role ที่ดำเนินการได้ (strict workflow)
+const STATUS_ACTIONS = {
+  Draft:                { roles:['Requester','Admin'],      actions:['Submit','EditJob'] },
+  PendingDeptApproval:  { roles:['ManagerApprover','Admin'],actions:['DeptApprove','DeptReject'] },
+  OwnerReceive:         { roles:['Admin'],                  actions:['ReceiveJob'] },
+  PendingOwnerApproval: { roles:['OwnerManager','Admin'],   actions:['OwnerMgrApprove'] },
+  Assigned:             { roles:['Owner','Admin'],          actions:['Assign'] },
+  InProgress:           { roles:['Engineer','Admin'],       actions:['UpdateProgress','Upload','Complete'] },
+  Completed:            { roles:['Owner','Admin'],          actions:['CloseJob'] },
+  Closed:               { roles:['Admin'],                  actions:[] },
+  Rejected:             { roles:['Admin'],                  actions:[] },
+};
+const ROLE_COLORS = {
+  Requester:'#1a5fa8',ManagerApprover:'#9a6200',Owner:'#6d28d9',
+  OwnerManager:'#9a6200',Engineer:'#2e7d32',Admin:'#a32d2d'
+};
+const ROLE_BG = {
+  Requester:'#e6f1fb',ManagerApprover:'#fff8e6',Owner:'#f3e8ff',
+  OwnerManager:'#fff8e6',Engineer:'#eaf3de',Admin:'#fcebeb'
+};
+const ROLE_LABEL = {
+  Requester:'ผู้ขอใช้บริการ', ManagerApprover:'ผู้จัดการ (อนุมัติ)',
+  Owner:'หัวหน้าศูนย์วิศวกรรม', OwnerManager:'ผู้จัดการ/ผู้อำนวยการ',
+  Engineer:'วิศวกร/ช่าง', Admin:'ผู้ดูแลระบบ EC'
+};
+
+// ════════════════════════════════════════════════
+//  LOGIN
+// ════════════════════════════════════════════════
+let loginFoundUser = null; _loginUser = null;
+
+// ═══════════════════════════════════════════════
+//  SELF-CONTAINED LOGIN HANDLER
+// ═══════════════════════════════════════════════
+var _loginUser = null;
+
+var _USERS = {
+  'lavitra.t':{n:'ลวิตรา ธรรมตะคุ',r:'Admin',d:'ศูนย์วิศวกรรม'},
+  'thanya.s':{n:'ธัญญาศิริ สุ่มมาตย์',r:'Requester',d:'ฝ่ายผลิต'},
+  'sompong.t':{n:'สมพงษ์ ธุรกิจดี',r:'ManagerApprover',d:'ฝ่ายผลิต'},
+  'manager.eng':{n:'ผู้จัดการ วิศวกรรม',r:'OwnerManager',d:'ผู้บริหาร'},
+  'somchai.w':{n:'สมชาย วิศวกร',r:'Engineer',d:'ศูนย์วิศวกรรม'},
+  'admin.sys':{n:'Admin ระบบ',r:'Admin',d:'IT'},
+  'vipa.c':{n:'วิภา เจริญกิจ',r:'Owner',d:'ศูนย์วิศวกรรม'},
+  'panida.a':{n:'พนิดา อ่องพิมาย',r:'Requester',d:'ฝ่ายผลิต'},
+  'anoma.s':{n:'อโนมา สุภาชัยวัฒน์',r:'Requester',d:'อาชีวอนามัย'},
+  'pensuda.p':{n:'เพ็ญสุดา เพียงกระโทก',r:'Requester',d:'HR'},
+  'mithuna.l':{n:'มิถุนา หล่อสุพรรณเพร',r:'Requester',d:'ฝ่ายผลิต'},
+  'vichai.c':{n:'วิชัย ช่างใจดี',r:'Engineer',d:'ศูนย์วิศวกรรม'},
+  'mgr.prod':{n:'ผู้จัดการ ฝ่ายผลิต',r:'ManagerApprover',d:'ฝ่ายผลิต'}
+};
+
+var _RLABEL = {
+  'Requester':'ผู้ขอใช้บริการ',
+  'ManagerApprover':'ผู้จัดการ (อนุมัติ)',
+  'Owner':'หัวหน้าศูนย์วิศวกรรม',
+  'OwnerManager':'ผู้จัดการ/ผู้อำนวยการ',
+  'Engineer':'วิศวกร/ช่าง',
+  'Admin':'ผู้ดูแลระบบ EC'
+};
+
+function _getAllUsers(){
+  // Redirect to canonical user fetch function
+  if(typeof _getAllUsersLogin==='function') return _getAllUsersLogin();
+  return {};
+}
+function getLiveUserDir(){
+  try{
+    var deleted=getDeletedUsers();
+    var base=Object.assign({},USER_DIRECTORY);
+    var s=localStorage.getItem('engservice_udir_v1');
+    if(s){
+      var stored=JSON.parse(s);
+      Object.keys(stored).forEach(function(k){
+        var u=stored[k];
+        var ex=base[k]||{};
+        base[k]={name:u.name||u.n||ex.name||'',role:u.role||u.r||ex.role||'',
+          dept:u.dept||u.d||ex.dept||'',password:u.password||ex.password||''};
+      });
+    }
+    deleted.forEach(function(k){delete base[k];});
+    return base;
+  }catch(e){}
+  return Object.assign({},USER_DIRECTORY);
+}
+
+function handleLoginInput(val){
+  // Redirect to canonical login check function
+  if(typeof _doLoginCheck==='function') _doLoginCheck((val||'').trim().toLowerCase().replace(/@kbs\.co\.th$/i,''));
+}
+function handleLoginSubmit(){
+  // Redirect to canonical login submit function  
+  if(typeof _doLoginSubmit==='function') _doLoginSubmit();
+}
+
+// Keep doLogin as alias for backward compat
+function doLogin(){ handleLoginSubmit(); }
+
+function onEmailInput(inp){ handleLoginInput(inp ? inp.value : ''); }
+
+
+function fillDemo(username){
+  const inp = document.getElementById('login-email-inp');
+  inp.value = username;
+  onEmailInput(inp);
+  inp.focus();
+}
+
+function doLogin(){
+  try{
+    if(!loginFoundUser){
+      var errEl=document.getElementById('login-error');
+      if(errEl){errEl.textContent='กรุณากรอกอีเมลที่ถูกต้อง';errEl.style.display='block';}
+      return;
+    }
+    // Re-verify from live directory
+    var liveDir=getLiveUserDir();
+    var fresh=liveDir[loginFoundUser.emailUser];
+    if(!fresh){
+      // Fallback: trust loginFoundUser if liveDir lookup fails
+      fresh=loginFoundUser;
+    }
+    currentRole=fresh.role;
+    currentUser={name:fresh.name,email:loginFoundUser.emailUser+'@kbs.co.th',dept:fresh.dept};
+    var ls=document.getElementById('login-screen');
+    var as=document.getElementById('app-shell');
+    if(ls){
+      // Remove login-screen from DOM entirely to prevent any blocking
+      try{ ls.parentNode.removeChild(ls); }
+      catch(e){ ls.style.display='none'; ls.style.pointerEvents='none'; ls.style.zIndex='-9999'; }
+    }
+    if(as)as.style.display='block';
+    // Sync userDir
+    try{if(typeof userDir!=='undefined')userDir=getLiveUserDir();}catch(e){}
+    var nu=document.getElementById('nav-username');
+    var nr=document.getElementById('nav-role-label');
+    var na=document.getElementById('nav-avatar');
+    var bn=document.getElementById('btn-new');
+    if(nu)nu.textContent=currentUser.name;
+    if(nr)nr.textContent=(ROLE_LABEL[currentRole]||currentRole)+' · '+currentUser.email;
+    if(na)na.textContent=currentUser.name.charAt(0);
+    if(bn)bn.style.display=can('createJob')?'':'none';
+    document.querySelectorAll('.nav-tab-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
+    document.querySelectorAll('.sb-item-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
+    updateRoleInfoBar();
+    updateCounts();
+    renderList();
+    goPage('browse');
+    addNotif('ยินดีต้อนรับ '+currentUser.name,'เข้าสู่ระบบในฐานะ '+(ROLE_LABEL[currentRole]||currentRole),false);
+  }catch(err){
+    console.error('doLogin error:',err);
+    toast('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: '+err.message,'error');
+  }
+}
+function doLogout(){
+  currentRole=null; currentUser=null; loginFoundUser=null; window.__lu=null;
+  var as=document.getElementById('app-shell');
+  if(as) as.style.display='none';
+  document.querySelectorAll('.nav-tab-admin').forEach(function(t){t.style.display='none';});
+  document.querySelectorAll('.sb-item-admin').forEach(function(t){t.style.display='none';});
+  var ls=document.getElementById('login-screen');
+  if(ls){
+    ls.style.cssText='position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0e4080,#1a5fa8,#2176c7);display:flex;align-items:center;justify-content:center';
+    var inp=document.getElementById('login-email-inp');
+    if(inp){inp.value='';inp.style.borderColor='#e5e7eb';}
+    var pre=document.getElementById('login-preview'); if(pre)pre.style.display='none';
+    var nf=document.getElementById('login-not-found'); if(nf)nf.style.display='none';
+    var btn=document.getElementById('login-btn'); if(btn){btn.disabled=true;btn.style.background='#93c5fd';}
+  } else {
+    window.location.reload();
+  }
+}
+
+function updateRoleInfoBar(){
+  const badge = document.getElementById('role-info-badge');
+  const text  = document.getElementById('role-info-text');
+  if(!badge||!text||!currentRole) return;
+  badge.textContent = ROLE_LABEL[currentRole]||currentRole;
+  badge.style.background = ROLE_BG[currentRole]||'#f3f4f6';
+  badge.style.color = ROLE_COLORS[currentRole]||'#374151';
+  const roleDesc = {
+    Requester:'ท่านสามารถสร้าง แก้ไข และส่งใบขอใช้บริการของตัวเอง',
+    ManagerApprover:'ท่านสามารถอนุมัติหรือไม่อนุมัติคำร้องของหน่วยงาน',
+    Admin:'ท่านรับงาน / ปิดงาน / จัดการ Master Data / ผู้ใช้ และดำเนินการทุกขั้นตอน',
+    Owner:'ท่านมอบหมายงานวิศวกร ตรวจสอบ และปิดงาน',
+    OwnerManager:'ท่านอนุมัติให้ดำเนินการจาก Owner',
+    Engineer:'ท่านดำเนินงาน อัปเดตความคืบหน้า และ Upload ไฟล์',
+  };
+  text.textContent = roleDesc[currentRole]||'';
+}
+
+// ════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ════════════════════════════════════════════════
+function addNotif(title, sub, unread=true){
+  notifs.unshift({id:Date.now(),title,sub,time:nowStr(),unread});
+  if(notifs.length>20) notifs=notifs.slice(0,20);
+  saveNotifs(notifs);
+  renderNotifs();
+}
+function renderNotifs(){
+  const list = document.getElementById('notif-list');
+  const dot = document.getElementById('notif-dot');
+  const unreadCount = notifs.filter(n=>n.unread).length;
+  dot.classList.toggle('active', unreadCount>0);
+  if(!notifs.length){
+    list.innerHTML='<div class="notif-empty">ไม่มีการแจ้งเตือน</div>';
+    return;
+  }
+  list.innerHTML = notifs.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="markRead(${n.id})">
+      <div class="notif-item-title">${n.title}</div>
+      <div class="notif-item-sub">${n.sub}</div>
+      <div class="notif-item-time">${n.time}</div>
+    </div>`).join('');
+}
+function markRead(id){notifs=notifs.map(n=>n.id===id?{...n,unread:false}:n);saveNotifs(notifs);renderNotifs();}
+function clearNotifs(){notifs=[];saveNotifs(notifs);renderNotifs();}
+function toggleNotif(){
+  const p = document.getElementById('notif-panel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open')){
+    notifs=notifs.map(n=>({...n,unread:false}));
+    saveNotifs(notifs);renderNotifs();
+  }
+}
+document.addEventListener('click',e=>{
+  const p=document.getElementById('notif-panel');
+  if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.closest('.notif-btn'))
+    p.classList.remove('open');
+});
+
+// ════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════
+function badge(status){
+  return `<span class="badge ${STATUS_BADGE_CLS[status]||'b-draft'}">${STATUS_LABEL[status]||status}</span>`;
+}
+function nowStr(){
+  const d=new Date();
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function toast(msg,type=''){
+  const w=document.getElementById('toast-wrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;w.appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+function visibleJobs(){
+  if(!currentUser||!currentRole) return [];
+  return jobs.filter(j=>{
+    if(currentRole==='Requester')       return j.requesterEmail===currentUser.email;
+    if(currentRole==='ManagerApprover') return true;
+    if(currentRole==='Engineer')        return j.assignedEngineerEmail===currentUser.email||true;
+    return true;
+  });
+}
+function updateCounts(){
+  const vj=visibleJobs();
+  const pend=vj.filter(j=>['PendingDeptApproval','OwnerReceive','PendingOwnerApproval','Assigned'].includes(j.status)).length;
+  const wip=vj.filter(j=>j.status==='InProgress').length;
+  const done=vj.filter(j=>['Completed','Closed'].includes(j.status)).length;
+  const draft=vj.filter(j=>j.status==='Draft').length;
+  const reject=vj.filter(j=>j.status==='Rejected').length;
+  ['s-total','r-total'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=vj.length;});
+  ['s-pending'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=pend;});
+  ['s-wip'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=wip;});
+  ['s-done'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=done;});
+  const nb=document.getElementById('nb-pending');if(nb){nb.textContent=pend;nb.style.display=pend?'':'none';}
+  const e=el=>document.getElementById(el);
+  if(e('sb-all'))e('sb-all').textContent=vj.length;
+  if(e('sb-draft'))e('sb-draft').textContent=draft;
+  if(e('sb-wip'))e('sb-wip').textContent=wip;
+  if(e('sb-done'))e('sb-done').textContent=done;
+  if(e('sb-pending'))e('sb-pending').textContent=pend;
+  if(e('sb-reject'))e('sb-reject').textContent=reject;
+  if(e('r-closed'))e('r-closed').textContent=vj.filter(j=>j.status==='Closed').length;
+  if(e('r-reject'))e('r-reject').textContent=reject;
+}
+
+// ════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════
+function goPage(page, jobId){
+  // Admin-only guard
+  if((page==='users'||page==='master')&&currentRole!=='Admin'){
+    toast('เฉพาะ Admin เท่านั้นที่มีสิทธิ์เข้าถึงหน้านี้','error'); return;
+  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  const pg=document.getElementById('page-'+page);
+  if(!pg){ console.warn('page not found:',page); return; }
+  pg.classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const tabMap={browse:0,dashboard:1,form:2,approve:3,report:4,users:5,master:6};
+  if(tabMap[page]!==undefined && tabs[tabMap[page]]) tabs[tabMap[page]].classList.add('active');
+  if(page==='browse'){document.querySelectorAll('.sb-item')[2]?.classList.add('active');renderList();}
+  else if(page==='dashboard'){document.querySelectorAll('.sb-item')[0]?.classList.add('active');renderDashboard();}
+  else if(page==='form'){setupForm(jobId);}
+  else if(page==='detail'){renderDetail();}
+  else if(page==='approve'){renderApprove();}
+  else if(page==='report'){renderReport();}
+  else if(page==='users'){renderUserTable();}
+  else if(page==='master'){renderMasterData();}
+  else if(page==='permissions'){renderPermissions();}
+  updateCounts();
+}
+function filterStatus(st){
+  const el=document.getElementById('filter-status');if(el)el.value=st;
+  currentPage=1;renderList();
+}
+
+// ════════════════════════════════════════════════
+//  BROWSE LIST
+// ════════════════════════════════════════════════
+function renderList(){
+  // Show/hide delete column header based on role
+  const thDel=document.getElementById('th-del');
+  if(thDel) thDel.style.display=currentRole==='Admin'?'':'none';
+  const q=(document.getElementById('search-inp').value||'').toLowerCase();
+  const fs=document.getElementById('filter-status').value;
+  const fu=document.getElementById('filter-urgency').value;
+  const ft=document.getElementById('filter-type')?.value||'';
+  let filtered=visibleJobs().filter(j=>{
+    const match=!q||(j.title+j.requesterName+j.requestNo+j.requesterDept).toLowerCase().includes(q);
+    const st=!fs||j.status===fs;
+    const ug=!fu||j.urgency===fu;
+    const ty=!ft||j.jobType===ft;
+    return match&&st&&ug&&ty;
+  });
+  const total=filtered.length;
+  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  if(currentPage>pages)currentPage=1;
+  const slice=filtered.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+  const tbody=document.getElementById('list-body');
+  if(!slice.length){
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 13h4"/></svg>
+      <p>ไม่พบรายการ</p><small>ลองปรับตัวกรองหรือค้นหาใหม่</small></div></td></tr>`;
+  } else {
+    tbody.innerHTML=slice.map(j=>{
+      const ub=j.urgency==='เร่งด่วนมาก'?`<span class="b-urgent-high">🔴 ${j.urgency}</span>`:
+               j.urgency==='เร่งด่วน'?`<span class="b-urgent-med">🟡 ${j.urgency}</span>`:
+               `<span style="font-size:13px;color:var(--gray)">${j.urgency}</span>`;
+      const delBtn=currentRole==='Admin'
+        ?`<td onclick="event.stopPropagation()" style="text-align:center;padding:6px 8px;width:60px">
+            <button onclick="deleteJob(${j.id})" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">🗑 ลบ</button>
+          </td>`:'';
+      return `<tr onclick="openDetail(${j.id})" style="cursor:pointer">
+        <td style="font-weight:700;color:var(--blue);white-space:nowrap;font-family:var(--mono);font-size:12px">${j.requestNo}</td>
+        <td><div class="doc-link">
+          <svg width="12" height="14" fill="#dbeafe" stroke="var(--blue)" stroke-width=".7" viewBox="0 0 12 14" style="flex-shrink:0;margin-top:2px"><rect x="1" y="1" width="10" height="12" rx="1.5"/><path d="M3 4.5h6M3 7h5M3 9.5h3.5" stroke="var(--blue)" stroke-width=".9"/></svg>
+          ${j.title}
+        </div></td>
+        <td style="white-space:nowrap;color:var(--gray);font-size:12px;font-family:var(--mono)">${j.date}</td>
+        <td>${j.requesterName}<br><span style="font-size:11px;color:var(--gray)">${j.requesterDept}</span></td>
+        <td style="font-size:12px;color:var(--gray)">${j.jobType}</td>
+        <td>${ub}</td>
+        <td>${badge(j.status)}</td>
+        ${delBtn}
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('pg-info').textContent=total?`แสดง ${Math.min((currentPage-1)*PAGE_SIZE+1,total)}–${Math.min(currentPage*PAGE_SIZE,total)} จาก ${total} รายการ`:'ไม่พบรายการ';
+  // Pagination
+  const pgBtns=document.getElementById('pg-btns');
+  pgBtns.innerHTML='';
+  const mkBtn=(label,page,active,disabled)=>{
+    const b=document.createElement('button');
+    b.className='pg-btn'+(active?' active':'');
+    b.textContent=label;b.disabled=disabled||false;
+    b.onclick=()=>{currentPage=page;renderList();};
+    pgBtns.appendChild(b);
+  };
+  if(pages<=1)return;
+  mkBtn('‹',Math.max(1,currentPage-1),false,currentPage===1);
+  const start=Math.max(1,currentPage-2),end=Math.min(pages,currentPage+2);
+  if(start>1){mkBtn('1',1,false);if(start>2){const sp=document.createElement('span');sp.className='pg-btn';sp.textContent='…';sp.style.border='none';sp.style.cursor='default';pgBtns.appendChild(sp);}}
+  for(let i=start;i<=end;i++)mkBtn(i,i,i===currentPage);
+  if(end<pages){if(end<pages-1){const sp=document.createElement('span');sp.className='pg-btn';sp.textContent='…';sp.style.border='none';sp.style.cursor='default';pgBtns.appendChild(sp);}mkBtn(pages,pages,false);}
+  mkBtn('›',Math.min(pages,currentPage+1),false,currentPage===pages);
+}
+
+// ════════════════════════════════════════════════
+//  FORM
+// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//  JOB TYPE → SERVICE OPTIONS MAP
+// ════════════════════════════════════════════════
+const JOB_TYPE_SERVICES = {
+  'คำขอใช้บริการ': [
+    {id:'svc-design',   label:'ออกแบบ'},
+    {id:'svc-draft',    label:'เขียนแบบ'},
+    {id:'svc-price',    label:'ประเมินราคา'},
+    {id:'svc-supervise',label:'ควบคุมงาน'},
+  ],
+  'ขอแบบเพื่อนำไปใช้งาน/แก้ไข': [
+    {id:'svc-civil',    label:'แบบ Civil & Structure'},
+    {id:'svc-machine',  label:'แบบเครื่องจักร'},
+  ],
+  'ขอแก้ไขแบบ': [
+    {id:'svc-civil',    label:'แบบ Civil & Structure'},
+    {id:'svc-machine',  label:'แบบเครื่องจักร'},
+  ],
+};
+
+function onJobTypeChange(type){
+  const services = JOB_TYPE_SERVICES[type] || [];
+  const container = document.getElementById('svc-checkboxes');
+  if(!container) return;
+  container.innerHTML = `<div class="svc-grid" style="margin-bottom:8px">${
+    services.map(s=>`<label class="svc-item"><input type="checkbox" id="${s.id}" value="${s.label}"> ${s.label}</label>`).join('')
+  }</div>`;
+}
+
+function getServiceTypes(){
+  const checked = [];
+  document.querySelectorAll('#svc-checkboxes input[type=checkbox]:checked').forEach(cb=>{
+    checked.push(cb.value);
+  });
+  return checked.join(', ') || '-';
+}
+
+// Lookup Manager Approver from userDir by email prefix
+function lookupApprover(val){
+  const nameEl = document.getElementById('f-approver-name');
+  if(!nameEl) return;
+  const raw = val.trim().toLowerCase().replace(/@kbs\.co\.th$/i,'');
+  const liveDir = getLiveUserDir();
+  const found = liveDir[raw];
+  if(found && found.role==='ManagerApprover'){
+    nameEl.textContent = '✓ ' + found.name;
+    nameEl.style.color = 'var(--green)';
+  } else if(raw.length>=3 && found){
+    nameEl.textContent = found.name + ' (ไม่ใช่ Mgr Approver)';
+    nameEl.style.color = '#d97706';
+  } else if(raw.length>=3){
+    nameEl.textContent = 'ไม่พบผู้ใช้';
+    nameEl.style.color = 'var(--red)';
+  } else {
+    nameEl.textContent = '';
+  }
+}
+
+// Auto-fill Manager Approver from the user's dept
+function autoFillApprover(){
+  if(!currentUser) return;
+  const liveDir = getLiveUserDir();
+  // Find ManagerApprover in same dept
+  const match = Object.entries(liveDir).find(([,u])=>u.role==='ManagerApprover' && u.dept===currentUser.dept);
+  if(match){
+    const email = match[0]+'@kbs.co.th';
+    const inp = document.getElementById('f-dept-approver');
+    if(inp && !inp.value) inp.value = email;
+    lookupApprover(email);
+  }
+}
+
+// ════════════════════════════════════════════════
+//  FORM SETUP
+// ════════════════════════════════════════════════
+function setupForm(jobId){
+  const isEdit = jobId!==null && jobId!==undefined;
+  const j = isEdit ? jobs.find(x=>x.id===jobId) : null;
+  selectedJob = j || null;
+  document.getElementById('form-title').textContent = isEdit ? `แก้ไขใบขอ — ${j.requestNo}` : 'สร้างใบขอใช้บริการใหม่';
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  document.getElementById('f-no').value = j ? j.requestNo : '(กำหนดอัตโนมัติ)';
+  document.getElementById('f-date').value = j ? j.date.split('/').reverse().join('-') : todayStr;
+  document.getElementById('f-requester').value = currentUser.name;
+  document.getElementById('f-dept').value = j ? j.requesterDept : currentUser.dept;
+  document.getElementById('f-status-show').value = j ? STATUS_LABEL[j.status] : 'ใหม่';
+  document.getElementById('f-title').value = j ? j.title : '';
+  document.getElementById('f-objective').value = j ? (j.objective||'') : '';
+  document.getElementById('f-location').value = j ? j.location : '';
+  document.getElementById('f-desc').value = j ? j.description : '';
+  document.getElementById('f-urgency').value = j ? j.urgency : '';
+
+  // Job type + dynamic services
+  const jobType = j ? j.jobType : 'คำขอใช้บริการ';
+  document.getElementById('f-jobtype').value = jobType;
+  onJobTypeChange(jobType);
+
+  // Re-check saved service types
+  if(j && j.serviceTypes && j.serviceTypes !== '-'){
+    const saved = j.serviceTypes.split(', ').map(s=>s.trim());
+    setTimeout(()=>{
+      document.querySelectorAll('#svc-checkboxes input[type=checkbox]').forEach(cb=>{
+        if(saved.includes(cb.value)) cb.checked = true;
+      });
+    }, 10);
+  }
+
+  // Manager Approver email
+  const approverEmail = j ? j.deptApproverEmail : '';
+  document.getElementById('f-dept-approver').value = approverEmail;
+  if(approverEmail) lookupApprover(approverEmail);
+  else autoFillApprover();
+
+  document.getElementById('form-badge').innerHTML = j ? badge(j.status) : '';
+
+  const fa = document.getElementById('form-action-area');
+  const canEdit = can('editJob') && (!j || j.status === 'Draft');
+  fa.style.display = canEdit ? 'flex' : 'none';
+  // Remove leftover "cannot edit" notes
+  fa.parentElement.querySelectorAll('.form-no-edit-note').forEach(el=>el.remove());
+  if(!canEdit && j){
+    const note = document.createElement('span');
+    note.className = 'form-no-edit-note';
+    note.style.cssText = 'color:var(--gray);font-size:12px';
+    note.textContent = 'ใบขอนี้อยู่ในขั้นตอน "' + (STATUS_LABEL[j.status]||j.status) + '" ไม่สามารถแก้ไขได้';
+    fa.parentElement.appendChild(note);
+  }
+}
+
+function validateForm(){
+  const fields = [
+    { id:'f-title',     msg:'กรุณาระบุชื่องาน' },
+    { id:'f-objective', msg:'กรุณาระบุวัตถุประสงค์' },
+    { id:'f-location',  msg:'กรุณาระบุสถานที่ดำเนินงาน' },
+    { id:'f-desc',      msg:'กรุณาระบุรายละเอียด / เหตุผลความจำเป็น' },
+    { id:'f-urgency',   msg:'กรุณาเลือกความเร่งด่วน' },
+  ];
+  for(const f of fields){
+    const el = document.getElementById(f.id);
+    if(!el || !el.value.trim()){ toast(f.msg,'error'); el?.focus(); return false; }
+  }
+  // Check at least one service type selected
+  const checked = document.querySelectorAll('#svc-checkboxes input[type=checkbox]:checked');
+  if(!checked.length){ toast('กรุณาเลือกประเภทของการบริการที่ต้องการอย่างน้อย 1 รายการ','error'); return false; }
+  // Check approver email
+  const approver = document.getElementById('f-dept-approver').value.trim();
+  if(!approver){ toast('กรุณาระบุ Manager Approver Email','error'); return false; }
+  if(!approver.endsWith('@kbs.co.th')){ toast('Manager Approver Email ต้องเป็น @kbs.co.th เท่านั้น','error'); return false; }
+  return true;
+}
+
+function buildJobData(status){
+  const dv = document.getElementById('f-date').value;
+  const parts = dv.split('-');
+  const dateStr = parts.length===3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dv;
+  return {
+    title:            document.getElementById('f-title').value.trim(),
+    objective:        document.getElementById('f-objective').value.trim(),
+    date:             dateStr,
+    requesterName:    currentUser.name,
+    requesterEmail:   currentUser.email,
+    requesterDept:    document.getElementById('f-dept').value,
+    deptApproverEmail:document.getElementById('f-dept-approver').value.trim(),
+    ownerEmail:       'lavitra.t@kbs.co.th',       // system default — Admin EC
+    ownerManagerEmail:'manager.eng@kbs.co.th',     // system default
+    jobType:          document.getElementById('f-jobtype').value,
+    serviceTypes:     getServiceTypes(),
+    urgency:          document.getElementById('f-urgency').value,
+    location:         document.getElementById('f-location').value,
+    description:      document.getElementById('f-desc').value,
+    otherText:        '',
+    status,
+  };
+}
+
+function saveDraft(){
+  const t = document.getElementById('f-title').value.trim();
+  if(!t){ toast('กรุณาระบุชื่องาน','error'); return; }
+  upsertJob(buildJobData('Draft'),'Draft','บันทึก Draft สำเร็จ');
+}
+
+function submitRequest(){
+  if(!validateForm()) return;
+  const data = buildJobData('PendingDeptApproval');
+  upsertJob(data, 'PendingDeptApproval', 'ส่งคำร้องสำเร็จ — รออนุมัติจาก Manager Approver');
+  // Simulate email notification
+  const approverEmail = data.deptApproverEmail;
+  const liveDir = getLiveUserDir();
+  const approverUsername = approverEmail.replace('@kbs.co.th','');
+  const approver = liveDir[approverUsername];
+  addNotif(`📧 แจ้ง Manager Approver: ${approver?approver.name:approverEmail}`,'กรุณาเปิด Outlook ส่ง email');
+  _showEmailNotif(
+    approverEmail,
+    '[Engineering Service] ขอความอนุเคราะห์อนุมัติคำร้อง — ' + data.title,
+    data.title,
+    'กรุณาตรวจสอบและอนุมัติคำร้อง ประเภท: ' + data.jobType + ' | บริการ: ' + data.serviceTypes,
+    'ผู้ขอ: ' + data.requesterName + ' (' + data.requesterDept + ') | ความเร่งด่วน: ' + data.urgency
+  );
+}
+function upsertJob(data, status, msg){
+  if(selectedJob){
+    const idx = jobs.findIndex(j=>j.id===selectedJob.id);
+    jobs[idx] = {...jobs[idx], ...data, status};
+    addHistory(jobs[idx].requestNo, status, msg.includes('Draft') ? 'แก้ไขใบขอ' : 'ส่งคำร้องใหม่');
+  } else {
+    const newId = Math.max(...jobs.map(j=>j.id), 0) + 1;
+    const newNo = 'ENG-2026-' + String(newId).padStart(4,'0');
+    const newJob = {
+      id:newId, requestNo:newNo, ...data,
+      assignedEngineerEmail:'', assignedEngineerName:'',
+      progressPercent:0, progressNote:'', deptApproveResult:'', ownerApproveResult:'',
+      completedDate:'', closedDate:'', notes:'', files:[]
+    };
+    jobs.unshift(newJob);
+    addHistory(newNo, 'Draft', 'สร้างใบขอใหม่');
+    if(status !== 'Draft') addHistory(newNo, status, 'ส่งคำร้อง');
+  }
+  saveJobs(jobs); updateCounts(); toast(msg,'success'); goPage('browse');
+}
+
+// ════════════════════════════════════════════════
+//  DETAIL
+// ════════════════════════════════════════════════
+function openDetail(id){selectedJob=jobs.find(j=>j.id===id);goPage('detail');}
+function renderDetail(){
+  if(!selectedJob)return;
+  const j=selectedJob;
+  document.getElementById('detail-req-no').textContent=j.requestNo;
+  document.getElementById('detail-title-sub').textContent=j.title;
+  document.getElementById('detail-info').innerHTML=[
+    ['ชื่องาน',`<strong>${j.title}</strong>`],
+    ['วัตถุประสงค์',`<span style="white-space:pre-wrap">${j.objective||'-'}</span>`],
+    ['ประเภท',j.jobType],
+    ['ผู้ขอ',`${j.requesterName} <span style="color:var(--gray);font-size:11px">(${j.requesterDept})</span>`],
+    ['วันที่ยื่น',`<span style="font-family:var(--mono);font-size:12px">${j.date}</span>`],
+    ['ความเร่งด่วน',j.urgency],
+    ['สถานที่',j.location||'-'],
+    ['รายละเอียด',j.description||'-'],
+    ['ประเภทบริการ',j.serviceTypes||'-'],
+    ['สถานะ',badge(j.status)],
+    ['Manager Approver',`<span style="font-size:12px;color:var(--blue)">${j.deptApproverEmail}</span>`],
+    ['Owner',`<span style="font-size:12px;color:var(--blue)">${j.ownerEmail}</span>`],
+    ['Owner Manager',`<span style="font-size:12px;color:var(--blue)">${j.ownerManagerEmail}</span>`],
+    ['Engineer',j.assignedEngineerName||'-'],
+    ['ผลอนุมัติ Dept',j.deptApproveResult||'-'],
+    ['ผลอนุมัติ OwnerMgr',j.ownerApproveResult||'-'],
+    ['วันที่เสร็จ',j.completedDate||'-'],
+    ['วันที่ปิดงาน',j.closedDate||'-'],
+  ].map(([lbl,val])=>`<div class="detail-row"><div class="detail-lbl">${lbl}</div><div class="detail-val">${val}</div></div>`).join('');
+  const pct=j.progressPercent||0;
+  const isDone=['Completed','Closed'].includes(j.status);
+  document.getElementById('detail-progress').innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:12px;color:var(--gray)">ความคืบหน้า</span>
+      <span style="font-weight:700;color:${isDone?'var(--green)':'var(--blue)'};font-family:var(--mono)">${pct}%</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar ${isDone?'done':''}" style="width:${pct}%"></div></div>
+    ${j.progressNote?`<div style="font-size:12px;color:var(--gray);margin-top:6px;padding:8px;background:var(--gray2);border-radius:6px">${j.progressNote}</div>`:''}`;
+  // Timeline
+  const steps=['Draft','PendingDeptApproval','OwnerReceive','PendingOwnerApproval','Assigned','InProgress','Completed','Closed'];
+  const stepLabels={Draft:'สร้างใบขอ',PendingDeptApproval:'รออนุมัติ Manager',OwnerReceive:'Admin รับงาน',PendingOwnerApproval:'รออนุมัติ Owner Mgr',Assigned:'มอบหมายวิศวกร',InProgress:'กำลังดำเนินการ',Completed:'งานเสร็จ',Closed:'ปิดงาน'};
+  const jobHist=hist.filter(h=>h.requestNo===j.requestNo);
+  const tlHtml=steps.map(step=>{
+    const h=jobHist.find(x=>x.step===step);
+    let cls='pending',icon='○';
+    if(j.status==='Rejected'&&step==='PendingDeptApproval'){cls='reject';icon='✕';}
+    else if(h&&step!==j.status){cls='done';icon='✓';}
+    else if(step===j.status){cls='current';icon='●';}
+    return `<div class="tl-item">
+      <div class="tl-dot ${cls}">${icon}</div>
+      <div class="tl-content">
+        <div class="tl-title">${stepLabels[step]}</div>
+        ${h?`<div class="tl-sub">${h.by} <span style="color:#9ca3af">(${h.role})</span>${h.note?' — '+h.note:''}</div><div class="tl-date">${h.date}</div>`:'<div class="tl-sub" style="color:#d1d5db">รอดำเนินการ</div>'}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('detail-timeline').innerHTML=j.status==='Rejected'?
+    jobHist.map(h=>`<div class="tl-item">
+      <div class="tl-dot ${h.step==='Rejected'?'reject':'done'}">${h.step==='Rejected'?'✕':'✓'}</div>
+      <div class="tl-content">
+        <div class="tl-title">${stepLabels[h.step]||h.step}</div>
+        <div class="tl-sub">${h.by} <span style="color:#9ca3af">(${h.role})</span>${h.note?' — '+h.note:''}</div>
+        <div class="tl-date">${h.date}</div>
+      </div>
+    </div>`).join(''):tlHtml;
+  renderActionPanel();
+}
+function renderActionPanel(){
+  const j=selectedJob;if(!j)return;
+  const el=document.getElementById('detail-action-panel');
+  const sa=STATUS_ACTIONS[j.status]||{roles:[],actions:[]};
+  const canAct=sa.roles.includes(currentRole);
+  let html='';
+
+  // ── Requester: Draft actions ──
+  if(currentRole==='Requester'&&j.status==='Draft'&&j.requesterEmail===currentUser.email){
+    html=`<div class="action-panel">
+      <div class="action-title">📝 ใบขอนี้ยังเป็น Draft — สามารถแก้ไขหรือส่งคำร้องได้</div>
+      <div class="action-btns">
+        <button class="btn btn-sec" onclick="goPage('form',${j.id})">✏️ แก้ไขใบขอ</button>
+        <button class="btn btn-primary" onclick="doAction('Submit')">📤 ส่งคำร้อง</button>
+      </div></div>`;
+  }
+  // ── ManagerApprover: Pending Dept Approval ──
+  else if(currentRole==='ManagerApprover'&&j.status==='PendingDeptApproval'){
+    html=`<div class="action-panel amber">
+      <div class="action-title">🔔 รายการนี้รอการอนุมัติจากท่าน (Manager Approver)</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">
+          หมายเหตุ <span style="font-weight:400;color:var(--gray)">(บังคับเฉพาะกรณีไม่อนุมัติ)</span>
+        </label>
+        <textarea id="ap-note" class="form-textarea" style="min-height:52px" placeholder="ระบุเหตุผล (จำเป็นเฉพาะกรณีไม่อนุมัติ)..."></textarea>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-success" onclick="doAction('DeptApprove')">✅ อนุมัติ</button>
+        <button class="btn btn-danger"  onclick="(function(){var n=document.getElementById('ap-note')&&document.getElementById('ap-note').value.trim();if(!n){alert('กรุณาระบุเหตุผลการไม่อนุมัติในช่องหมายเหตุก่อน');document.getElementById('ap-note').focus();return;}doAction('DeptReject');})()">❌ ไม่อนุมัติ</button>
+      </div></div>`;
+  }
+  // ── Admin: OwnerReceive — รับงาน ──
+  else if(currentRole==='Admin'&&j.status==='OwnerReceive'){
+    html=`<div class="action-panel">
+      <div class="action-title">📥 รายการนี้รอการรับงาน (Admin)</div>
+      <div class="action-btns">
+        <button class="btn btn-primary" onclick="doAction('ReceiveJob')">📬 รับงานเข้าระบบ</button>
+      </div></div>`;
+  }
+  // ── OwnerManager: Pending Owner Approval ──
+  else if(currentRole==='OwnerManager'&&j.status==='PendingOwnerApproval'){
+    html=`<div class="action-panel amber">
+      <div class="action-title">🔔 รายการนี้รอการอนุมัติจากท่าน (Owner Manager)</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">หมายเหตุ</label>
+        <textarea id="ap-note" class="form-textarea" style="min-height:52px" placeholder="หมายเหตุประกอบการอนุมัติ..."></textarea>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-success" onclick="doAction('OwnerMgrApprove')">✅ อนุมัติให้ดำเนินการ</button>
+      </div></div>`;
+  }
+  // ── Owner: Assigned — มอบหมายวิศวกร ──
+  else if(currentRole==='Owner'&&j.status==='Assigned'){
+    // Build engineer dropdown from directory
+        const engOptions = Object.entries(getLiveUserDir())
+      .filter(([,u])=>u.role==='Engineer')
+      .map(([k,u])=>`<option value="${k}@kbs.co.th" data-name="${u.name}" ${j.assignedEngineerEmail===k+'@kbs.co.th'?'selected':''}>${u.name} (${k}@kbs.co.th)</option>`).join('');
+    html=`<div class="action-panel">
+      <div class="action-title">👷 มอบหมายวิศวกรให้กับงานนี้</div>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">เลือกวิศวกร <span style="color:var(--red)">*</span></label>
+          <select id="ap-eng-sel" class="form-select" onchange="onEngSelect(this)">
+            <option value="">-- เลือกวิศวกร --</option>
+            ${engOptions}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">หมายเหตุ</label>
+          <input id="ap-assign-note" class="form-input" style="width:200px" placeholder="หมายเหตุการมอบหมาย...">
+        </div>
+        <button class="btn btn-primary" onclick="doAction('Assign')">📋 มอบหมายงาน</button>
+      </div></div>`;
+  }
+  // ── Engineer: InProgress — Update Progress + Upload ──
+  else if(currentRole==='Engineer'&&j.status==='InProgress'&&j.assignedEngineerEmail===currentUser.email){
+    html=`<div class="action-panel green">
+      <div class="action-title">🔧 ดำเนินงาน — อัปเดตความคืบหน้า</div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px">
+        <div style="flex:1;min-width:200px">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">ความคืบหน้า: <span id="ap-pct-lbl" style="font-family:var(--mono);color:var(--blue)">${j.progressPercent}</span>%</label>
+          <input type="range" id="ap-progress" min="0" max="100" step="5" value="${j.progressPercent}" style="width:100%;accent-color:var(--blue)" oninput="document.getElementById('ap-pct-lbl').textContent=this.value">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-top:2px"><span>0%</span><span>50%</span><span>100%</span></div>
+        </div>
+        <div style="flex:2;min-width:200px">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">รายงานความคืบหน้า</label>
+          <textarea id="ap-note" class="form-textarea" style="min-height:52px" placeholder="รายงานรายละเอียดการดำเนินงาน...">${j.progressNote}</textarea>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;padding:10px 12px;background:var(--gray2);border-radius:8px">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">📎 Upload ไฟล์งาน (รูปภาพ / เอกสาร)</label>
+        <input type="file" id="ap-files" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" style="font-size:12px;width:100%"
+          onchange="handleFileUpload(this)">
+        <div id="file-list" style="margin-top:8px">${renderFileList(j.files||[])}</div>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-success btn-sm" onclick="doAction('UpdateProgress')">💾 บันทึกความคืบหน้า</button>
+        <button class="btn btn-primary" onclick="doAction('Complete')">🏁 แจ้งงานเสร็จ 100%</button>
+      </div></div>`;
+  }
+  // ── Owner: Completed — ตรวจสอบและปิดงาน ──
+  else if(currentRole==='Owner'&&j.status==='Completed'){
+    html=`<div class="action-panel green">
+      <div class="action-title">✅ งานเสร็จแล้ว — ตรวจสอบและปิดงาน</div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">หมายเหตุการตรวจสอบ</label>
+        <textarea id="ap-note" class="form-textarea" style="min-height:44px" placeholder="บันทึกผลการตรวจสอบ..."></textarea>
+      </div>
+      <div class="action-btns">
+        <button class="btn btn-success" onclick="doAction('CloseJob')">🔒 ปิดงาน</button>
+      </div></div>`;
+  }
+  // ── Admin: Full control panel ──
+  else if(currentRole==='Admin'){
+    const adminBtns = [];
+    if(j.status==='Draft')               adminBtns.push(`<button class="btn btn-primary btn-sm" onclick="doAction('Submit')">📤 ส่งคำร้อง</button>`);
+    if(j.status==='PendingDeptApproval') adminBtns.push(`<button class="btn btn-success btn-sm" onclick="doAction('DeptApprove')">✅ อนุมัติ</button><button class="btn btn-danger btn-sm" onclick="doAction('DeptReject')">❌ ไม่อนุมัติ</button>`);
+    if(j.status==='OwnerReceive')        adminBtns.push(`<button class="btn btn-primary btn-sm" onclick="doAction('ReceiveJob')">📬 รับงาน</button>`);
+    if(j.status==='PendingOwnerApproval')adminBtns.push(`<button class="btn btn-success btn-sm" onclick="doAction('OwnerMgrApprove')">✅ อนุมัติ</button>`);
+    if(j.status==='Assigned')            adminBtns.push(`<button class="btn btn-primary btn-sm" onclick="doAction('AdminAssign')">👷 มอบหมาย</button>`);
+    if(j.status==='InProgress')          adminBtns.push(`<button class="btn btn-success btn-sm" onclick="doAction('Complete')">🏁 งานเสร็จ</button>`);
+    if(j.status==='Completed')           adminBtns.push(`<button class="btn btn-success btn-sm" onclick="doAction('CloseJob')">🔒 ปิดงาน</button>`);
+    if(['Draft','Rejected'].includes(j.status)) adminBtns.push(`<button class="btn btn-sec btn-sm" onclick="goPage('form',${j.id})">✏️ แก้ไข</button>`);
+    html=`<div class="action-panel red">
+      <div class="action-title">🛡️ Admin — จัดการทุกขั้นตอน
+        <span style="font-size:11px;font-weight:400;color:var(--gray);margin-left:8px">สถานะปัจจุบัน: <strong>${STATUS_LABEL[j.status]||j.status}</strong></span>
+      </div>
+      ${j.status==='Assigned'?`<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+        <select id="ap-admin-eng" class="form-select" style="max-width:300px">
+          ${Object.entries(getLiveUserDir()).filter(([,u])=>u.role==='Engineer').map(([k,u])=>`<option value="${k}@kbs.co.th">${u.name}</option>`).join('')}
+        </select>
+      </div>`:''}
+      ${j.status==='PendingDeptApproval'||j.status==='PendingOwnerApproval'?`<div style="margin-bottom:10px"><textarea id="ap-note" class="form-textarea" style="min-height:44px" placeholder="หมายเหตุ (บังคับเฉพาะกรณีไม่อนุมัติ)..."></textarea></div>`:''}
+      <div class="action-btns" style="flex-wrap:wrap">${adminBtns.join('')}</div>
+    </div>`;
+  }
+  // ── ไม่มีสิทธิ์ดำเนินการ ──
+  else if(!html){
+    const waitMsg = {
+      PendingDeptApproval:'รอ Manager Approver ของหน่วยงานอนุมัติ',
+      OwnerReceive:'รอ Admin รับงาน',
+      PendingOwnerApproval:'รอ Owner Manager อนุมัติ',
+      Assigned:'รอ Owner มอบหมายวิศวกร',
+      InProgress:'รอ Engineer ดำเนินงานและรายงานความคืบหน้า',
+      Completed:'รอ Owner ตรวจสอบและปิดงาน',
+      Closed:'งานปิดแล้ว',
+      Rejected:'งานถูกปฏิเสธ',
+      Draft:'ใบขออยู่ในสถานะ Draft'
+    };
+    if(j.status!=='Closed'&&j.status!=='Rejected'){
+      html=`<div class="action-panel" style="border-left-color:var(--gray3)">
+        <div class="action-title" style="color:var(--gray)">ℹ️ ${waitMsg[j.status]||'รอดำเนินการ'}</div>
+        <div style="font-size:12px;color:#9ca3af">Role ของท่าน (${ROLE_LABEL[currentRole]||currentRole}) ไม่มีสิทธิ์ดำเนินการในขั้นตอนนี้</div>
+      </div>`;
+    }
+  }
+  el.innerHTML=html;
+}
+
+// ════════════════════════════════════════════════
+//  FILE UPLOAD HELPERS
+// ════════════════════════════════════════════════
+function renderFileList(files){
+  if(!files||!files.length) return '<div style="font-size:11px;color:#9ca3af">ยังไม่มีไฟล์แนบ</div>';
+  return files.map((f,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;border-bottom:1px solid var(--gray3)">
+    <span>📎</span><span style="flex:1">${f.name}</span>
+    <span style="color:var(--gray);font-size:11px">${f.size}</span>
+    <span style="color:#9ca3af;font-size:11px">${f.date}</span>
+    <button onclick="removeFile(${i})" style="border:none;background:none;color:var(--red);cursor:pointer;font-size:12px;padding:0 4px">✕</button>
+  </div>`).join('');
+}
+function handleFileUpload(inp){
+  if(!selectedJob||!inp.files.length) return;
+  const idx=jobs.findIndex(x=>x.id===selectedJob.id);
+  if(!jobs[idx].files) jobs[idx].files=[];
+  Array.from(inp.files).forEach(f=>{
+    jobs[idx].files.push({name:f.name,size:formatBytes(f.size),date:nowStr(),uploadedBy:currentUser.name});
+  });
+  saveJobs(jobs);
+  selectedJob=jobs[idx];
+  document.getElementById('file-list').innerHTML=renderFileList(jobs[idx].files);
+  inp.value='';
+  toast(`อัปโหลด ${inp.files.length} ไฟล์สำเร็จ`,'success');
+  addNotif('อัปโหลดไฟล์แล้ว',`${selectedJob.requestNo}: ${jobs[idx].files.length} ไฟล์`);
+}
+function removeFile(idx){
+  if(!selectedJob) return;
+  const ji=jobs.findIndex(x=>x.id===selectedJob.id);
+  jobs[ji].files.splice(idx,1);
+  saveJobs(jobs);
+  selectedJob=jobs[ji];
+  document.getElementById('file-list').innerHTML=renderFileList(jobs[ji].files||[]);
+}
+function formatBytes(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+function onEngSelect(sel){
+  const opt=sel.options[sel.selectedIndex];
+}
+
+// ════════════════════════════════════════════════
+//  EMAIL NOTIFICATION SIMULATION
+// ════════════════════════════════════════════════
+function _showEmailNotif(toEmail, subject, jobTitle, message, extraBody){
+  try{
+    const liveDir = getLiveUserDir();
+    const key = toEmail.replace('@kbs.co.th','');
+    const toUser = liveDir[key];
+    const toName = toUser ? toUser.name : toEmail;
+    const initial = toName.charAt(0);
+
+    // Build mailto link for Outlook
+    const emailBody = [
+      'เรียน ' + toName + ',',
+      '',
+      '📋 งาน: ' + jobTitle,
+      '💬 ' + message,
+      extraBody || '',
+      '',
+      '🔗 กรุณาเข้าระบบ Engineering Service เพื่อดำเนินการ',
+      'วันที่: ' + nowStr(),
+      '',
+      'ระบบ Engineering Service | ศูนย์วิศวกรรม KBS'
+    ].filter(Boolean).join('\n');
+
+    const mailtoLink = 'mailto:' + toEmail +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(emailBody);
+
+    document.getElementById('modal-title').innerHTML = '📧 แจ้งเตือนผู้เกี่ยวข้อง';
+    document.getElementById('modal-body').innerHTML = `
+      <div style="background:#f0f7ff;border:1px solid #b5d4f4;border-radius:10px;padding:14px 16px;font-size:13px">
+        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">${initial}</div>
+          <div>
+            <div style="font-weight:700;color:#111827">ถึง: ${toName}</div>
+            <div style="color:var(--blue);font-size:11px;font-family:var(--mono)">${toEmail}</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--blue3);padding-top:10px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:12px">หัวข้อ: ${subject}</div>
+          <div style="color:#374151;line-height:1.8;font-size:12px;background:#fff;border-radius:6px;padding:10px;border:1px solid #e5e7eb;margin-bottom:12px;white-space:pre-line">${emailBody.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <a href="${mailtoLink}" target="_blank"
+               style="background:#0078d4;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+              📨 เปิด Outlook ส่ง Email
+            </a>
+            <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${toEmail}').then(()=>toast('คัดลอกอีเมลแล้ว','success'))"
+              style="background:var(--gray2);color:#374151;border:1px solid var(--gray3);padding:10px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font)">
+              📋 คัดลอกอีเมล
+            </button>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#9ca3af;text-align:center">
+            คลิก "เปิด Outlook ส่ง Email" เพื่อส่ง email ผ่าน Microsoft Outlook โดยอัตโนมัติ
+          </div>
+        </div>
+      </div>`;
+    const btn = document.getElementById('modal-confirm-btn');
+    btn.textContent = 'ปิด'; btn.className = 'btn btn-sec';
+    btn.onclick = closeModal;
+    document.getElementById('modal').style.display = 'flex';
+  }catch(e){ console.warn('_showEmailNotif error:', e); }
+}
+
+// ════════════════════════════════════════════════
+//  WORKFLOW ACTIONS (Permission-enforced)
+// ════════════════════════════════════════════════
+function doAction(action){
+  const j=selectedJob;if(!j)return;
+  const note=(document.getElementById('ap-note')||{}).value||'';
+
+  // ── Permission guard ──
+  const sa=STATUS_ACTIONS[j.status]||{};
+  if(currentRole!=='Admin'&&!sa.roles?.includes(currentRole)){
+    toast('ท่านไม่มีสิทธิ์ดำเนินการในขั้นตอนนี้','error'); return;
+  }
+
+  if(action==='Submit'){
+    updateJobStatus(j,'PendingDeptApproval','ส่งคำร้องเพื่ออนุมัติ');
+    addNotif('ส่งคำร้องแล้ว',`${j.requestNo} รอ Manager Approver`);
+    toast('📧 ส่ง Email แจ้ง Manager Approver แล้ว','success');
+    const approverDir = getLiveUserDir();
+    const approverKey = j.deptApproverEmail.replace('@kbs.co.th','');
+    const approverUser = approverDir[approverKey];
+    _showEmailNotif(j.deptApproverEmail,
+      '[Engineering Service] ขอความอนุเคราะห์อนุมัติคำร้อง — '+j.title,
+      j.requestNo+' — '+j.title,
+      'มีคำร้องรอการอนุมัติจากท่าน กรุณาเข้าระบบเพื่อตรวจสอบและอนุมัติ',
+      'ผู้ขอ: '+j.requesterName+' ('+j.requesterDept+') | ประเภท: '+j.jobType+'\\nบริการ: '+j.serviceTypes+' | ความเร่งด่วน: '+j.urgency
+    );
+
+  } else if(action==='DeptApprove'){
+    // อนุมัติ: ไม่ต้องใส่หมายเหตุ
+    const approveNote = note || 'อนุมัติ';
+    updateJobField(j,{deptApproveResult:'อนุมัติ: '+approveNote});
+    updateJobStatus(j,'OwnerReceive','Manager Approver อนุมัติ'+(note?' — '+note:''));
+    addNotif('อนุมัติคำร้องแล้ว',`${j.requestNo} ส่งให้ Admin รับงาน`);
+    toast('📧 ส่ง Email แจ้ง Admin EC แล้ว','success');
+    _showEmailNotif(j.ownerEmail,
+      '[Engineering Service] มีคำร้องใหม่รอการรับงาน — '+j.title,
+      j.requestNo+' — '+j.title,
+      'Manager Approver อนุมัติคำร้องแล้ว กรุณาเข้าระบบเพื่อรับงาน',
+      'ผู้ขอ: '+j.requesterName+' | บริการ: '+j.serviceTypes+'\nManager Approver: '+currentUser.name
+    );
+
+  } else if(action==='DeptReject'){
+    if(!note){toast('กรุณาระบุเหตุผลการไม่อนุมัติ','error');return;}
+    updateJobField(j,{deptApproveResult:'ไม่อนุมัติ: '+note});
+    updateJobStatus(j,'Rejected','ไม่อนุมัติ: '+note);
+    addNotif('ปฏิเสธคำร้อง',`${j.requestNo} — ${note}`);
+    _showEmailNotif(j.requesterEmail,
+      '[Engineering Service] คำร้องของท่านไม่ได้รับการอนุมัติ — '+j.title,
+      j.requestNo+' — '+j.title,
+      'คำร้องของท่านไม่ได้รับการอนุมัติ เหตุผล: '+note,
+      'กรุณาติดต่อ Manager Approver ('+currentUser.name+') เพื่อสอบถามเพิ่มเติม'
+    );
+    toast('📧 แจ้งผู้ขอ: '+j.requesterEmail,'warn');
+
+  } else if(action==='ReceiveJob'){
+    updateJobStatus(j,'PendingOwnerApproval','Admin รับงาน');
+    addNotif('รับงานแล้ว',`${j.requestNo} รอ Owner Manager อนุมัติ`);
+    toast('📧 ส่ง Email แจ้ง Owner Manager แล้ว','success');
+    _showEmailNotif(j.ownerManagerEmail,'[Engineering Service] ขอความอนุเคราะห์อนุมัติให้ดำเนินการ — '+j.title,
+      j.requestNo+' — '+j.title,'กรุณาเข้าระบบและอนุมัติให้ศูนย์วิศวกรรมดำเนินการ',
+      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
+
+  } else if(action==='OwnerMgrApprove'){
+    updateJobField(j,{ownerApproveResult:'อนุมัติ'+(note?' — '+note:'')});
+    updateJobStatus(j,'Assigned','Owner Manager อนุมัติ'+(note?' — '+note:''));
+    addNotif('อนุมัติให้ดำเนินการแล้ว',`${j.requestNo} รอ Owner มอบหมายวิศวกร`);
+    toast('📧 ส่ง Email แจ้ง Owner (หัวหน้าศูนย์วิศวกรรม) แล้ว','success');
+    _showEmailNotif(j.ownerEmail,'[Engineering Service] ขอให้มอบหมายวิศวกร/ช่าง — '+j.title,
+      j.requestNo+' — '+j.title,'คำร้องนี้ได้รับการอนุมัติแล้ว กรุณาเข้าระบบเพื่อมอบหมายวิศวกร/ช่าง',
+      'ผู้ขอ: '+j.requesterName+' | บริการ: '+j.serviceTypes);
+
+  } else if(action==='Assign'){
+    const sel=document.getElementById('ap-eng-sel');
+    const engEmail=sel?.value||j.assignedEngineerEmail;
+    if(!engEmail){toast('กรุณาเลือกวิศวกร','error');return;}
+    const engUser=Object.entries(getLiveUserDir()).find(([k,u])=>k+'@kbs.co.th'===engEmail);
+    const engName=engUser?engUser[1].name:engEmail;
+    updateJobField(j,{assignedEngineerEmail:engEmail,assignedEngineerName:engName});
+    updateJobStatus(j,'InProgress','มอบหมายให้: '+engName+' ('+engEmail+')');
+    addNotif('มอบหมายงานแล้ว',`${j.requestNo} → ${engName}`);
+    toast('📧 ส่ง Email แจ้งวิศวกร/ช่าง แล้ว','success');
+    _showEmailNotif(engEmail,'[Engineering Service] ท่านได้รับมอบหมายงาน — '+j.title,
+      j.requestNo+' — '+j.title,'กรุณาเข้าระบบเพื่อดำเนินงานและรายงานความคืบหน้า',
+      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
+    toast('📧 แจ้ง Engineer: '+engEmail,'success');
+
+  } else if(action==='AdminAssign'){
+    const sel=document.getElementById('ap-admin-eng');
+    const engEmail=sel?.value||'somchai.w@kbs.co.th';
+    const engUser=Object.entries(getLiveUserDir()).find(([k,u])=>k+'@kbs.co.th'===engEmail);
+    const engName=engUser?engUser[1].name:'วิศวกร';
+    updateJobField(j,{assignedEngineerEmail:engEmail,assignedEngineerName:engName});
+    updateJobStatus(j,'InProgress','Admin มอบหมายให้: '+engName);
+    addNotif('Admin มอบหมายงาน',`${j.requestNo} → ${engName}`);
+    toast('📧 ส่ง Email แจ้งวิศวกร/ช่าง แล้ว','success');
+    _showEmailNotif(engEmail,'[Engineering Service] ท่านได้รับมอบหมายงาน — '+j.title,
+      j.requestNo+' — '+j.title,'กรุณาเข้าระบบเพื่อดำเนินงานและรายงานความคืบหน้า',
+      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
+
+  } else if(action==='UpdateProgress'){
+    const pct=parseInt((document.getElementById('ap-progress')||{}).value||'0');
+    updateJobField(j,{progressPercent:pct,progressNote:note});
+    addHistory(j.requestNo,'InProgress','อัปเดต '+pct+'% — '+note);
+    saveJobs(jobs);updateCounts();
+    addNotif('อัปเดตความคืบหน้า',`${j.requestNo}: ${pct}%`);
+    toast('บันทึกความคืบหน้า '+pct+'%','success');
+    selectedJob=jobs.find(x=>x.id===j.id);renderDetail();return;
+
+  } else if(action==='Complete'){
+    updateJobField(j,{progressPercent:100,completedDate:nowStr().split(' ')[0]});
+    updateJobStatus(j,'Completed','วิศวกรแจ้งงานเสร็จสมบูรณ์');
+    addNotif('งานเสร็จสิ้น',`${j.requestNo} รอ Owner ตรวจสอบและปิดงาน`);
+    toast('📧 ส่ง Email แจ้ง Owner แล้ว','success');
+    _showEmailNotif(j.ownerEmail,'[Engineering Service] งานเสร็จแล้ว รอตรวจสอบและปิดงาน — '+j.title,
+      j.requestNo+' — '+j.title,'วิศวกรแจ้งงานเสร็จสมบูรณ์แล้ว กรุณาตรวจสอบคุณภาพงานและปิดงาน',
+      'วิศวกรผู้ดำเนินการ: '+j.assignedEngineerName+' | ผู้ขอ: '+j.requesterName);
+
+  } else if(action==='CloseJob'){
+    updateJobField(j,{closedDate:nowStr().split(' ')[0]});
+    updateJobStatus(j,'Closed','ปิดงานเรียบร้อย'+(note?' — '+note:''));
+    addNotif('ปิดงานแล้ว',`${j.requestNo} เสร็จสมบูรณ์`);
+    toast('📧 ส่ง Email แจ้งผู้ขอแล้ว','success');
+    _showEmailNotif(j.requesterEmail,
+      '[Engineering Service] งานของท่านเสร็จสมบูรณ์แล้ว — '+j.title,
+      j.requestNo+' — '+j.title,
+      'งานของท่านได้รับการดำเนินการเสร็จสมบูรณ์และปิดเรียบร้อยแล้ว',
+      'วิศวกรผู้ดำเนินการ: '+j.assignedEngineerName+'\nหากมีข้อสงสัยกรุณาติดต่อศูนย์วิศวกรรม'
+    );
+  }
+  selectedJob=jobs.find(x=>x.id===j.id);renderDetail();updateCounts();
+}
+function updateJobStatus(j,newStatus,note){
+  const idx=jobs.findIndex(x=>x.id===j.id);
+  jobs[idx].status=newStatus;
+  addHistory(j.requestNo,newStatus,note);
+  saveJobs(jobs);
+  toast(STATUS_LABEL[newStatus]||newStatus,'success');
+}
+function updateJobField(j,fields){
+  const idx=jobs.findIndex(x=>x.id===j.id);
+  jobs[idx]={...jobs[idx],...fields};
+  saveJobs(jobs);
+}
+function addHistory(requestNo,step,note){
+  hist.push({requestNo,step,date:nowStr(),by:currentUser.name,role:currentRole,note});
+  saveHist(hist);
+}
+
+// ════════════════════════════════════════════════
+//  APPROVE PAGE (role-aware)
+// ════════════════════════════════════════════════
+function renderApprove(){
+  // Filter items relevant to current role's action scope
+  const roleStatusMap = {
+    ManagerApprover: ['PendingDeptApproval'],
+    Admin:           ['OwnerReceive'],
+    OwnerManager:    ['PendingOwnerApproval'],
+    Owner:           ['Assigned','Completed'],
+    Engineer:        ['InProgress'],
+    Requester:       [],
+  };
+  const myStatuses = currentRole==='Admin'
+    ? ['PendingDeptApproval','OwnerReceive','PendingOwnerApproval','Assigned','InProgress','Completed']
+    : (roleStatusMap[currentRole]||[]);
+  const pending = jobs.filter(j=>myStatuses.includes(j.status));
+  document.getElementById('approve-body').innerHTML=pending.length?
+    pending.map(j=>`<tr onclick="openDetail(${j.id})" style="cursor:pointer">
+      <td style="font-weight:700;color:var(--blue);font-family:var(--mono);font-size:12px">${j.requestNo}</td>
+      <td>${j.title}</td>
+      <td>${j.requesterName}<br><small style="color:var(--gray)">${j.requesterDept}</small></td>
+      <td style="white-space:nowrap;color:var(--gray);font-family:var(--mono);font-size:12px">${j.date}</td>
+      <td>${j.urgency==='เร่งด่วนมาก'?`<span class="b-urgent-high">🔴 ${j.urgency}</span>`:j.urgency==='เร่งด่วน'?`<span class="b-urgent-med">🟡 ${j.urgency}</span>`:j.urgency}</td>
+      <td>${badge(j.status)}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail(${j.id})">ดำเนินการ →</button></td>
+    </tr>`).join(''):`<tr><td colspan="7"><div class="empty">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+      <p>ไม่มีรายการที่ต้องดำเนินการ</p><small>ไม่มีงานรอดำเนินการสำหรับ Role: ${ROLE_LABEL[currentRole]||currentRole}</small>
+    </div></td></tr>`;
+}
+
+// ════════════════════════════════════════════════
+//  REPORT PAGE
+// ════════════════════════════════════════════════
+function renderReport(){
+  const vj=visibleJobs();
+  const counts={};
+  vj.forEach(j=>counts[j.status]=(counts[j.status]||0)+1);
+  document.getElementById('report-bars').innerHTML=Object.entries(STATUS_LABEL).map(([st,lbl])=>{
+    const cnt=counts[st]||0;const pct=vj.length?Math.round(cnt/vj.length*100):0;
+    return `<div class="chart-bar-row">
+      <span class="chart-bar-label">${lbl}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+      <span class="chart-bar-val">${cnt}</span>
+    </div>`;
+  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
+  const typeCounts={};
+  vj.forEach(j=>typeCounts[j.jobType]=(typeCounts[j.jobType]||0)+1);
+  document.getElementById('report-jobtype').innerHTML=Object.entries(typeCounts).map(([t,cnt])=>{
+    const pct=vj.length?Math.round(cnt/vj.length*100):0;
+    return `<div class="chart-bar-row">
+      <span class="chart-bar-label">${t}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--green),#22c55e)"></div></div>
+      <span class="chart-bar-val">${cnt}</span>
+    </div>`;
+  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
+}
+
+// ════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════
+function renderDashboard(){
+  const vj=visibleJobs();
+  // Status bars
+  const counts={};
+  vj.forEach(j=>counts[j.status]=(counts[j.status]||0)+1);
+  document.getElementById('dash-bars').innerHTML=Object.entries(STATUS_LABEL).map(([st,lbl])=>{
+    const cnt=counts[st]||0;const pct=vj.length?Math.round(cnt/vj.length*100):0;
+    return `<div class="chart-bar-row">
+      <span class="chart-bar-label">${lbl}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
+      <span class="chart-bar-val">${cnt}</span>
+    </div>`;
+  }).join('');
+  // Recent list
+  const recent=vj.slice(0,6);
+  document.getElementById('dash-recent').innerHTML=recent.length?recent.map(j=>`
+    <div class="recent-item" onclick="openDetail(${j.id})">
+      <div class="recent-no">${j.requestNo}</div>
+      <div class="recent-title" title="${j.title}">${j.title}</div>
+      <div class="recent-meta">${badge(j.status)}<br><span style="font-size:10px">${j.date}</span></div>
+    </div>`).join(''):`<div class="empty" style="padding:20px"><p>ยังไม่มีข้อมูล</p></div>`;
+  // Urgency
+  const urg={};
+  vj.forEach(j=>urg[j.urgency]=(urg[j.urgency]||0)+1);
+  const urgColors={'เร่งด่วนมาก':'var(--red)','เร่งด่วน':'#d97706','ปกติ':'var(--blue)','ไม่ระบุ':'var(--gray)'};
+  document.getElementById('dash-urgency').innerHTML=Object.entries(urg).map(([u,cnt])=>{
+    const pct=vj.length?Math.round(cnt/vj.length*100):0;
+    return `<div class="chart-bar-row">
+      <span class="chart-bar-label">${u}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:${urgColors[u]||'var(--blue)'}"></div></div>
+      <span class="chart-bar-val" style="color:${urgColors[u]||'var(--blue)'}">${cnt}</span>
+    </div>`;
+  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
+  // Job type
+  const typeCounts={};
+  vj.forEach(j=>typeCounts[j.jobType]=(typeCounts[j.jobType]||0)+1);
+  document.getElementById('dash-jobtype').innerHTML=Object.entries(typeCounts).map(([t,cnt])=>{
+    const pct=vj.length?Math.round(cnt/vj.length*100):0;
+    return `<div class="chart-bar-row">
+      <span class="chart-bar-label">${t}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#4f46e5,#818cf8)"></div></div>
+      <span class="chart-bar-val" style="color:#4f46e5">${cnt}</span>
+    </div>`;
+  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
+  // Sub
+  document.getElementById('dash-sub').textContent=`เข้าสู่ระบบในฐานะ ${currentRole}: ${currentUser?.name||''} — ${vj.length} รายการทั้งหมด`;
+}
+
+// ════════════════════════════════════════════════
+//  EXPORT
+// ════════════════════════════════════════════════
+function exportPDF(){
+  const j=selectedJob;if(!j)return;
+  toast('กำลังสร้าง PDF...','warn');
+  setTimeout(()=>{
+    const w=window.open('','_blank');
+    const jh=hist.filter(h=>h.requestNo===j.requestNo);
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${j.requestNo}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Sarabun',sans-serif;font-size:13px;padding:28px;color:#1f2937}
+    h1{color:#1a5fa8;font-size:16px;border-bottom:2px solid #1a5fa8;padding-bottom:6px;margin-bottom:16px}
+    h2{font-size:13px;margin:14px 0 8px;color:#1a5fa8}
+    table{width:100%;border-collapse:collapse;margin-bottom:12px}
+    td,th{border:1px solid #ddd;padding:7px 10px;font-size:12px}th{background:#e6f1fb;font-weight:700;text-align:left}
+    .badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:#e6f1fb;color:#1a5fa8}
+    .footer{color:#9ca3af;font-size:10px;margin-top:24px;text-align:center;border-top:1px solid #eee;padding-top:8px}</style></head>
+    <body><h1>ใบขอใช้บริการ — ${j.requestNo}</h1>
+    <table><tr><th>ชื่องาน</th><td><strong>${j.title}</strong></td><th>สถานะ</th><td><span class="badge">${STATUS_LABEL[j.status]||j.status}</span></td></tr>
+    <tr><th>ผู้ขอ</th><td>${j.requesterName}</td><th>หน่วยงาน</th><td>${j.requesterDept}</td></tr>
+    <tr><th>วันที่ยื่น</th><td>${j.date}</td><th>ประเภท</th><td>${j.jobType}</td></tr>
+    <tr><th>ความเร่งด่วน</th><td>${j.urgency}</td><th>สถานที่</th><td>${j.location||'-'}</td></tr>
+    <tr><th>รายละเอียด</th><td colspan="3">${j.description||'-'}</td></tr>
+    <tr><th>ประเภทบริการ</th><td colspan="3">${j.serviceTypes||'-'}</td></tr>
+    <tr><th>Engineer</th><td>${j.assignedEngineerName||'-'}</td><th>ความคืบหน้า</th><td>${j.progressPercent}%</td></tr>
+    <tr><th>ผลอนุมัติ Dept</th><td>${j.deptApproveResult||'-'}</td><th>ผลอนุมัติ OwnerMgr</th><td>${j.ownerApproveResult||'-'}</td></tr></table>
+    <h2>Workflow Timeline</h2>
+    <table><tr><th>ขั้นตอน</th><th>วันเวลา</th><th>ผู้ดำเนินการ</th><th>Role</th><th>หมายเหตุ</th></tr>
+    ${jh.map(h=>`<tr><td>${STATUS_LABEL[h.step]||h.step}</td><td>${h.date}</td><td>${h.by}</td><td>${h.role}</td><td>${h.note}</td></tr>`).join('')}
+    </table><div class="footer">พิมพ์: ${nowStr()} | ระบบใบขอใช้บริการ ศูนย์วิศวกรรม v2.0</div>
+    <script>window.print();<\/script>
+</body></html>`);
+    w.document.close();
+  },400);
+}
+function exportListCSV(){
+  const vj=visibleJobs();
+  const rows=[['เลขที่','ชื่องาน','ผู้ขอ','หน่วยงาน','วันที่','สถานะ','ความเร่งด่วน','ประเภท','Engineer','ความคืบหน้า']];
+  vj.forEach(j=>rows.push([j.requestNo,j.title,j.requesterName,j.requesterDept,j.date,
+    STATUS_LABEL[j.status]||j.status,j.urgency,j.jobType,j.assignedEngineerName||'-',j.progressPercent+'%']));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='EngineeringService_'+new Date().toISOString().split('T')[0]+'.csv';a.click();
+  toast('Export CSV สำเร็จ','success');
+}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function confirmModal(){closeModal();}
+
+// ════════════════════════════════════════════════
+//  MANAGE USERS (Admin only)
+// ════════════════════════════════════════════════
+const MASTER_KEY='engservice_master_v1';
+function loadMaster(){try{const d=localStorage.getItem(MASTER_KEY);if(d)return JSON.parse(d);}catch(e){}
+  return{
+    dept:['ฝ่ายผลิต','ฝ่ายบัญชี','HR','IT (KPP)','อาชีวอนามัย','ศูนย์วิศวกรรม','ผู้บริหาร'],
+    jobtype:['1.คำขอใช้บริการ','2.งานโครงการ','3.งานซ่อมด่วน'],
+    svc:['ออกแบบ','เขียนแบบ','ควบคุมงาน','ประเมินราคา','ขออนุมัติดำเนินการ','ขออนุมัติเปิด PO','ติดตั้ง','ตรวจสอบ']
+  };
+}
+function saveMaster(m){try{localStorage.setItem(MASTER_KEY,JSON.stringify(m));}catch(e){}}
+let masterData=loadMaster();
+
+// User directory as editable list (stored in localStorage)
+const DELETED_KEY='engservice_deleted_v1';
+function getDeletedUsers(){try{return JSON.parse(localStorage.getItem(DELETED_KEY)||'[]');}catch(e){return[];}}
+function addDeletedUser(key){try{var d=getDeletedUsers();if(!d.includes(key)){d.push(key);localStorage.setItem(DELETED_KEY,JSON.stringify(d));}}catch(e){}}
+
+const UDIR_KEY='engservice_udir_v1';
+function loadUDir(){
+  try{
+    const deleted=getDeletedUsers();
+    const d=localStorage.getItem(UDIR_KEY);
+    const base=d?{...USER_DIRECTORY,...JSON.parse(d)}:{...USER_DIRECTORY};
+    deleted.forEach(function(k){delete base[k];});
+    return base;
+  }catch(e){}
+  return {...USER_DIRECTORY};
+}
+function saveUDir(u){
+  try{
+    // Only save the DIFF vs USER_DIRECTORY (user-added/edited entries)
+    // This ensures we never lose built-in users
+    const toSave = {};
+    Object.entries(u).forEach(([k,v])=>{
+      const base = USER_DIRECTORY[k];
+      // Save if new user OR if any field differs from default
+      if(!base || base.name!==v.name || base.role!==v.role || base.dept!==v.dept){
+        toSave[k] = v;
+      }
+    });
+    localStorage.setItem(UDIR_KEY, JSON.stringify(toSave));
+  }catch(e){}
+}
+let userDir=loadUDir();
+
+function renderUserTable(){
+  const q=(document.getElementById('user-search')?.value||'').toLowerCase();
+  const rf=document.getElementById('user-role-filter')?.value||'';
+  const rows=Object.entries(userDir).filter(([k,u])=>{
+    const match=!q||(u.name+k).toLowerCase().includes(q);
+    const role=!rf||u.role===rf;
+    return match&&role;
+  });
+  const roleColors={Requester:'#1a5fa8',ManagerApprover:'#9a6200',Owner:'#6d28d9',OwnerManager:'#9a6200',Engineer:'#2e7d32',Admin:'#a32d2d'};
+  const roleBg={Requester:'#e6f1fb',ManagerApprover:'#fff8e6',Owner:'#f3e8ff',OwnerManager:'#fff8e6',Engineer:'#eaf3de',Admin:'#fcebeb'};
+  document.getElementById('user-table-body').innerHTML=rows.length?rows.map(([k,u])=>`
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">${k}@kbs.co.th</td>
+      <td><span class="badge" style="background:${roleBg[u.role]||'#f3f4f6'};color:${roleColors[u.role]||'#374151'}">${ROLE_LABEL[u.role]||u.role}</span></td>
+      <td style="font-size:12px;color:var(--gray)">${u.dept}</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('${k}')">✏️ แก้ไข</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('${k}')" style="margin-left:4px" ${k==='admin.sys'?'disabled title="ไม่สามารถลบ Admin หลัก"':''}>🗑️</button>
+      </td>
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><p>ไม่พบผู้ใช้</p></div></td></tr>`;
+}
+
+// ════════════════════════════════════════════════
+//  DEPT COMBOBOX HELPERS
+// ════════════════════════════════════════════════
+function buildDeptCombo(id, currentVal){
+  return `
+    <div class="combo-wrap" id="wrap-${id}">
+      <input class="combo-input" id="${id}" autocomplete="off"
+        placeholder="พิมพ์หรือเลือกแผนก..."
+        value="${currentVal||''}"
+        oninput="filterDeptCombo('${id}')"
+        onfocus="openDeptCombo('${id}')"
+        onblur="setTimeout(()=>closeDeptCombo('${id}'),180)">
+      <span class="combo-arrow">▾</span>
+      <div class="combo-dropdown" id="drop-${id}"></div>
+    </div>`;
+}
+
+function openDeptCombo(id){
+  filterDeptCombo(id);
+  document.getElementById(`drop-${id}`)?.classList.add('open');
+}
+
+function closeDeptCombo(id){
+  document.getElementById(`drop-${id}`)?.classList.remove('open');
+}
+
+function filterDeptCombo(id){
+  const inp = document.getElementById(id);
+  const drop = document.getElementById(`drop-${id}`);
+  if(!inp || !drop) return;
+  const q = inp.value.trim().toLowerCase();
+  const filtered = masterData.dept.filter(d => !q || d.toLowerCase().includes(q));
+  let html = '';
+  if(filtered.length){
+    html += filtered.map(d=>`
+      <div class="combo-option ${d===inp.value?'selected':''}"
+        onmousedown="selectDeptCombo('${id}','${d.replace(/'/g,"\\'")}')">
+        ${d}${d===inp.value?' <span style="font-size:10px;color:var(--green)">✓</span>':''}
+      </div>`).join('');
+  } else {
+    html += `<div class="combo-empty">ไม่พบ "${inp.value}" ในรายการ</div>`;
+  }
+  // Add "new dept" option if typed value is new
+  if(inp.value.trim() && !masterData.dept.map(d=>d.toLowerCase()).includes(inp.value.trim().toLowerCase())){
+    html += `<div class="combo-option-new"
+      onmousedown="selectDeptCombo('${id}','${inp.value.trim().replace(/'/g,"\\'")}')">
+      ➕ เพิ่มแผนกใหม่: "<strong>${inp.value.trim()}</strong>"
+    </div>`;
+  }
+  drop.innerHTML = html;
+  drop.classList.add('open');
+}
+
+function selectDeptCombo(id, val){
+  const inp = document.getElementById(id);
+  if(inp) inp.value = val;
+  closeDeptCombo(id);
+}
+
+function getDeptComboValue(id){
+  return (document.getElementById(id)?.value||'').trim();
+}
+
+function initDeptCombo(id){
+  // Populate dropdown on first open — already handled by onfocus/oninput
+  // Just ensure the dropdown container exists
+  const drop = document.getElementById(`drop-${id}`);
+  if(drop && !drop.innerHTML){
+    filterDeptCombo(id);
+    drop.classList.remove('open'); // Don't open on init
+  }
+}
+
+function showAddUserModal(){
+  document.getElementById('modal-title').innerHTML='👤 เพิ่มผู้ใช้ใหม่';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="form-group">
+        <label class="form-label">ชื่อ-สกุล <span class="req">*</span></label>
+        <input class="form-input" id="mu-name" placeholder="ชื่อ-สกุล">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username (ก่อน @kbs.co.th) <span class="req">*</span></label>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input class="form-input" id="mu-email" placeholder="firstname.l" style="flex:1">
+          <span style="color:var(--gray);font-size:12px;white-space:nowrap">@kbs.co.th</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role <span class="req">*</span></label>
+        <select class="form-select" id="mu-role">
+          ${Object.entries(ROLE_LABEL).map(([k,v])=>`<option value="${k}">${v} (${k})</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">แผนก/หน่วยงาน <span class="req">*</span></label>
+        ${buildDeptCombo('mu-dept', '')}
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เลือกจากรายการ หรือพิมพ์เพื่อเพิ่มแผนกใหม่</div>
+      </div>
+    </div>`;
+  initDeptCombo('mu-dept');
+  const btn=document.getElementById('modal-confirm-btn');
+  btn.textContent='เพิ่มผู้ใช้'; btn.className='btn btn-primary';
+  btn.onclick=()=>saveNewUser();
+  document.getElementById('modal').style.display='flex';
+}
+function saveNewUser(){
+  const name      = document.getElementById('mu-name').value.trim();
+  const emailUser = document.getElementById('mu-email').value.trim().toLowerCase();
+  const role      = document.getElementById('mu-role').value;
+  const dept      = getDeptComboValue('mu-dept');
+
+  if(!name || !emailUser){ toast('กรุณากรอกข้อมูลให้ครบ','error'); return; }
+  if(!dept){ toast('กรุณาระบุแผนก/หน่วยงาน','error'); return; }
+  if(!/^[a-z0-9._-]+$/.test(emailUser)){ toast('Username ใช้ได้เฉพาะ a-z, 0-9, . _ -','error'); return; }
+
+  // Check duplicate using live directory (includes both built-in + stored users)
+  const liveDir = getLiveUserDir();
+  if(liveDir[emailUser]){ toast('Username นี้มีอยู่แล้ว','error'); return; }
+
+  // Auto-add new dept to masterData if not already there
+  if(!masterData.dept.includes(dept)){
+    masterData.dept.push(dept);
+    saveMaster(masterData);
+    toast(`เพิ่มแผนก "${dept}" ใหม่ในระบบแล้ว`, 'success');
+  }
+
+  // Add to userDir and save
+  userDir[emailUser] = {name, role, dept};
+  saveUDir(userDir);
+
+  // Also sync the live dir variable
+  userDir = getLiveUserDir();
+
+  closeModal();
+  renderUserTable();
+  toast(`เพิ่มผู้ใช้ ${name} (${emailUser}@kbs.co.th) สำเร็จ`, 'success');
+}
+function editUser(key){
+  const u=userDir[key];if(!u)return;
+  document.getElementById('modal-title').innerHTML=`✏️ แก้ไขผู้ใช้: ${u.name}`;
+  document.getElementById('modal-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="form-group">
+        <label class="form-label">ชื่อ-สกุล</label>
+        <input class="form-input" id="eu-name" value="${u.name}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">อีเมล</label>
+        <input class="form-input" value="${key}@kbs.co.th" readonly style="background:var(--gray2);color:var(--gray)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="eu-role">
+          ${Object.entries(ROLE_LABEL).map(([k,v])=>`<option value="${k}" ${u.role===k?'selected':''}>${v} (${k})</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">รีเซ็ตรหัสผ่าน <span style="font-weight:400;color:var(--gray)">(ไม่บังคับ)</span></label>
+        <input class="form-input" id="eu-password" type="password" placeholder="กรอกเพื่อรีเซ็ต password ให้ user" value="">
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน — User จะถูกบังคับตั้ง password ใหม่ถ้า Admin รีเซ็ต</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">แผนก/หน่วยงาน</label>
+        ${buildDeptCombo('eu-dept', u.dept)}
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เลือกจากรายการ หรือพิมพ์เพื่อเพิ่มแผนกใหม่</div>
+      </div>
+    </div>`;
+  initDeptCombo('eu-dept');
+  const btn=document.getElementById('modal-confirm-btn');
+  btn.textContent='บันทึก'; btn.className='btn btn-primary';
+  btn.onclick=()=>{
+    const dept=getDeptComboValue('eu-dept');
+    userDir[key].name=document.getElementById('eu-name').value.trim();
+    userDir[key].role=document.getElementById('eu-role').value;
+    userDir[key].dept=dept||u.dept;
+    const newPw=(document.getElementById('eu-password')?.value||'').trim();
+    if(newPw) userDir[key].password=newPw;
+    // Auto-add new dept to masterData
+    if(dept && !masterData.dept.includes(dept)){
+      masterData.dept.push(dept);
+      saveMaster(masterData);
+    }
+    saveUDir(userDir);
+    userDir = getLiveUserDir(); // re-sync
+    closeModal(); renderUserTable();
+    toast('บันทึกข้อมูลผู้ใช้สำเร็จ','success');
+  };
+  document.getElementById('modal').style.display='flex';
+}
+
+function deleteUser(key){
+  if(key==='admin.sys'||key==='lavitra.t'){toast('ไม่สามารถลบ Admin หลักได้','error');return;}
+  const u=userDir[key];
+  if(!confirm('ยืนยันลบผู้ใช้ "'+(u?u.name:key)+'" ('+key+'@kbs.co.th)?'))return;
+  addDeletedUser(key);
+  delete userDir[key];
+  saveUDir(userDir);
+  userDir=getLiveUserDir();
+  renderUserTable();
+  toast('ลบผู้ใช้สำเร็จ','success');
+}
+
+function deleteJob(id){
+  if(currentRole!=='Admin'){toast('เฉพาะ Admin เท่านั้น','error');return;}
+  const j=jobs.find(x=>x.id===id);
+  if(!j){toast('ไม่พบรายการ','error');return;}
+  if(!confirm('ยืนยันลบใบขอ "'+j.requestNo+' — '+j.title+'"?\nการลบจะไม่สามารถกู้คืนได้'))return;
+  jobs=jobs.filter(x=>x.id!==id);
+  saveJobs(jobs);
+  // Also clean up history for this job
+  try{
+    let hist=loadHist();
+    hist=hist.filter(h=>h.requestNo!==j.requestNo);
+    saveHist(hist);
+  }catch(e){}
+  updateCounts();renderList();
+  toast('ลบ '+j.requestNo+' สำเร็จ','success');
+  addNotif('ลบใบขอแล้ว',j.requestNo+' — '+j.title);
+}
+
+// ════════════════════════════════════════════════
+//  MASTER DATA
+// ════════════════════════════════════════════════
+function renderMasterData(){
+  const mkList=(items,type)=>items.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray3)">
+      <span style="flex:1;font-size:13px">${item}</span>
+      <button onclick="deleteMasterItem('${type}',${i})" class="btn btn-sec btn-sm" style="color:var(--red);padding:3px 8px">✕</button>
+    </div>`).join('');
+  document.getElementById('master-dept-list').innerHTML=mkList(masterData.dept,'dept')||'<p style="color:var(--gray);font-size:13px">ยังไม่มีข้อมูล</p>';
+  document.getElementById('master-jobtype-list').innerHTML=mkList(masterData.jobtype,'jobtype')||'<p style="color:var(--gray);font-size:13px">ยังไม่มีข้อมูล</p>';
+  document.getElementById('master-svc-list').innerHTML=mkList(masterData.svc,'svc')||'<p style="color:var(--gray);font-size:13px">ยังไม่มีข้อมูล</p>';
+  document.getElementById('master-stats').innerHTML=`
+    <div class="detail-row"><div class="detail-lbl">ผู้ใช้ทั้งหมด</div><div class="detail-val" style="font-weight:700;font-family:var(--mono)">${Object.keys(userDir).length} คน</div></div>
+    <div class="detail-row"><div class="detail-lbl">ใบขอทั้งหมด</div><div class="detail-val" style="font-weight:700;font-family:var(--mono)">${jobs.length} ใบ</div></div>
+    <div class="detail-row"><div class="detail-lbl">ใบขอปิดแล้ว</div><div class="detail-val" style="font-weight:700;color:var(--green);font-family:var(--mono)">${jobs.filter(j=>j.status==='Closed').length} ใบ</div></div>
+    <div class="detail-row"><div class="detail-lbl">ใบขอกำลังดำเนินการ</div><div class="detail-val" style="font-weight:700;color:#1d4ed8;font-family:var(--mono)">${jobs.filter(j=>j.status==='InProgress').length} ใบ</div></div>
+    <div class="detail-row"><div class="detail-lbl">หน่วยงาน</div><div class="detail-val" style="font-family:var(--mono)">${masterData.dept.length} หน่วย</div></div>
+    <div class="detail-row"><div class="detail-lbl">เวอร์ชันระบบ</div><div class="detail-val" style="color:var(--gray);font-family:var(--mono)">v2.1 — KBS EC</div></div>`;
+}
+function addMasterItem(type){
+  const inp=document.getElementById(`new-${type}-inp`);
+  const val=inp?.value.trim();
+  if(!val){toast('กรุณากรอกข้อมูล','warn');return;}
+  if(masterData[type].includes(val)){toast('มีข้อมูลนี้อยู่แล้ว','warn');return;}
+  masterData[type].push(val);saveMaster(masterData);inp.value='';
+  renderMasterData();toast('เพิ่มข้อมูลสำเร็จ','success');
+}
+function deleteMasterItem(type,idx){
+  masterData[type].splice(idx,1);saveMaster(masterData);
+  renderMasterData();toast('ลบข้อมูลสำเร็จ','success');
+}
+
+// ════════════════════════════════════════════════
+//  PERMISSIONS PAGE
+// ════════════════════════════════════════════════
+function renderPermissions(){
+  document.getElementById('perm-my-role').textContent = ROLE_LABEL[currentRole]||currentRole;
+
+  // My permissions chips
+  const myPerms = Object.entries(PERMISSIONS)
+    .filter(([,roles])=>roles.includes(currentRole))
+    .map(([k])=>k);
+  const permNames = {
+    createJob:'สร้างใบขอ',editJob:'แก้ไขใบขอ',viewJob:'ดูใบขอ',
+    approveDept:'อนุมัติ (Dept)',receiveJob:'รับงาน',approveOwner:'อนุมัติ (OwnerMgr)',
+    assignEng:'มอบหมายวิศวกร',updateProgress:'อัปเดตความคืบหน้า',
+    uploadFiles:'Upload ไฟล์',completeJob:'แจ้งงานเสร็จ',closeJob:'ปิดงาน',
+    manageUsers:'จัดการผู้ใช้',manageMaster:'จัดการ Master Data'
+  };
+  document.getElementById('perm-my-list').innerHTML = myPerms.length
+    ? myPerms.map(p=>`<span style="background:var(--green2);color:var(--green);border:1px solid #86efac;border-radius:12px;padding:4px 12px;font-size:12px;font-weight:600">✓ ${permNames[p]||p}</span>`).join('')
+    : '<span style="color:var(--gray);font-size:13px">ไม่มีสิทธิ์พิเศษ — ดูข้อมูลได้อย่างเดียว</span>';
+
+  // Full matrix
+  const roles = ['Requester','ManagerApprover','Admin','Owner','OwnerManager','Engineer'];
+  const rows = Object.entries(permNames).map(([key,label])=>{
+    const cells = roles.map(r=>{
+      const has = PERMISSIONS[key]?.includes(r);
+      const isMine = r===currentRole;
+      return `<td${isMine?' style="background:rgba(26,95,168,.06)"':''}>${has?'<span class="perm-check">✓</span>':'<span class="perm-dash">—</span>'}</td>`;
+    }).join('');
+    const isHighlight = PERMISSIONS[key]?.includes(currentRole);
+    return `<tr${isHighlight?' class="perm-highlight"':''}>
+      <td>${label}</td>${cells}
+    </tr>`;
+  }).join('');
+  document.getElementById('perm-matrix-body').innerHTML = rows;
+}
+
+
+// ═══════════════════════════════════════════════
+//  LOGIN WIRING (inside main script scope)
+// ═══════════════════════════════════════════════
+var _USERS_LOGIN = {
+  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม'},
+  'thanya.s':{name:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',dept:'ฝ่ายผลิต'},
+  'sompong.t':{name:'สมพงษ์ ธุรกิจดี',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'manager.eng':{name:'ผู้จัดการ วิศวกรรม',role:'OwnerManager',dept:'ผู้บริหาร'},
+  'somchai.w':{name:'สมชาย วิศวกร',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
+  'vipa.c':{name:'วิภา เจริญกิจ',role:'Owner',dept:'ศูนย์วิศวกรรม'},
+  'panida.a':{name:'พนิดา อ่องพิมาย',role:'Requester',dept:'ฝ่ายผลิต'},
+  'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'อาชีวอนามัย'},
+  'pensuda.p':{name:'เพ็ญสุดา เพียงกระโทก',role:'Requester',dept:'HR'},
+  'mithuna.l':{name:'มิถุนา หล่อสุพรรณเพร',role:'Requester',dept:'ฝ่ายผลิต'},
+  'vichai.c':{name:'วิชัย ช่างใจดี',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'mgr.prod':{name:'ผู้จัดการ ฝ่ายผลิต',role:'ManagerApprover',dept:'ฝ่ายผลิต'}
+};
+
+function _normalizeUser(u){
+  // Handle both {n,r,d} and {name,role,dept} formats
+  if(!u) return null;
+  return {
+    name: u.name||u.n||'',
+    role: u.role||u.r||'',
+    dept: u.dept||u.d||''
+  };
+}
+
+function _getAllUsersLogin(){
+  try{
+    var deleted=getDeletedUsers();
+    var base={};
+    // Step 1: Built-in defaults (no password)
+    [USER_DIRECTORY, _USERS_LOGIN].forEach(function(src){
+      if(!src) return;
+      Object.keys(src).forEach(function(k){
+        var u=src[k];
+        base[k]={name:u.name||u.n||'',role:u.role||u.r||'',dept:u.dept||u.d||''};
+      });
+    });
+    // Step 2: Override with localStorage — MUST preserve ALL fields including password
+    var s=localStorage.getItem('engservice_udir_v1');
+    if(s){
+      var stored=JSON.parse(s);
+      Object.keys(stored).forEach(function(k){
+        var u=stored[k];
+        var existing=base[k]||{};
+        base[k]={
+          name:u.name||u.n||existing.name||'',
+          role:u.role||u.r||existing.role||'',
+          dept:u.dept||u.d||existing.dept||'',
+          password:u.password||existing.password||''
+        };
+      });
+    }
+    // Step 3: Remove deleted
+    deleted.forEach(function(k){delete base[k];});
+    return base;
+  }catch(e){}
+  return Object.assign({},_USERS_LOGIN);
+}
+
+function _doLoginCheck(raw){
+  var all=_getAllUsersLogin(), u=all[raw];
+  var btn=document.getElementById('login-btn');
+  var pre=document.getElementById('login-preview');
+  var nf=document.getElementById('login-not-found');
+  var inp=document.getElementById('login-email-inp');
+  if(!btn) return;
+  if(nf) nf.style.display='none';
+  if(inp) inp.className='login-input'+(u?' success':raw.length>=3?' error':'');
+  if(!u){
+    window.__lu=null; btn.disabled=true;
+    if(pre) pre.style.display='none';
+    var pwf=document.getElementById('login-password-field'); if(pwf) pwf.style.display='none';
+    if(raw.length>=3&&nf){
+      var adm=Object.entries(_getAllUsersLogin()).find(function(e){return(e[1].role||'')==='Admin';});
+      var admN=adm?(adm[1].name):'ผู้ดูแลระบบ EC';
+      var admE=adm?(adm[0]+'@kbs.co.th'):'lavitra.t@kbs.co.th';
+      nf.innerHTML='<div style="font-weight:700;color:#991b1b;margin-bottom:6px">⚠ ไม่พบบัญชีนี้ในระบบ</div>'+
+        '<div style="font-size:12px;color:#7f1d1d">อีเมล <b>'+raw+'@kbs.co.th</b> ยังไม่ได้รับการลงทะเบียน<br>'+
+        '⚠ กรุณาเปิดระบบจาก <b>URL เดียวกัน</b> กับที่ Admin ใช้ และติดต่อผู้ดูแลระบบเพื่อขอเพิ่มบัญชี</div>'+
+        '<div class="login-not-found-contact"><div class="login-not-found-contact-avatar">'+admN.charAt(0)+'</div>'+
+        '<div class="login-not-found-contact-info"><div style="font-weight:700">'+admN+'</div>'+
+        '<div style="font-size:11px;color:#1a5fa8">'+admE+'</div></div></div>';
+      nf.style.display='block';
+    }
+    return;
+  }
+  var uN=u.name||u.n||''; var uR=u.role||u.r||''; var uD=u.dept||u.d||''; var uU=u;
+  window.__lu={name:uN,role:uR,dept:uD,emailUser:raw,_rawUser:u};
+  if(pre){
+    pre.style.display='flex';
+    var av=document.getElementById('preview-avatar');
+    var nm=document.getElementById('preview-name');
+    var ro=document.getElementById('preview-role');
+    var dp=document.getElementById('preview-dept');
+    if(av) av.textContent=uN.charAt(0);
+    if(nm) nm.textContent=uN;
+    if(ro) ro.textContent='🔑 '+(ROLE_LABEL[uR]||uR);
+    if(dp) dp.textContent=uD;
+  }
+  // Show correct password panel based on whether user has password already
+  var pwField=document.getElementById('login-password-field');
+  var pwExist=document.getElementById('login-pw-existing');
+  var pwNew=document.getElementById('login-pw-new');
+  var pwErr=document.getElementById('login-pass-error');
+  var pwInp=document.getElementById('login-password-inp');
+  var pwConf=document.getElementById('login-password-confirm');
+  if(pwErr) pwErr.style.display='none';
+  if(pwInp) pwInp.value='';
+  if(pwConf) pwConf.value='';
+  if(uR&&uN){
+    var hasPw=!!(uU&&uU.password);
+    if(pwField) pwField.style.display='block';
+    if(hasPw){
+      if(pwExist) pwExist.style.display='block';
+      if(pwNew) pwNew.style.display='none';
+      if(pwInp) pwInp.focus();
+    } else {
+      if(pwExist) pwExist.style.display='none';
+      if(pwNew) pwNew.style.display='block';
+      if(pwInp) pwInp.focus();
+    }
+  }
+  btn.disabled=false;
+  btn.style.background='var(--blue)';
+}
+
+function _doLoginSubmit(){
+  var lu=window.__lu;
+  if(!lu){toast('กรุณากรอกอีเมลที่ถูกต้อง','error');return;}
+  var all=_getAllUsersLogin(), u=all[lu.emailUser]||lu;
+  // Password handling
+  var storedPw=(u.password)||(window.__lu&&window.__lu._rawUser&&window.__lu._rawUser.password)||'';
+  var isNewUser=!storedPw||(window.__lu&&window.__lu._changePw);
+  var pwErr=document.getElementById('login-pass-error');
+  // Read from the correct input based on mode
+  var pwInp=isNewUser
+    ? document.getElementById('login-password-new')
+    : document.getElementById('login-password-inp');
+  var pwConf=document.getElementById('login-password-confirm');
+  var enteredPw=(pwInp?pwInp.value:'').trim();
+
+  function showPwErr(msg){if(pwErr){pwErr.textContent=msg;pwErr.style.display='block';}}
+
+  if(isNewUser){
+    // First time: must set new password
+    var confirmPw=(pwConf?pwConf.value:'').trim();
+    if(!enteredPw){showPwErr('กรุณากำหนดรหัสผ่านของท่าน');if(pwInp)pwInp.focus();return;}
+    if(enteredPw.length<6){showPwErr('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');if(pwInp)pwInp.focus();return;}
+    if(!/[a-zA-Z]/.test(enteredPw)){showPwErr('รหัสผ่านต้องมีตัวอักษรภาษาอังกฤษอย่างน้อย 1 ตัว');if(pwInp)pwInp.focus();return;}
+    if(!/[0-9]/.test(enteredPw)){showPwErr('รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว');if(pwInp)pwInp.focus();return;}
+    if(enteredPw!==confirmPw){showPwErr('รหัสผ่านไม่ตรงกัน กรุณากรอกใหม่');if(pwConf){pwConf.value='';pwConf.focus();}return;}
+    // Save new password
+    var allDir=_getAllUsersLogin();
+    var targetUser=allDir[lu.emailUser];
+    if(targetUser){
+      targetUser.password=enteredPw;
+      try{
+        var stored=JSON.parse(localStorage.getItem('engservice_udir_v1')||'{}');
+        stored[lu.emailUser]=stored[lu.emailUser]||{};
+        stored[lu.emailUser].name=targetUser.name;
+        stored[lu.emailUser].role=targetUser.role;
+        stored[lu.emailUser].dept=targetUser.dept;
+        stored[lu.emailUser].password=enteredPw;
+        localStorage.setItem('engservice_udir_v1',JSON.stringify(stored));
+      }catch(e){}
+    }
+    u=Object.assign({},u,{password:enteredPw});
+  } else {
+    // Returning user: verify password
+    if(!enteredPw){showPwErr('กรุณากรอกรหัสผ่าน');if(pwInp)pwInp.focus();return;}
+    if(enteredPw!==storedPw){showPwErr('รหัสผ่านไม่ถูกต้อง');if(pwInp){pwInp.value='';pwInp.focus();}return;}
+  }
+  // Set main script variables directly (same scope!)
+  currentRole=u.role;
+  currentUser={name:u.name,email:lu.emailUser+'@kbs.co.th',dept:u.dept};
+  loginFoundUser=lu;
+  try{if(typeof userDir!=='undefined')userDir=_getAllUsersLogin();}catch(e){}
+  // Hide login-screen
+  var ls=document.getElementById('login-screen');
+  var as=document.getElementById('app-shell');
+  if(ls){try{ls.parentNode.removeChild(ls);}catch(e){ls.style.display='none';ls.style.pointerEvents='none';ls.style.zIndex='-1';}}
+  if(as) as.style.display='block';
+  // Update nav
+  var nu=document.getElementById('nav-username');
+  var nr=document.getElementById('nav-role-label');
+  var na=document.getElementById('nav-avatar');
+  var bn=document.getElementById('btn-new');
+  if(nu) nu.textContent=currentUser.name;
+  if(nr) nr.textContent=(ROLE_LABEL[currentRole]||currentRole)+' · '+lu.emailUser+'@kbs.co.th';
+  if(na) na.textContent=currentUser.name.charAt(0);
+  if(bn) bn.style.display=can('createJob')?'':'none';
+  document.querySelectorAll('.nav-tab-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
+  document.querySelectorAll('.sb-item-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
+  // Init app — all functions available since we're in same scope
+  try{updateRoleInfoBar();}catch(e){console.warn('updateRoleInfoBar:',e);}
+  try{updateCounts();}catch(e){console.warn('updateCounts:',e);}
+  try{renderList();}catch(e){console.warn('renderList:',e);}
+  try{goPage('browse');}catch(e){console.warn('goPage:',e);}
+  try{addNotif('ยินดีต้อนรับ '+currentUser.name,'เข้าสู่ระบบในฐานะ '+(ROLE_LABEL[currentRole]||currentRole),false);}catch(e){}
+}
+
+function _showChangePassword(){
+  // Allow user to change their own password from login screen
+  var pwExist=document.getElementById('login-pw-existing');
+  var pwNew=document.getElementById('login-pw-new');
+  var pwInp=document.getElementById('login-password-inp');
+  var pwConf=document.getElementById('login-password-confirm');
+  var pwErr=document.getElementById('login-pass-error');
+  if(pwExist) pwExist.style.display='none';
+  if(pwNew){ pwNew.style.display='block'; }
+  if(pwErr) pwErr.style.display='none';
+  if(pwInp) pwInp.value='';
+  if(pwConf) pwConf.value='';
+  if(pwInp) pwInp.focus();
+  // Mark as change mode (not new user mode)
+  if(window.__lu) window.__lu._changePw=true;
+}
+
+// Wire login events
+(function wireLogin(){
+  var inp=document.getElementById('login-email-inp');
+  var btn=document.getElementById('login-btn');
+  if(!inp||!btn){setTimeout(wireLogin,100);return;}
+  inp.oninput=function(){
+    var raw=inp.value.trim().toLowerCase().replace(/@kbs.co.th$/i,'');
+    _doLoginCheck(raw);
+  };
+  inp.onkeydown=function(e){
+    if(e.key==='Enter'&&!btn.disabled) _doLoginSubmit();
+  };
+  btn.onclick=_doLoginSubmit;
+  window.doLogin=_doLoginSubmit;
+  window.handleLoginSubmit=_doLoginSubmit;
+  window.onEmailInput=function(el){_doLoginCheck((el?el.value:'').trim().toLowerCase().replace(/@kbs.co.th$/i,''));};
+  window.getLiveUserDir=_getAllUsersLogin;
+  console.log('[Engineering Service] Login wired. Users:',Object.keys(_getAllUsersLogin()).length);
+})();
+
+// Init — Migrate old userDir storage format if needed
+(function migrateUserDir(){
+  try {
+    const stored = localStorage.getItem('engservice_udir_v1');
+    if(!stored) return;
+    const parsed = JSON.parse(stored);
+    // Old format stored ALL users (including USER_DIRECTORY defaults)
+    // New format only stores DIFF (additions/edits)
+    // Detect old format: if it contains built-in users with unchanged data, strip them out
+    const isOldFormat = Object.keys(USER_DIRECTORY).some(k => {
+      const s = parsed[k], d = USER_DIRECTORY[k];
+      return s && d && s.name===d.name && s.role===d.role && s.dept===d.dept;
+    });
+    if(isOldFormat){
+      // Convert to new diff-only format
+      const diff = {};
+      Object.entries(parsed).forEach(([k,v])=>{
+        const base = USER_DIRECTORY[k];
+        if(!base || base.name!==v.name || base.role!==v.role || base.dept!==v.dept){
+          diff[k] = v;
+        }
+      });
+      localStorage.setItem('engservice_udir_v1', JSON.stringify(diff));
+      console.log('[EngService] Migrated userDir to diff-only format. New users preserved:', Object.keys(diff));
+    }
+  } catch(e) { console.warn('[EngService] migrateUserDir error:', e); }
+})();
+
+renderNotifs();
+</script>
+</body>
+</html>
