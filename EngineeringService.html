@@ -2539,13 +2539,11 @@ function loadUDir(){
 }
 function saveUDir(u){
   try{
-    // Only save the DIFF vs USER_DIRECTORY (user-added/edited entries)
-    // This ensures we never lose built-in users
     const toSave = {};
     Object.entries(u).forEach(([k,v])=>{
       const base = USER_DIRECTORY[k];
-      // Save if new user OR if any field differs from default
-      if(!base || base.name!==v.name || base.role!==v.role || base.dept!==v.dept){
+      // Save if: new user, any field differs, OR has password set
+      if(!base || base.name!==v.name || base.role!==v.role || base.dept!==v.dept || v.password){
         toSave[k] = v;
       }
     });
