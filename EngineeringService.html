@@ -900,7 +900,10 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   <div class="page" id="page-users">
     <div class="sec-header">
       <div><div class="sec-title">👥 จัดการผู้ใช้งานระบบ</div><div class="sec-sub">เพิ่ม / แก้ไข / ลบ User และกำหนด Role</div></div>
-      <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มผู้ใช้ใหม่</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มผู้ใช้ใหม่</button>
+        <button class="btn btn-success btn-sm" onclick="exportUserList()" title="อัปเดต User List ลงในไฟล์ใหม่เพื่อ Upload GitHub">📤 Export User List</button>
+      </div>
     </div>
     <div class="table-card">
       <div class="toolbar">
@@ -2149,6 +2152,60 @@ function _showEmailNotif(toEmail, subject, jobTitle, message, extraBody){
     btn.onclick = closeModal;
     document.getElementById('modal').style.display = 'flex';
   }catch(e){ console.warn('_showEmailNotif error:', e); }
+}
+
+function exportUserList(){
+  // Merge current userDir (localStorage) into USER_DIRECTORY format
+  const allUsers = getLiveUserDir();
+  const deleted  = getDeletedUsers();
+
+  // Build new USER_DIRECTORY string
+  let udLines = 'const USER_DIRECTORY = {\n';
+  Object.entries(allUsers).forEach(([k,u])=>{
+    if(deleted.includes(k)) return;
+    const name = (u.name||'').replace(/'/g,"\\'");
+    const role = (u.role||'');
+    const dept = (u.dept||'').replace(/'/g,"\\'");
+    const pw   = u.password ? `,password:'${u.password.replace(/'/g,"\\'")}'` : '';
+    udLines += `  '${k}':{name:'${name}',role:'${role}',dept:'${dept}'${pw}},\n`;
+  });
+  udLines += '};';
+
+  // Replace USER_DIRECTORY in current HTML source
+  const htmlContent = document.documentElement.outerHTML;
+  // Find and replace the USER_DIRECTORY block
+  const udStart = htmlContent.indexOf('const USER_DIRECTORY = {');
+  const udEnd   = htmlContent.indexOf('\n};', udStart) + 3;
+  if(udStart === -1){ toast('ไม่พบ USER_DIRECTORY ในไฟล์','error'); return; }
+
+  const newHtml = htmlContent.substring(0, udStart) + udLines + htmlContent.substring(udEnd);
+
+  // Download as new HTML file
+  const blob = new Blob([newHtml], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'EngineeringService.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // Show instruction modal
+  document.getElementById('modal-title').innerHTML = '📤 Export User List สำเร็จ';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="font-size:13px;line-height:2">
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-bottom:12px">
+        ✅ ดาวน์โหลดไฟล์ <b>EngineeringService.html</b> ใหม่แล้ว<br>
+        ไฟล์นี้มีรายชื่อ User ทั้งหมด <b>${Object.keys(allUsers).length} คน</b> ฝังอยู่
+      </div>
+      <b>ขั้นตอนต่อไป:</b><br>
+      1. ไปที่ <b>github.com/kbsengineeringcenter-art/engineering-service</b><br>
+      2. ลบ <b>EngineeringService.html</b> เดิมออก<br>
+      3. Upload ไฟล์ใหม่ที่ดาวน์โหลดไป<br>
+      4. รอ 1-2 นาที → ทุกเครื่องเห็น User ใหม่ทันที ✅
+    </div>`;
+  const btn = document.getElementById('modal-confirm-btn');
+  btn.textContent = 'รับทราบ'; btn.className = 'btn btn-primary';
+  btn.onclick = closeModal;
+  document.getElementById('modal').style.display = 'flex';
 }
 
 // ════════════════════════════════════════════════
