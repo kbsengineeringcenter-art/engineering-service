@@ -2518,6 +2518,7 @@ function renderUserTable(){
       <td style="font-size:12px;color:var(--gray)">${u.dept}</td>
       <td>
         <button class="btn btn-sec btn-sm" onclick="editUser('${k}')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('${k}')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
         <button class="btn btn-danger btn-sm" onclick="deleteUser('${k}')" style="margin-left:4px" ${k==='admin.sys'?'disabled title="ไม่สามารถลบ Admin หลัก"':''}>🗑️</button>
       </td>
     </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><p>ไม่พบผู้ใช้</p></div></td></tr>`;
@@ -2682,9 +2683,20 @@ function editUser(key){
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">รีเซ็ตรหัสผ่าน <span style="font-weight:400;color:var(--gray)">(ไม่บังคับ)</span></label>
-        <input class="form-input" id="eu-password" type="password" placeholder="กรอกเพื่อรีเซ็ต password ให้ user" value="">
-        <div style="font-size:11px;color:var(--gray);margin-top:3px">เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน — User จะถูกบังคับตั้ง password ใหม่ถ้า Admin รีเซ็ต</div>
+        <label class="form-label">รหัสผ่าน <span style="font-weight:400;color:var(--gray)">(ไม่บังคับ)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="form-input" id="eu-password" type="password" 
+            placeholder="กรอกเพื่อตั้ง/เปลี่ยนรหัสผ่าน" style="flex:1">
+          <button type="button" 
+            onclick="document.getElementById('eu-password').value='RESET_PASSWORD';document.getElementById('eu-pw-reset-notice').style.display='block'"
+            style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:var(--font)">
+            🔄 Reset
+          </button>
+        </div>
+        <div id="eu-pw-reset-notice" style="display:none;margin-top:4px;font-size:11px;color:#dc2626;font-weight:600">
+          ⚠ Password จะถูก Reset — User ต้องตั้งรหัสผ่านใหม่ตอน Login ครั้งถัดไป
+        </div>
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน | กด Reset เพื่อให้ User ตั้งรหัสผ่านใหม่</div>
       </div>
       <div class="form-group">
         <label class="form-label">แผนก/หน่วยงาน</label>
@@ -2700,8 +2712,13 @@ function editUser(key){
     userDir[key].name=document.getElementById('eu-name').value.trim();
     userDir[key].role=document.getElementById('eu-role').value;
     userDir[key].dept=dept||u.dept;
-    const newPw=(document.getElementById('eu-password')?.value||'').trim();
-    if(newPw) userDir[key].password=newPw;
+    const rawPw=(document.getElementById('eu-password')?.value||'').trim();
+    if(rawPw==='RESET_PASSWORD'){
+      delete userDir[key].password; // Admin reset: user must set new password on next login
+    } else if(rawPw){
+      userDir[key].password=rawPw; // Admin set new password directly
+    }
+    // If rawPw is empty: keep existing password unchanged
     // Auto-add new dept to masterData
     if(dept && !masterData.dept.includes(dept)){
       masterData.dept.push(dept);
@@ -2713,6 +2730,28 @@ function editUser(key){
     toast('บันทึกข้อมูลผู้ใช้สำเร็จ','success');
   };
   document.getElementById('modal').style.display='flex';
+}
+
+function resetUserPassword(key){
+  if(currentRole!=='Admin'){toast('เฉพาะ Admin เท่านั้น','error');return;}
+  const u=userDir[key];
+  if(!u){toast('ไม่พบ user','error');return;}
+  if(!confirm('Reset รหัสผ่านของ "'+u.name+'" ('+key+'@kbs.co.th)?\nUser จะต้องตั้งรหัสผ่านใหม่ตอน Login ครั้งถัดไป'))return;
+  // Remove password from userDir and localStorage
+  delete userDir[key].password;
+  // Also update localStorage directly
+  try{
+    const stored=JSON.parse(localStorage.getItem('engservice_udir_v1')||'{}');
+    if(stored[key]) delete stored[key].password;
+    // Ensure user exists in stored with current data
+    stored[key]=stored[key]||{};
+    stored[key].name=u.name; stored[key].role=u.role; stored[key].dept=u.dept;
+    localStorage.setItem('engservice_udir_v1',JSON.stringify(stored));
+  }catch(e){}
+  saveUDir(userDir);
+  userDir=getLiveUserDir();
+  renderUserTable();
+  toast('Reset รหัสผ่าน "'+u.name+'" สำเร็จ — User ต้องตั้งรหัสใหม่ตอน Login','success');
 }
 
 function deleteUser(key){
