@@ -441,6 +441,12 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 
     <button class="login-btn" id="login-btn" disabled>เข้าสู่ระบบ →</button>
     <div class="login-demo-note">เฉพาะอีเมล <b>@kbs.co.th</b> เท่านั้น</div>
+    <div style="margin-top:12px;border-top:1px solid #e5e7eb;padding-top:10px">
+      <button onclick="_debugShowUsers()" 
+        style="width:100%;background:none;border:1px dashed #d1d5db;color:#9ca3af;border-radius:6px;padding:6px;font-size:11px;cursor:pointer;font-family:var(--font)">
+        🔍 ตรวจสอบ Users ในระบบ (Admin only)
+      </button>
+    </div>
   </div>
 </div>
 
@@ -3075,6 +3081,36 @@ function _showChangePassword(){
   if(pwInp) pwInp.focus();
   // Mark as change mode (not new user mode)
   if(window.__lu) window.__lu._changePw=true;
+}
+
+function _debugShowUsers(){
+  try{
+    const stored = JSON.parse(localStorage.getItem('engservice_udir_v1')||'{}');
+    const builtIn = Object.keys(USER_DIRECTORY||{});
+    const storedKeys = Object.keys(stored);
+    const allUsers = _getAllUsersLogin ? Object.keys(_getAllUsersLogin()) : [];
+    
+    let msg = '=== Users ในระบบ ===\n\n';
+    msg += '📦 Built-in users (' + builtIn.length + '):\n';
+    builtIn.forEach(k => msg += '  • ' + k + '@kbs.co.th\n');
+    
+    msg += '\n💾 Stored in localStorage (' + storedKeys.length + '):\n';
+    if(storedKeys.length === 0){
+      msg += '  (ว่าง — Admin ยังไม่ได้เพิ่ม user)\n';
+    } else {
+      storedKeys.forEach(k => {
+        const u = stored[k];
+        msg += '  • ' + k + '@kbs.co.th → ' + (u.name||'?') + ' [' + (u.role||'?') + '] pw:' + (u.password?'✓':'✗') + '\n';
+      });
+    }
+    
+    msg += '\n✅ All visible users (' + allUsers.length + '):\n';
+    allUsers.forEach(k => msg += '  • ' + k + '\n');
+    
+    alert(msg);
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
 }
 
 // Wire login events
