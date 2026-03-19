@@ -1043,15 +1043,62 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 //  DATA STORE
 // ════════════════════════════════════════════════
 const STORE_KEY = 'engservice_prod_v1';
+const API_URL  = 'https://script.google.com/macros/s/AKfycbz5j4daPlfiUwReE_-rTBTcJ5Ji_4jNoPZnDgWC1taYhgN7JGys5iqLhAAQPA6oVtjb/exec'; // Google Sheets backend
+let   _apiReady = false; // true เมื่อ sync กับ Google Sheets ได้
 const HIST_KEY  = 'engservice_hist_v1';
 const NOTIF_KEY = 'engservice_notif_v1';
 
-function loadJobs(){try{const d=localStorage.getItem(STORE_KEY);if(d)return JSON.parse(d);}catch(e){}return getSampleData();}
-function saveJobs(j){try{localStorage.setItem(STORE_KEY,JSON.stringify(j));}catch(e){}}
-function loadHist(){try{const d=localStorage.getItem(HIST_KEY);if(d)return JSON.parse(d);}catch(e){}return getSampleHistory();}
-function saveHist(h){try{localStorage.setItem(HIST_KEY,JSON.stringify(h));}catch(e){}}
+// ═══════════════════════════════════════════════════════
+//  GOOGLE SHEETS SYNC — ข้อมูลกลางสำหรับทุกเครื่อง
+// ═══════════════════════════════════════════════════════
+async function _apiCall(method, data){
+  try{
+    const opts = method==='GET'
+      ? { method:'GET' }
+      : { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) };
+    const res = await fetch(API_URL + (method==='GET'?'?action='+data:''), opts);
+    return await res.json();
+  }catch(e){ console.warn('API error:',e); return {ok:false,error:e.message}; }
+}
+
+async function _syncFromSheets(){
+  try{
+    const [jobsRes, histRes, notifRes] = await Promise.all([
+      _apiCall('GET','getJobs'),
+      _apiCall('GET','getHistory'),
+      _apiCall('GET','getNotifs')
+    ]);
+    if(jobsRes.ok)  { jobs  = jobsRes.data||[];  localStorage.setItem(STORE_KEY,JSON.stringify(jobs)); }
+    if(histRes.ok)  { hist  = histRes.data||[];   localStorage.setItem(HIST_KEY, JSON.stringify(hist)); }
+    if(notifRes.ok) { notifs= notifRes.data||[];  localStorage.setItem(NOTIF_KEY,JSON.stringify(notifs)); }
+    _apiReady = true;
+    console.log('[Sheets] Synced: '+jobs.length+' jobs, '+hist.length+' hist, '+notifs.length+' notifs');
+    return true;
+  }catch(e){ console.warn('[Sheets] Sync failed, using localStorage:',e); return false; }
+}
+
+function loadJobs(){
+  try{const d=localStorage.getItem(STORE_KEY);if(d)return JSON.parse(d);}catch(e){}
+  return [];
+}
+function saveJobs(j){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(j));}catch(e){}
+  // Async save to Sheets (don't wait)
+  if(API_URL) _apiCall('POST',{action:'saveJobs',data:j}).catch(()=>{});
+}
+function loadHist(){
+  try{const d=localStorage.getItem(HIST_KEY);if(d)return JSON.parse(d);}catch(e){}
+  return [];
+}
+function saveHist(h){
+  try{localStorage.setItem(HIST_KEY,JSON.stringify(h));}catch(e){}
+  if(API_URL) _apiCall('POST',{action:'saveHistory',data:h}).catch(()=>{});
+}
 function loadNotifs(){try{const d=localStorage.getItem(NOTIF_KEY);if(d)return JSON.parse(d);}catch(e){}return [];}
-function saveNotifs(n){try{localStorage.setItem(NOTIF_KEY,JSON.stringify(n));}catch(e){}}
+function saveNotifs(n){
+  try{localStorage.setItem(NOTIF_KEY,JSON.stringify(n));}catch(e){}
+  if(API_URL) _apiCall('POST',{action:'saveNotifs',data:n}).catch(()=>{});
+}
 
 // ════════════════════════════════════════════════
 //  SAMPLE DATA
@@ -1358,6 +1405,16 @@ function doLogin(){
     updateCounts();
     renderList();
     goPage('browse');
+    // Sync from Google Sheets
+    _syncFromSheets().then(synced=>{
+      if(synced){
+        jobs=loadJobs(); hist=loadHist(); notifs=loadNotifs();
+        try{updateCounts();}catch(e){}
+        try{renderList();}catch(e){}
+        try{renderNotifs();}catch(e){}
+        toast('🔄 ซิงค์ข้อมูลจาก Google Sheets แล้ว','success');
+      }
+    });
     addNotif('ยินดีต้อนรับ '+currentUser.name,'เข้าสู่ระบบในฐานะ '+(ROLE_LABEL[currentRole]||currentRole),false);
   }catch(err){
     console.error('doLogin error:',err);
@@ -3095,11 +3152,21 @@ function _doLoginSubmit(){
   if(bn) bn.style.display=can('createJob')?'':'none';
   document.querySelectorAll('.nav-tab-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
   document.querySelectorAll('.sb-item-admin').forEach(function(t){t.style.display=currentRole==='Admin'?'':'none';});
-  // Init app — all functions available since we're in same scope
-  try{updateRoleInfoBar();}catch(e){console.warn('updateRoleInfoBar:',e);}
-  try{updateCounts();}catch(e){console.warn('updateCounts:',e);}
-  try{renderList();}catch(e){console.warn('renderList:',e);}
-  try{goPage('browse');}catch(e){console.warn('goPage:',e);}
+  // Sync from Google Sheets then init app
+  try{updateRoleInfoBar();}catch(e){}
+  try{updateCounts();}catch(e){}
+  try{renderList();}catch(e){}
+  try{goPage('browse');}catch(e){}
+  // Pull latest data from Google Sheets
+  _syncFromSheets().then(synced=>{
+    if(synced){
+      jobs=loadJobs(); hist=loadHist(); notifs=loadNotifs();
+      try{updateCounts();}catch(e){}
+      try{renderList();}catch(e){}
+      try{renderNotifs();}catch(e){}
+      toast('🔄 ซิงค์ข้อมูลจาก Google Sheets แล้ว','success');
+    }
+  });
   try{addNotif('ยินดีต้อนรับ '+currentUser.name,'เข้าสู่ระบบในฐานะ '+(ROLE_LABEL[currentRole]||currentRole),false);}catch(e){}
 }
 
