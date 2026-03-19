@@ -1,4 +1,4 @@
-<html lang="th"><head>
+<html lang="th"><plasmo-csui></plasmo-csui><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Engineering Service — ระบบใบขอใช้บริการ ศูนย์วิศวกรรม</title>
@@ -387,7 +387,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <button class="nav-tab" onclick="goPage('dashboard')">📊 Dashboard</button>
     <button class="nav-tab" onclick="goPage('form',null)">+ สร้างใบขอ</button>
     <button class="nav-tab" onclick="goPage('approve')">
-      รออนุมัติ<span class="nav-badge" id="nb-pending" style="">1</span>
+      รออนุมัติ<span class="nav-badge" id="nb-pending">1</span>
     </button>
     <button class="nav-tab" onclick="goPage('report')">รายงาน</button>
     <button class="nav-tab nav-tab-admin active" onclick="goPage('users')" style="">👥 จัดการผู้ใช้</button>
@@ -879,7 +879,23 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
           <th>เลขที่</th><th>ชื่องาน</th><th>ผู้ขอ</th>
           <th>วันที่</th><th>ความเร่งด่วน</th><th>สถานะ</th><th>การดำเนินการ</th>
         </tr></thead>
-        <tbody id="approve-body"></tbody>
+        <tbody id="approve-body"><tr onclick="openDetail(2)" style="cursor:pointer">
+      <td style="font-weight:700;color:var(--blue);font-family:var(--mono);font-size:12px">ENG-2026-0002</td>
+      <td>Tset ระบบ 3</td>
+      <td>ลวิตรา ธรรมตะคุ<br><small style="color:var(--gray)">ศูนย์วิศวกรรม</small></td>
+      <td style="white-space:nowrap;color:var(--gray);font-family:var(--mono);font-size:12px">19/03/2026</td>
+      <td>ปกติ</td>
+      <td><span class="badge b-wip">กำลังดำเนินการ</span></td>
+      <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail(2)">ดำเนินการ →</button></td>
+    </tr><tr onclick="openDetail(1)" style="cursor:pointer">
+      <td style="font-weight:700;color:var(--blue);font-family:var(--mono);font-size:12px">ENG-2026-0001</td>
+      <td>Tset ระบบ 1</td>
+      <td>ลวิตรา ธรรมตะคุ<br><small style="color:var(--gray)">ศูนย์วิศวกรรม</small></td>
+      <td style="white-space:nowrap;color:var(--gray);font-family:var(--mono);font-size:12px">19/03/2026</td>
+      <td>ปกติ</td>
+      <td><span class="badge b-assign">มอบหมายแล้ว</span></td>
+      <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail(1)">ดำเนินการ →</button></td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -982,14 +998,14 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       </td>
     </tr>
     <tr>
-      <td><strong>Anuwat Phanhom</strong></td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">anuwat.p@kbs.co.th</td>
-      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td><strong>Thanet Koysamran</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">thanet.k@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
       <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
       <td>
-        <button class="btn btn-sec btn-sm" onclick="editUser('anuwat.p')">✏️ แก้ไข</button>
-        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('anuwat.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteUser('anuwat.p')" style="margin-left:4px">🗑️</button>
+        <button class="btn btn-sec btn-sm" onclick="editUser('thanet.k')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('thanet.k')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('thanet.k')" style="margin-left:4px">🗑️</button>
       </td>
     </tr>
     <tr>
@@ -1001,6 +1017,28 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
         <button class="btn btn-sec btn-sm" onclick="editUser('sidapon.p')">✏️ แก้ไข</button>
         <button class="btn btn-sec btn-sm" onclick="resetUserPassword('sidapon.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
         <button class="btn btn-danger btn-sm" onclick="deleteUser('sidapon.p')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Sathid Jhanthong</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">sathid.j@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('sathid.j')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('sathid.j')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('sathid.j')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Kullaya Mangsombat</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">kullaya.m@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('kullaya.m')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('kullaya.m')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('kullaya.m')" style="margin-left:4px">🗑️</button>
       </td>
     </tr></tbody>
         </table>
@@ -1099,70 +1137,13 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 </div><!-- /app-shell -->
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal" style="display: none;">
+<div class="modal-overlay" id="modal" style="display:none">
   <div class="modal">
-    <div class="modal-title" id="modal-title">👤 เพิ่มผู้ใช้ใหม่</div>
-    <div id="modal-body">
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="form-group">
-        <label class="form-label">ชื่อ-สกุล <span class="req">*</span></label>
-        <input class="form-input" id="mu-name" placeholder="ชื่อ-สกุล">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Username (ก่อน @kbs.co.th) <span class="req">*</span></label>
-        <div style="display:flex;align-items:center;gap:6px">
-          <input class="form-input" id="mu-email" placeholder="firstname.l" style="flex:1">
-          <span style="color:var(--gray);font-size:12px;white-space:nowrap">@kbs.co.th</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Role <span class="req">*</span></label>
-        <select class="form-select" id="mu-role">
-          <option value="Requester">ผู้ขอใช้บริการ (Requester)</option><option value="ManagerApprover">ผู้จัดการ (อนุมัติ) (ManagerApprover)</option><option value="Owner">หัวหน้าศูนย์วิศวกรรม (Owner)</option><option value="OwnerManager">ผู้จัดการ/ผู้อำนวยการ (OwnerManager)</option><option value="Engineer">วิศวกร/ช่าง (Engineer)</option><option value="Admin">ผู้ดูแลระบบ EC (Admin)</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">แผนก/หน่วยงาน <span class="req">*</span></label>
-        
-    <div class="combo-wrap" id="wrap-mu-dept">
-      <input class="combo-input" id="mu-dept" autocomplete="off" placeholder="พิมพ์หรือเลือกแผนก..." value="" oninput="filterDeptCombo('mu-dept')" onfocus="openDeptCombo('mu-dept')" onblur="setTimeout(()=&gt;closeDeptCombo('mu-dept'),180)">
-      <span class="combo-arrow">▾</span>
-      <div class="combo-dropdown" id="drop-mu-dept">
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายผลิต')">
-        ฝ่ายผลิต
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายบัญชี')">
-        ฝ่ายบัญชี
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ศูนย์วิศวกรรม')">
-        ศูนย์วิศวกรรม
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายทรัพยากรบุคคล')">
-        ฝ่ายทรัพยากรบุคคล
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายอาชีวอนามัยฯ')">
-        ฝ่ายอาชีวอนามัยฯ
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายประกันคุณภาพ')">
-        ฝ่ายประกันคุณภาพ
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายบำรุงรักษา')">
-        ฝ่ายบำรุงรักษา
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายโลจิสติกส์')">
-        ฝ่ายโลจิสติกส์
-      </div>
-      <div class="combo-option " onmousedown="selectDeptCombo('mu-dept','ฝ่ายส่งเสริมวัตถุดิบ')">
-        ฝ่ายส่งเสริมวัตถุดิบ
-      </div></div>
-    </div>
-        <div style="font-size:11px;color:var(--gray);margin-top:3px">เลือกจากรายการ หรือพิมพ์เพื่อเพิ่มแผนกใหม่</div>
-      </div>
-    </div></div>
+    <div class="modal-title" id="modal-title">ดำเนินการ</div>
+    <div id="modal-body"></div>
     <div class="modal-footer">
       <button class="btn btn-sec" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn btn-primary" id="modal-confirm-btn" onclick="confirmModal()">เพิ่มผู้ใช้</button>
+      <button class="btn" id="modal-confirm-btn" onclick="confirmModal()">ยืนยัน</button>
     </div>
   </div>
 </div>
@@ -1371,8 +1352,10 @@ const USER_DIRECTORY = {
   'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
   'pimonpan.s':{name:'Pimonpan Sookkratok',role:'Owner',dept:'ศูนย์วิศวกรรม'},
   'amon.t':{name:'Amon Taweechuensakul',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
-  'anuwat.p':{name:'Anuwat Phanhom',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'thanet.k':{name:'Thanet Koysamran',role:'ManagerApprover',dept:'ศูนย์วิศวกรรม'},
   'sidapon.p':{name:'Sidapon Pangjan',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'sathid.j':{name:'Sathid Jhanthong',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'kullaya.m':{name:'Kullaya Mangsombat',role:'Requester',dept:'ฝ่ายผลิต'},
 };
 
 // ════════════════════════════════════════════════
@@ -3145,21 +3128,15 @@ function _getAllUsersLogin(){
   try{
     var deleted=getDeletedUsers();
     var base={};
-    // Step 1: Built-in defaults — include password if embedded (from Export)
+    // Step 1: Built-in defaults (no password)
     [USER_DIRECTORY, _USERS_LOGIN].forEach(function(src){
       if(!src) return;
       Object.keys(src).forEach(function(k){
         var u=src[k];
-        var existing=base[k]||{};
-        base[k]={
-          name:u.name||u.n||existing.name||'',
-          role:u.role||u.r||existing.role||'',
-          dept:u.dept||u.d||existing.dept||'',
-          password:u.password||existing.password||''  // ✓ รวม password จาก USER_DIRECTORY
-        };
+        base[k]={name:u.name||u.n||'',role:u.role||u.r||'',dept:u.dept||u.d||''};
       });
     });
-    // Step 2: Override with localStorage — localStorage wins for all fields
+    // Step 2: Override with localStorage — MUST preserve ALL fields including password
     var s=localStorage.getItem('engservice_udir_v1');
     if(s){
       var stored=JSON.parse(s);
