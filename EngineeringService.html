@@ -1440,6 +1440,7 @@ function nowStr(){
   return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 function toast(msg,type=''){
+  if(!currentRole&&!currentUser) return; // ไม่แสดง toast ก่อน login
   const w=document.getElementById('toast-wrap');
   const t=document.createElement('div');
   t.className=`toast ${type}`;t.textContent=msg;w.appendChild(t);
@@ -3197,6 +3198,14 @@ function _debugShowUsers(){
   } catch(e) { console.warn('[EngService] migrateUserDir error:', e); }
 })();
 
+// Clear stale error notifications from previous sessions
+try{
+  var notifArr = JSON.parse(localStorage.getItem('engservice_notif_v1')||'[]');
+  notifArr = notifArr.filter(function(n){
+    return !n.title || (!n.title.includes('เฉพาะ Admin') && !n.sub || !n.sub.includes('เฉพาะ Admin'));
+  });
+  localStorage.setItem('engservice_notif_v1', JSON.stringify(notifArr));
+}catch(e){}
 renderNotifs();
 </script>
 </body>
