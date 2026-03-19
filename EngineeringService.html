@@ -754,13 +754,12 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
               <input class="form-input" id="f-dept" readonly>
             </div>
             <div class="form-group">
-              <label class="form-label">Manager Approver Email <span class="req">*</span></label>
-              <div style="position:relative">
-                <input class="form-input" id="f-dept-approver" placeholder="username@kbs.co.th"
-                  oninput="lookupApprover(this.value)" style="padding-right:100px">
-                <span id="f-approver-name" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--green);font-weight:600;pointer-events:none"></span>
-              </div>
-              <div style="font-size:11px;color:var(--gray);margin-top:3px">ผู้จัดการฝ่ายของท่านที่มีสิทธิ์อนุมัติคำร้องนี้</div>
+              <label class="form-label">Manager Approver <span class="req">*</span></label>
+              <select class="form-select" id="f-dept-approver" onchange="onApproverSelect(this.value)">
+                <option value="">-- เลือก Manager Approver --</option>
+              </select>
+              <div id="f-approver-name" style="font-size:11px;color:var(--green);font-weight:600;margin-top:3px"></div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px">ผู้จัดการฝ่ายของท่านที่มีสิทธิ์อนุมัติคำร้องนี้</div>
             </div>
           </div>
         </div>
@@ -1241,6 +1240,8 @@ const USER_DIRECTORY = {
   'somchai.w':   {name:'สมชาย วิศวกร',         role:'Engineer',        dept:'ศูนย์วิศวกรรม'},
   'admin.sys':   {name:'Admin ระบบ',           role:'Admin',           dept:'IT'},
   'vipa.c':      {name:'วิภา เจริญกิจ',         role:'Owner',           dept:'ศูนย์วิศวกรรม'},
+  'pimonpan.s':  {name:'พิมลพรรณ สุกกระโทก',     role:'Owner',           dept:'ศูนย์วิศวกรรม'},
+  'amon.t':      {name:'อมร แตวเชือนสกุล',        role:'OwnerManager',    dept:'ศูนย์วิศวกรรม'},
   'panida.a':    {name:'พนิดา อ่องพิมาย',      role:'Requester',       dept:'ฝ่ายผลิต'},
   'anoma.s':     {name:'อโนมา สุภาชัยวัฒน์',   role:'Requester',       dept:'อาชีวอนามัย'},
   'pensuda.p':   {name:'เพ็ญสุดา เพียงกระโทก', role:'Requester',       dept:'HR'},
@@ -1710,20 +1711,38 @@ function lookupApprover(val){
 // Auto-fill Manager Approver from the user's dept
 function autoFillApprover(){
   if(!currentUser) return;
+  const sel = document.getElementById('f-dept-approver');
+  if(!sel) return;
   const liveDir = getLiveUserDir();
-  // Find ManagerApprover in same dept
-  const match = Object.entries(liveDir).find(([,u])=>u.role==='ManagerApprover' && u.dept===currentUser.dept);
-  if(match){
-    const email = match[0]+'@kbs.co.th';
-    const inp = document.getElementById('f-dept-approver');
-    if(inp && !inp.value) inp.value = email;
-    lookupApprover(email);
-  }
+  // Build dropdown of all ManagerApprovers
+  const approvers = Object.entries(liveDir)
+    .filter(([,u])=>u.role==='ManagerApprover')
+    .sort((a,b)=>a[1].name.localeCompare(b[1].name, 'th'));
+  sel.innerHTML = '<option value="">-- เลือก Manager Approver --</option>';
+  approvers.forEach(([k,u])=>{
+    const email = k+'@kbs.co.th';
+    const opt = document.createElement('option');
+    opt.value = email;
+    opt.textContent = u.name + ' (' + (u.dept||'') + ')';
+    // Auto-select if same dept
+    if(u.dept === currentUser.dept) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  // Update name display
+  onApproverSelect(sel.value);
 }
 
-// ════════════════════════════════════════════════
-//  FORM SETUP
-// ════════════════════════════════════════════════
+function onApproverSelect(email){
+  const nameEl = document.getElementById('f-approver-name');
+  if(!nameEl) return;
+  if(!email){ nameEl.textContent=''; return; }
+  const liveDir = getLiveUserDir();
+  const key = email.replace('@kbs.co.th','');
+  const u = liveDir[key];
+  nameEl.textContent = u ? '✓ '+u.name+' ('+u.dept+')' : email;
+}
+
+
 function setupForm(jobId){
   const isEdit = jobId!==null && jobId!==undefined;
   const j = isEdit ? jobs.find(x=>x.id===jobId) : null;
@@ -1760,9 +1779,13 @@ function setupForm(jobId){
 
   // Manager Approver email
   const approverEmail = j ? j.deptApproverEmail : '';
-  document.getElementById('f-dept-approver').value = approverEmail;
-  if(approverEmail) lookupApprover(approverEmail);
-  else autoFillApprover();
+  // Setup approver dropdown
+  autoFillApprover();
+  if(approverEmail){
+    const sel=document.getElementById('f-dept-approver');
+    if(sel) sel.value=approverEmail;
+    onApproverSelect(approverEmail);
+  }
 
   document.getElementById('form-badge').innerHTML = j ? badge(j.status) : '';
 
@@ -1814,8 +1837,8 @@ function buildJobData(status){
     requesterEmail:   currentUser.email,
     requesterDept:    document.getElementById('f-dept').value,
     deptApproverEmail:document.getElementById('f-dept-approver').value.trim(),
-    ownerEmail:       'lavitra.t@kbs.co.th',       // system default — Admin EC
-    ownerManagerEmail:'manager.eng@kbs.co.th',     // system default
+    ownerEmail:       'pimonpan.s@kbs.co.th',     // หัวหน้าศูนย์วิศวกรรม
+    ownerManagerEmail:'amon.t@kbs.co.th',          // ผู้อำนวยการศูนย์วิศวกรรม
     jobType:          document.getElementById('f-jobtype').value,
     serviceTypes:     getServiceTypes(),
     urgency:          document.getElementById('f-urgency').value,
@@ -2288,7 +2311,7 @@ function doAction(action){
     updateJobStatus(j,'OwnerReceive','Manager Approver อนุมัติ'+(note?' — '+note:''));
     addNotif('อนุมัติคำร้องแล้ว',`${j.requestNo} ส่งให้ Admin รับงาน`);
     toast('📧 ส่ง Email แจ้ง Admin EC แล้ว','success');
-    _showEmailNotif(j.ownerEmail,
+    _showEmailNotif('lavitra.t@kbs.co.th',
       '[Engineering Service] มีคำร้องใหม่รอการรับงาน — '+j.title,
       j.requestNo+' — '+j.title,
       'Manager Approver อนุมัติคำร้องแล้ว กรุณาเข้าระบบเพื่อรับงาน',
@@ -2973,6 +2996,8 @@ var _USERS_LOGIN = {
   'somchai.w':{name:'สมชาย วิศวกร',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
   'vipa.c':{name:'วิภา เจริญกิจ',role:'Owner',dept:'ศูนย์วิศวกรรม'},
+  'pimonpan.s':{name:'พิมลพรรณ สุกกระโทก',role:'Owner',dept:'ศูนย์วิศวกรรม'},
+  'amon.t':{name:'อมร แตวเชือนสกุล',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
   'panida.a':{name:'พนิดา อ่องพิมาย',role:'Requester',dept:'ฝ่ายผลิต'},
   'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'อาชีวอนามัย'},
   'pensuda.p':{name:'เพ็ญสุดา เพียงกระโทก',role:'Requester',dept:'HR'},
