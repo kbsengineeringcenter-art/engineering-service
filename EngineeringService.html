@@ -2225,7 +2225,7 @@ function _showEmailNotif(toEmail, subject, jobTitle, message, extraBody){
   }catch(e){ console.warn('_showEmailNotif error:', e); }
 }
 
-function exportUserList(){
+async function exportUserList(){
   // Merge current userDir (localStorage) into USER_DIRECTORY format
   const allUsers = getLiveUserDir();
   const deleted  = getDeletedUsers();
@@ -2242,25 +2242,23 @@ function exportUserList(){
   });
   udLines += '};';
 
-  // Replace USER_DIRECTORY in current HTML source
-  const htmlContent = document.documentElement.outerHTML;
-  // Find and replace the USER_DIRECTORY block
-  const udStart = htmlContent.indexOf('const USER_DIRECTORY = {');
-  const udEnd   = htmlContent.indexOf('\n};', udStart) + 3;
-  if(udStart === -1){ toast('ไม่พบ USER_DIRECTORY ในไฟล์','error'); return; }
+  // Fetch raw source from server then replace USER_DIRECTORY
+  try {
+    const response = await fetch(window.location.href);
+    const htmlContent = await response.text();
+    const udStart = htmlContent.indexOf('const USER_DIRECTORY = {');
+    const udEnd   = htmlContent.indexOf('\n};', udStart) + 3;
+    if(udStart === -1){ toast('ไม่พบ USER_DIRECTORY ในไฟล์','error'); return; }
+    const newHtml = htmlContent.substring(0, udStart) + udLines + htmlContent.substring(udEnd);
+    const blob = new Blob([newHtml], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'EngineeringService.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
 
-  const newHtml = htmlContent.substring(0, udStart) + udLines + htmlContent.substring(udEnd);
-
-  // Download as new HTML file
-  const blob = new Blob([newHtml], {type:'text/html;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'EngineeringService.html';
-  a.click();
-  URL.revokeObjectURL(a.href);
-
-  // Show instruction modal
-  document.getElementById('modal-title').innerHTML = '📤 Export User List สำเร็จ';
+    // Show instruction modal
+    document.getElementById('modal-title').innerHTML = '📤 Export User List สำเร็จ';
   document.getElementById('modal-body').innerHTML = `
     <div style="font-size:13px;line-height:2">
       <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-bottom:12px">
@@ -2277,6 +2275,10 @@ function exportUserList(){
   btn.textContent = 'รับทราบ'; btn.className = 'btn btn-primary';
   btn.onclick = closeModal;
   document.getElementById('modal').style.display = 'flex';
+  } catch(fetchErr) {
+    console.error('Export error:', fetchErr);
+    toast('เกิดข้อผิดพลาด: ' + fetchErr.message, 'error');
+  }
 }
 
 // ════════════════════════════════════════════════
