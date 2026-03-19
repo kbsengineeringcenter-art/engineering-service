@@ -1053,27 +1053,18 @@ const NOTIF_KEY = 'engservice_notif_v1';
 // ═══════════════════════════════════════════════════════
 async function _apiCall(method, data){
   try{
+    let url = API_URL;
     if(method==='GET'){
-      // GET: follow redirects, read JSON response
-      const res = await fetch(API_URL + '?action=' + data, {
-        method: 'GET',
-        redirect: 'follow'
-      });
-      const text = await res.text();
-      return JSON.parse(text);
+      url += '?action=' + data;
     } else {
-      // POST: use no-cors (Apps Script redirects POST)
-      // Send as form data to avoid preflight CORS
-      const form = new FormData();
-      form.append('data', JSON.stringify(data));
-      await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        mode: 'no-cors',
-        headers: {'Content-Type': 'text/plain'}
-      });
-      return {ok:true};
+      // Encode all data as GET parameters to avoid CORS preflight
+      const payload = encodeURIComponent(JSON.stringify(data));
+      url += '?payload=' + payload;
     }
+    const res = await fetch(url, { method:'GET', redirect:'follow' });
+    const text = await res.text();
+    try{ return JSON.parse(text); }
+    catch(e){ return {ok:true}; }
   }catch(e){ console.warn('API error:',e); return {ok:false,error:e.message}; }
 }
 
