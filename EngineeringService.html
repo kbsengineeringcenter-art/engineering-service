@@ -524,7 +524,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="sb-label">ใบขอของฉัน</div>
     <div class="sb-item" onclick="filterStatus('');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="1.5" width="12" height="12" rx="2"></rect><path d="M4 5h7M4 8h5M4 11h3"></path></svg>
-      ทั้งหมด <span class="sb-count" id="sb-all">2</span>
+      ทั้งหมด <span class="sb-count" id="sb-all">0</span>
     </div>
     <div class="sb-item" onclick="filterStatus('Draft');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M2 4h11M2 8h7M2 11h5"></path></svg>
@@ -536,7 +536,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     </div>
     <div class="sb-item" onclick="filterStatus('Completed');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M3 8l3 3 6-6"></path></svg>
-      เสร็จสิ้น <span class="sb-count green" id="sb-done">1</span>
+      เสร็จสิ้น <span class="sb-count green" id="sb-done">0</span>
     </div>
     <div class="sb-item" onclick="filterStatus('Rejected');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"></circle><path d="M5 10l5-5M10 10L5 5"></path></svg>
@@ -548,7 +548,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="sb-label">การดำเนินการ</div>
     <div class="sb-item" onclick="goPage('approve')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"></circle><path d="M5 7.5l2 2 3-3"></path></svg>
-      รออนุมัติ <span class="sb-count amber" id="sb-pending">1</span>
+      รออนุมัติ <span class="sb-count amber" id="sb-pending">0</span>
     </div>
     <div class="sb-item" onclick="goPage('report')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="5" width="3" height="8.5" rx="1"></rect><rect x="6" y="2" width="3" height="11.5" rx="1"></rect><rect x="10.5" y="7" width="3" height="6.5" rx="1"></rect></svg>
@@ -584,11 +584,11 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="stat-row">
       <div class="stat-card blue">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#1a5fa8" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M7 9h10M7 13h7M7 17h5"></path></svg>
-        <div class="stat-num" id="s-total">2</div><div class="stat-lbl">ใบขอทั้งหมด</div>
+        <div class="stat-num" id="s-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div>
       </div>
       <div class="stat-card amber">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#d97706" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
-        <div class="stat-num" id="s-pending">1</div><div class="stat-lbl">รออนุมัติ</div>
+        <div class="stat-num" id="s-pending">0</div><div class="stat-lbl">รออนุมัติ</div>
       </div>
       <div class="stat-card indigo">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#4f46e5" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg>
@@ -596,7 +596,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       </div>
       <div class="stat-card green">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#2e7d32" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-5"></path></svg>
-        <div class="stat-num" id="s-done">1</div><div class="stat-lbl">เสร็จ/ปิดงาน</div>
+        <div class="stat-num" id="s-done">0</div><div class="stat-lbl">เสร็จ/ปิดงาน</div>
       </div>
     </div>
     <div class="dash-grid2 dash-section">
@@ -647,6 +647,9 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-sec btn-sm" onclick="exportListCSV()">⬇ Export CSV</button>
+        <button class="btn btn-warning btn-sm" onclick="exportFullData()" title="บันทึกข้อมูลทั้งหมดลงในไฟล์ HTML เพื่อ Upload GitHub">
+          💾 Export ข้อมูล
+        </button>
         <button class="btn btn-primary" onclick="goPage('form',null)" id="btn-new" style="">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 13 13"><line x1="6.5" y1="1" x2="6.5" y2="12"></line><line x1="1" y1="6.5" x2="12" y2="6.5"></line></svg>
           สร้างใบขอ
@@ -702,35 +705,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
             <th>ความเร่งด่วน</th><th>สถานะ</th>
             <th id="th-del" style=""></th>
           </tr></thead>
-          <tbody id="list-body"><tr onclick="openDetail(2)" style="cursor:pointer">
-        <td style="font-weight:700;color:var(--blue);white-space:nowrap;font-family:var(--mono);font-size:12px">ENG-2026-0002</td>
-        <td><div class="doc-link">
-          <svg width="12" height="14" fill="#dbeafe" stroke="var(--blue)" stroke-width=".7" viewBox="0 0 12 14" style="flex-shrink:0;margin-top:2px"><rect x="1" y="1" width="10" height="12" rx="1.5"></rect><path d="M3 4.5h6M3 7h5M3 9.5h3.5" stroke="var(--blue)" stroke-width=".9"></path></svg>
-          Tset ระบบ 3
-        </div></td>
-        <td style="white-space:nowrap;color:var(--gray);font-size:12px;font-family:var(--mono)">19/03/2026</td>
-        <td>ลวิตรา ธรรมตะคุ<br><span style="font-size:11px;color:var(--gray)">ศูนย์วิศวกรรม</span></td>
-        <td style="font-size:12px;color:var(--gray)">คำขอใช้บริการ</td>
-        <td><span style="font-size:13px;color:var(--gray)">ปกติ</span></td>
-        <td><span class="badge b-done">งานเสร็จ</span></td>
-        <td onclick="event.stopPropagation()" style="text-align:center;padding:6px 8px;width:60px">
-            <button onclick="deleteJob(2)" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">🗑 ลบ</button>
-          </td>
-      </tr><tr onclick="openDetail(1)" style="cursor:pointer">
-        <td style="font-weight:700;color:var(--blue);white-space:nowrap;font-family:var(--mono);font-size:12px">ENG-2026-0001</td>
-        <td><div class="doc-link">
-          <svg width="12" height="14" fill="#dbeafe" stroke="var(--blue)" stroke-width=".7" viewBox="0 0 12 14" style="flex-shrink:0;margin-top:2px"><rect x="1" y="1" width="10" height="12" rx="1.5"></rect><path d="M3 4.5h6M3 7h5M3 9.5h3.5" stroke="var(--blue)" stroke-width=".9"></path></svg>
-          Tset ระบบ 1
-        </div></td>
-        <td style="white-space:nowrap;color:var(--gray);font-size:12px;font-family:var(--mono)">19/03/2026</td>
-        <td>ลวิตรา ธรรมตะคุ<br><span style="font-size:11px;color:var(--gray)">ศูนย์วิศวกรรม</span></td>
-        <td style="font-size:12px;color:var(--gray)">คำขอใช้บริการ</td>
-        <td><span style="font-size:13px;color:var(--gray)">ปกติ</span></td>
-        <td><span class="badge b-assign">มอบหมายแล้ว</span></td>
-        <td onclick="event.stopPropagation()" style="text-align:center;padding:6px 8px;width:60px">
-            <button onclick="deleteJob(1)" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">🗑 ลบ</button>
-          </td>
-      </tr></tbody>
+          <tbody id="list-body"></tbody>
         </table>
       </div>
       <div class="pagination">
@@ -917,7 +892,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       <div class="sec-title">📈 รายงาน / สถิติ</div>
     </div>
     <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
-      <div class="stat-card blue"><div class="stat-num" id="r-total">2</div><div class="stat-lbl">ใบขอทั้งหมด</div></div>
+      <div class="stat-card blue"><div class="stat-num" id="r-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div></div>
       <div class="stat-card green"><div class="stat-num" id="r-closed">0</div><div class="stat-lbl">ปิดงานแล้ว</div></div>
       <div class="stat-card red"><div class="stat-num" id="r-reject">0</div><div class="stat-lbl">ปฏิเสธ</div></div>
     </div>
@@ -1096,6 +1071,14 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 //  DATA STORE
 // ════════════════════════════════════════════════
 const STORE_KEY = 'engservice_prod_v1';
+
+// ═══════════════════════════════════════════════════
+//  EMBEDDED DATA — populated by "Export ข้อมูล" button
+//  Used as fallback when localStorage is empty (e.g. GitHub Pages)
+// ═══════════════════════════════════════════════════
+const EMBEDDED_JOBS = null; // replaced on export
+const EMBEDDED_HIST = null; // replaced on export
+const EMBEDDED_UDIR = null; // replaced on export — extra users beyond USER_DIRECTORY
 const API_URL  = 'https://script.google.com/macros/s/AKfycbz5j4daPlfiUwReE_-rTBTcJ5Ji_4jNoPZnDgWC1taYhgN7JGys5iqLhAAQPA6oVtjb/exec'; // Google Sheets backend
 let   _apiReady = false; // true เมื่อ sync กับ Google Sheets ได้
 const HIST_KEY  = 'engservice_hist_v1';
@@ -1138,7 +1121,12 @@ async function _syncFromSheets(){
 }
 
 function loadJobs(){
-  try{const d=localStorage.getItem(STORE_KEY);if(d)return JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem(STORE_KEY);if(d){const j=JSON.parse(d);if(j&&j.length>0)return j;}}catch(e){}
+  // Fallback: use embedded data (set by Export button for GitHub/shared use)
+  if(EMBEDDED_JOBS && EMBEDDED_JOBS.length > 0){
+    try{localStorage.setItem(STORE_KEY,JSON.stringify(EMBEDDED_JOBS));}catch(e){}
+    return EMBEDDED_JOBS;
+  }
   return [];
 }
 function saveJobs(j){
@@ -1147,7 +1135,11 @@ function saveJobs(j){
   if(API_URL) _apiCall('POST',{action:'saveJobs',data:j}).catch(()=>{});
 }
 function loadHist(){
-  try{const d=localStorage.getItem(HIST_KEY);if(d)return JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem(HIST_KEY);if(d){const h=JSON.parse(d);if(h&&h.length>0)return h;}}catch(e){}
+  if(EMBEDDED_HIST && EMBEDDED_HIST.length > 0){
+    try{localStorage.setItem(HIST_KEY,JSON.stringify(EMBEDDED_HIST));}catch(e){}
+    return EMBEDDED_HIST;
+  }
   return [];
 }
 function saveHist(h){
@@ -1396,6 +1388,15 @@ function getLiveUserDir(){
   try{
     var deleted=getDeletedUsers();
     var base=Object.assign({},USER_DIRECTORY);
+    // Apply embedded user data (from Export) as base layer
+    if(EMBEDDED_UDIR){
+      Object.keys(EMBEDDED_UDIR).forEach(function(k){
+        var u=EMBEDDED_UDIR[k];
+        var ex=base[k]||{};
+        base[k]={name:u.name||ex.name||'',role:u.role||ex.role||'',
+          dept:u.dept||ex.dept||'',password:u.password||ex.password||''};
+      });
+    }
     var s=localStorage.getItem('engservice_udir_v1');
     if(s){
       var stored=JSON.parse(s);
@@ -2291,6 +2292,89 @@ function _showEmailNotif(toEmail, subject, jobTitle, message, extraBody){
     btn.onclick = closeModal;
     document.getElementById('modal').style.display = 'flex';
   }catch(e){ console.warn('_showEmailNotif error:', e); }
+}
+
+function exportFullData(){
+  // Build current data snapshots
+  var currentJobs = jobs || [];
+  var currentHist = hist || [];
+  var liveDir     = getLiveUserDir();
+  var deleted     = getDeletedUsers();
+
+  // Extra users = non-built-in users from localStorage
+  var extraUsers = {};
+  Object.entries(liveDir).forEach(function(entry){
+    var k=entry[0], u=entry[1];
+    var base = USER_DIRECTORY[k];
+    // Save if new user OR any field changed from built-in OR has password
+    if(!base || base.name!==u.name || base.role!==u.role || base.dept!==u.dept || u.password){
+      extraUsers[k] = u;
+    }
+  });
+
+  var html = document.documentElement.outerHTML;
+
+  // Replace EMBEDDED_JOBS
+  html = html.replace(/const EMBEDDED_JOBS = .*?;/, 
+    'const EMBEDDED_JOBS = '+JSON.stringify(currentJobs)+';');
+
+  // Replace EMBEDDED_HIST  
+  html = html.replace(/const EMBEDDED_HIST = .*?;/,
+    'const EMBEDDED_HIST = '+JSON.stringify(currentHist)+';');
+
+  // Replace EMBEDDED_UDIR
+  html = html.replace(/const EMBEDDED_UDIR = .*?;/,
+    'const EMBEDDED_UDIR = '+JSON.stringify(extraUsers)+';');
+
+  // Also update USER_DIRECTORY for name changes
+  function escQ(s){ return (s||'').split("'").join("\'"); }
+  var udHead = "// Email \u2192 user directory (username part before @)\n// \u2605 Canonical built-in users \u2014 merged from all sources \u2605\nconst USER_DIRECTORY = {";
+  var udLines = udHead + '\n';
+  Object.entries(liveDir).forEach(function(entry){
+    var k=entry[0], u=entry[1];
+    if(deleted.includes(k)) return;
+    var pw = u.password ? ",password:'"+escQ(u.password)+"'" : '';
+    udLines += "  '"+k+"':{name:'"+escQ(u.name||'')+"',role:'"+(u.role||'')+"',dept:'"+escQ(u.dept||'')+"'"+pw+"},\n";
+  });
+  udLines += '};';
+  var udStart = html.indexOf('const USER_DIRECTORY = {');
+  if(udStart !== -1){
+    var udEnd = html.indexOf('\n};', udStart) + 3;
+    html = html.substring(0, udStart) + udLines + html.substring(udEnd);
+  }
+
+  // Clear stale rendered job rows (will be re-rendered by JS on load)
+  html = html.replace(/id="list-body">[\s\S]*?<\/tbody>/, 'id="list-body"></tbody>');
+
+  // Bump version to trigger startup sync on next load
+  html = html.replace(/var CURRENT_VERSION = '[^']+'/,
+    "var CURRENT_VERSION = '"+new Date().toISOString().slice(0,10)+"'");
+
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'EngineeringService.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // Show result
+  document.getElementById('modal-title').innerHTML = '\uD83D\uDCBE Export \u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14 \u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08';
+  document.getElementById('modal-body').innerHTML =
+    '<div style="font-size:13px;line-height:2">' +
+    '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:14px;margin-bottom:12px">' +
+    '\u2705 \u0E1D\u0E31\u0E07\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E25\u0E07\u0E43\u0E19 <b>EngineeringService.html</b> \u0E41\u0E25\u0E49\u0E27<br>' +
+    '\u2022 \u0E43\u0E1A\u0E02\u0E2D: <b>'+currentJobs.length+' \u0E23\u0E32\u0E22\u0E01\u0E32\u0E23</b><br>' +
+    '\u2022 \u0E1C\u0E39\u0E49\u0E43\u0E0A\u0E49: <b>'+Object.keys(liveDir).length+' \u0E04\u0E19</b>' +
+    '</div>' +
+    '<b>\u0E02\u0E31\u0E49\u0E19\u0E15\u0E2D\u0E19:</b><br>' +
+    '1. Upload <b>EngineeringService.html</b> \u0E02\u0E36\u0E49\u0E19 GitHub \u0E41\u0E17\u0E19\u0E44\u0E1F\u0E25\u0E4C\u0E40\u0E14\u0E34\u0E21<br>' +
+    '2. \u0E17\u0E38\u0E01\u0E04\u0E19\u0E40\u0E1B\u0E34\u0E14 GitHub URL \u0E08\u0E30\u0E40\u0E2B\u0E47\u0E19\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E40\u0E14\u0E35\u0E22\u0E27\u0E01\u0E31\u0E19 \u2705' +
+    '</div>';
+  var btn = document.getElementById('modal-confirm-btn');
+  btn.textContent = '\u0E23\u0E31\u0E1A\u0E17\u0E23\u0E32\u0E1A';
+  btn.className = 'btn btn-primary';
+  btn.onclick = closeModal;
+  document.getElementById('modal').style.display = 'flex';
 }
 
 function exportUserList(){
