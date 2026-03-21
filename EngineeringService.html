@@ -30,7 +30,9 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   position:fixed;inset:0;z-index:999;
   transition:opacity .2s;
   background:linear-gradient(135deg,#0e4080 0%,#1a5fa8 50%,#2176c7 100%);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:flex-start;justify-content:center;
+  overflow-y:auto;
+  padding:20px 0;
   animation:bgShift 8s ease infinite alternate;
 }
 @keyframes bgShift{from{background-position:0% 50%}to{background-position:100% 50%}}
@@ -358,6 +360,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   .content{padding:0;overflow:visible}
   .form-card,.detail-section{box-shadow:none;border:1px solid #ccc}
 }
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 /* ROLE INFO BAR */
 .role-info-bar{background:linear-gradient(90deg,var(--blue2),#fff);border:1px solid var(--blue3);border-radius:var(--radius);padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:12px}
@@ -366,10 +369,99 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 <body>
 
 <!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="1.8" viewBox="0 0 22 22">
+          <rect x="2" y="2" width="18" height="18" rx="3"></rect>
+          <path d="M6 8h10M6 12h7M6 16h4"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="login-logo-text">Engineering Service</div>
+        <div class="login-logo-sub">ระบบใบขอใช้บริการ ศูนย์วิศวกรรม</div>
+      </div>
+    </div>
+    <div class="login-title">เข้าสู่ระบบ</div>
+    <div class="login-sub">กรอกอีเมล KBS ของท่านเพื่อดำเนินการต่อ</div>
 
+    <div class="login-field">
+      <label class="login-label">อีเมล</label>
+      <div class="login-input-wrap">
+        <input class="login-input" id="login-email-inp" type="text"
+          placeholder="firstname.l"
+          autocomplete="username"
+          oninput="if(typeof _doLoginCheck==='function')_doLoginCheck(this.value.trim().toLowerCase().replace(/@kbs\.co\.th$/i,''))">
+        <span class="login-domain">@kbs.co.th</span>
+      </div>
+      <div class="login-error" id="login-error"></div>
+    </div>
+
+    <!-- User preview card (shown when email matches) -->
+    <div class="login-user-preview" id="login-preview">
+      <div class="login-user-avatar" id="preview-avatar">?</div>
+      <div>
+        <div class="login-user-name" id="preview-name"></div>
+        <div class="login-user-role" id="preview-role"></div>
+        <div class="login-user-dept" id="preview-dept"></div>
+      </div>
+    </div>
+
+    <!-- Password field (shown after email match) -->
+    <div id="login-password-field" style="display:none">
+      <!-- Existing password -->
+      <div id="login-pw-existing" style="display:none">
+        <div class="login-field">
+          <label class="login-label">รหัสผ่าน</label>
+          <input class="login-input" id="login-password-inp" type="password"
+            placeholder="กรอกรหัสผ่านของท่าน"
+            autocomplete="current-password"
+            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
+        </div>
+        <div style="font-size:11px;color:var(--blue);cursor:pointer;margin-top:4px;text-align:right"
+          onclick="if(typeof _showChangePassword==='function')_showChangePassword()">
+          🔑 เปลี่ยนรหัสผ่าน
+        </div>
+      </div>
+      <!-- New / set password -->
+      <div id="login-pw-new" style="display:none">
+        <div class="login-field">
+          <label class="login-label">ตั้งรหัสผ่านใหม่ <span style="font-weight:400;color:var(--gray)">(ครั้งแรก)</span></label>
+          <input class="login-input" id="login-password-new" type="password"
+            placeholder="ตั้งรหัสผ่าน (ตัวอักษร + ตัวเลข รวม ≥ 6)"
+            autocomplete="new-password"
+            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
+        </div>
+        <div class="login-field" style="margin-top:8px">
+          <label class="login-label">ยืนยันรหัสผ่าน</label>
+          <input class="login-input" id="login-password-confirm" type="password"
+            placeholder="กรอกรหัสผ่านอีกครั้ง"
+            autocomplete="new-password"
+            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
+        </div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">
+          รหัสผ่านต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว และยาวอย่างน้อย 6 ตัวอักษร
+        </div>
+      </div>
+      <div class="login-error" id="login-pass-error" style="margin-top:6px"></div>
+    </div>
+
+    <!-- Not found message -->
+    <div class="login-not-found" id="login-not-found"></div>
+
+    <button class="login-btn" id="login-btn" onclick="if(typeof _doLoginSubmit==='function')_doLoginSubmit()" disabled>
+      เข้าสู่ระบบ →
+    </button>
+    <div class="login-demo-note">
+      ระบบ Engineering Service | ศูนย์วิศวกรรม KBS<br>
+      ติดต่อผู้ดูแลระบบ: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e525f48574a4c5f104a7e555c4d105d51104a56">[email&#160;protected]</a>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ APP SHELL ═══ -->
-<div id="app-shell" style="display: block;">
+<div id="app-shell" style="display:none;">
 
 <!-- NAV -->
 <nav class="nav">
@@ -387,10 +479,10 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <button class="nav-tab" onclick="goPage('dashboard')">📊 Dashboard</button>
     <button class="nav-tab" onclick="goPage('form',null)">+ สร้างใบขอ</button>
     <button class="nav-tab" onclick="goPage('approve')">
-      รออนุมัติ<span class="nav-badge" id="nb-pending">1</span>
+      รออนุมัติ<span class="nav-badge" id="nb-pending">0</span>
     </button>
     <button class="nav-tab" onclick="goPage('report')">รายงาน</button>
-    <button class="nav-tab nav-tab-admin active" onclick="goPage('users')" style="">👥 จัดการผู้ใช้</button>
+    <button class="nav-tab nav-tab-admin" onclick="goPage('users')" style="">👥 จัดการผู้ใช้</button>
     <button class="nav-tab nav-tab-admin" onclick="goPage('master')" style="">⚙️ Master Data</button>
   </div>
   <div class="nav-right">
@@ -401,10 +493,10 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       <div class="notif-dot" id="notif-dot"></div>
     </button>
     <div class="nav-user">
-      <div class="avatar" id="nav-avatar">ล</div>
+      <div class="avatar" id="nav-avatar">?</div>
       <div style="line-height:1.3">
-        <div id="nav-username" style="font-size:12px;font-weight:600;color:#fff">ลวิตรา ธรรมตะคุ</div>
-        <div id="nav-role-label" style="font-size:10px;color:rgba(255,255,255,.6)">ผู้ดูแลระบบ EC · lavitra.t@kbs.co.th</div>
+        <div id="nav-username" style="font-size:12px;font-weight:600;color:#fff">—</div>
+        <div id="nav-role-label" style="font-size:10px;color:rgba(255,255,255,.6)">—</div>
       </div>
     </div>
     <button class="logout-btn" onclick="doLogout()">ออกจากระบบ</button>
@@ -842,10 +934,14 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   </div>
 
   <!-- ═══ MANAGE USERS PAGE (Admin only) ═══ -->
-  <div class="page active" id="page-users">
+  <div class="page" id="page-users">
     <div class="sec-header">
       <div><div class="sec-title">👥 จัดการผู้ใช้งานระบบ</div><div class="sec-sub">เพิ่ม / แก้ไข / ลบ User และกำหนด Role</div></div>
       <div style="display:flex;gap:8px">
+        <button class="btn btn-sec btn-sm" onclick="refreshUserTable()" id="btn-refresh-users" title="โหลดข้อมูลผู้ใช้ใหม่">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 14 14"><path d="M12 2.5A5.5 5.5 0 1 1 7 1.5"/><polyline points="9,1 12,1 12,4"/></svg>
+          Refresh
+        </button>
         <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มผู้ใช้ใหม่</button>
         <button class="btn btn-success btn-sm" onclick="exportUserList()" title="อัปเดต User List ลงในไฟล์ใหม่เพื่อ Upload GitHub">📤 Export User List</button>
       </div>
@@ -865,6 +961,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
           <option value="Engineer">Engineer</option>
           <option value="Admin">Admin</option>
         </select>
+        <span id="user-count-badge" style="font-size:12px;color:var(--gray);margin-left:4px"></span>
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
@@ -874,7 +971,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
           <tbody id="user-table-body">
     <tr>
       <td><strong>ลวิตรา ธรรมตะคุ</strong></td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">lavitra.t@kbs.co.th</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ef2ffe8f7eaecffb0eadef5fcedb0fdf1b0eaf6">[email&#160;protected]</a></td>
       <td><span class="badge" style="background:#fcebeb;color:#a32d2d">ผู้ดูแลระบบ EC</span></td>
       <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
       <td>
@@ -979,55 +1076,13 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 </div><!-- /app-shell -->
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal" style="display: none;">
+<div class="modal-overlay" id="modal" style="display:none;">
   <div class="modal">
-    <div class="modal-title" id="modal-title">✏️ แก้ไขผู้ใช้: อมร แตวเชือนสกุล</div>
-    <div id="modal-body">
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="form-group">
-        <label class="form-label">ชื่อ-สกุล</label>
-        <input class="form-input" id="eu-name" value="อมร แตวเชือนสกุล">
-      </div>
-      <div class="form-group">
-        <label class="form-label">อีเมล</label>
-        <input class="form-input" value="amon.t@kbs.co.th" readonly="" style="background:var(--gray2);color:var(--gray)">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Role</label>
-        <select class="form-select" id="eu-role">
-          <option value="Requester">ผู้ขอใช้บริการ (Requester)</option><option value="ManagerApprover">ผู้จัดการ (อนุมัติ) (ManagerApprover)</option><option value="Owner">หัวหน้าศูนย์วิศวกรรม (Owner)</option><option value="OwnerManager" selected="">ผู้จัดการ/ผู้อำนวยการ (OwnerManager)</option><option value="Engineer">วิศวกร/ช่าง (Engineer)</option><option value="Admin">ผู้ดูแลระบบ EC (Admin)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">รหัสผ่าน <span style="font-weight:400;color:var(--gray)">(ไม่บังคับ)</span></label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input class="form-input" id="eu-password" type="password" placeholder="กรอกเพื่อตั้ง/เปลี่ยนรหัสผ่าน" style="flex:1">
-          <button type="button" onclick="document.getElementById('eu-password').value='RESET_PASSWORD';document.getElementById('eu-pw-reset-notice').style.display='block'" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:var(--font)">
-            🔄 Reset
-          </button>
-        </div>
-        <div id="eu-pw-reset-notice" style="display:none;margin-top:4px;font-size:11px;color:#dc2626;font-weight:600">
-          ⚠ Password จะถูก Reset — User ต้องตั้งรหัสผ่านใหม่ตอน Login ครั้งถัดไป
-        </div>
-        <div style="font-size:11px;color:var(--gray);margin-top:3px">เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน | กด Reset เพื่อให้ User ตั้งรหัสผ่านใหม่</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">แผนก/หน่วยงาน</label>
-        
-    <div class="combo-wrap" id="wrap-eu-dept">
-      <input class="combo-input" id="eu-dept" autocomplete="off" placeholder="พิมพ์หรือเลือกแผนก..." value="ศูนย์วิศวกรรม" oninput="filterDeptCombo('eu-dept')" onfocus="openDeptCombo('eu-dept')" onblur="setTimeout(()=&gt;closeDeptCombo('eu-dept'),180)">
-      <span class="combo-arrow">▾</span>
-      <div class="combo-dropdown" id="drop-eu-dept">
-      <div class="combo-option selected" onmousedown="selectDeptCombo('eu-dept','ศูนย์วิศวกรรม')">
-        ศูนย์วิศวกรรม <span style="font-size:10px;color:var(--green)">✓</span>
-      </div></div>
-    </div>
-        <div style="font-size:11px;color:var(--gray);margin-top:3px">เลือกจากรายการ หรือพิมพ์เพื่อเพิ่มแผนกใหม่</div>
-      </div>
-    </div></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
     <div class="modal-footer">
       <button class="btn btn-sec" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn btn-primary" id="modal-confirm-btn" onclick="confirmModal()">บันทึก</button>
+      <button class="btn btn-primary" id="modal-confirm-btn" onclick="confirmModal()">ตกลง</button>
     </div>
   </div>
 </div>
@@ -1035,7 +1090,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 <!-- TOAST -->
 <div class="toast-wrap" id="toast-wrap"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
 // ════════════════════════════════════════════════
 //  DATA STORE
@@ -1231,11 +1286,23 @@ const ROLE_USERS = {
 };
 
 // Email → user directory (username part before @)
+// ★ Canonical built-in users — merged from all sources ★
 const USER_DIRECTORY = {
-  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม',password:'koy2026'},
-  'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
-  'pimonpan.s':{name:'พิมลพรรณ สุกกระโทก',role:'Owner',dept:'ศูนย์วิศวกรรม'},
-  'amon.t':{name:'Amon Taweechuensakul',role:'OwnerManager',dept:'ศูนย์วิศวกรรม',password:'koy2026'},
+  'lavitra.t' :{name:'ลวิตรา ธรรมตะคุ',      role:'Admin',           dept:'ศูนย์วิศวกรรม'},
+  'admin.sys' :{name:'Admin ระบบ',             role:'Admin',           dept:'IT'},
+  'pimonpan.s':{name:'พิมลพรรณ สุกกระโทก',   role:'Owner',           dept:'ศูนย์วิศวกรรม'},
+  'amon.t'    :{name:'อมร แตวเชือนสกุล',       role:'OwnerManager',    dept:'ศูนย์วิศวกรรม'},
+  'thanya.s'  :{name:'ธัญญาศิริ สุ่มมาตย์',   role:'Requester',       dept:'ฝ่ายผลิต'},
+  'sompong.t' :{name:'สมพงษ์ ธุรกิจดี',       role:'ManagerApprover', dept:'ฝ่ายผลิต'},
+  'manager.eng':{name:'ผู้จัดการ วิศวกรรม',   role:'OwnerManager',    dept:'ผู้บริหาร'},
+  'somchai.w' :{name:'สมชาย วิศวกร',           role:'Engineer',        dept:'ศูนย์วิศวกรรม'},
+  'vipa.c'    :{name:'วิภา เจริญกิจ',          role:'Owner',           dept:'ศูนย์วิศวกรรม'},
+  'panida.a'  :{name:'พนิดา อ่องพิมาย',        role:'Requester',       dept:'ฝ่ายผลิต'},
+  'anoma.s'   :{name:'อโนมา สุภาชัยวัฒน์',    role:'Requester',       dept:'อาชีวอนามัย'},
+  'pensuda.p' :{name:'เพ็ญสุดา เพียงกระโทก',  role:'Requester',       dept:'HR'},
+  'mithuna.l' :{name:'Mithuna Lorsuphanporn',   role:'Requester',       dept:'ฝ่ายผลิต'},
+  'vichai.c'  :{name:'วิชัย ช่างใจดี',         role:'Engineer',        dept:'ศูนย์วิศวกรรม'},
+  'mgr.prod'  :{name:'ผู้จัดการ ฝ่ายผลิต',    role:'ManagerApprover', dept:'ฝ่ายผลิต'},
 };
 
 // ════════════════════════════════════════════════
@@ -1306,7 +1373,7 @@ var _USERS = {
   'panida.a':{n:'พนิดา อ่องพิมาย',r:'Requester',d:'ฝ่ายผลิต'},
   'anoma.s':{n:'อโนมา สุภาชัยวัฒน์',r:'Requester',d:'อาชีวอนามัย'},
   'pensuda.p':{n:'เพ็ญสุดา เพียงกระโทก',r:'Requester',d:'HR'},
-  'mithuna.l':{n:'มิถุนา หล่อสุพรรณเพร',r:'Requester',d:'ฝ่ายผลิต'},
+  'mithuna.l':{name:'Mithuna Lorsuphanporn',role:'Requester',dept:'ฝ่ายผลิต'},
   'vichai.c':{n:'วิชัย ช่างใจดี',r:'Engineer',d:'ศูนย์วิศวกรรม'},
   'mgr.prod':{n:'ผู้จัดการ ฝ่ายผลิต',r:'ManagerApprover',d:'ฝ่ายผลิต'}
 };
@@ -1495,7 +1562,8 @@ function nowStr(){
   return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 function toast(msg,type=''){
-  if(!currentRole&&!currentUser) return; // ไม่แสดง toast ก่อน login
+  // Allow error/warn toasts even before login so user sees feedback
+  if(!currentRole&&!currentUser&&type!=='error'&&type!=='warn') return;
   const w=document.getElementById('toast-wrap');
   const t=document.createElement('div');
   t.className=`toast ${type}`;t.textContent=msg;w.appendChild(t);
@@ -1547,11 +1615,23 @@ function goPage(page, jobId){
   const pg=document.getElementById('page-'+page);
   if(!pg){ console.warn('page not found:',page); return; }
   pg.classList.add('active');
-  const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap={browse:0,dashboard:1,form:2,approve:3,report:4,users:5,master:6};
-  if(tabMap[page]!==undefined && tabs[tabMap[page]]) tabs[tabMap[page]].classList.add('active');
-  if(page==='browse'){document.querySelectorAll('.sb-item')[2]?.classList.add('active');renderList();}
-  else if(page==='dashboard'){document.querySelectorAll('.sb-item')[0]?.classList.add('active');renderDashboard();}
+  // Highlight nav tab by matching onclick attribute (reliable, index-independent)
+  document.querySelectorAll('.nav-tab').forEach(t=>{
+    const oc=t.getAttribute('onclick')||'';
+    if(oc.includes("'"+page+"'")) t.classList.add('active');
+  });
+  // Sidebar highlight
+  document.querySelectorAll('.sb-item').forEach(s=>{
+    const oc=s.getAttribute('onclick')||'';
+    if(page==='dashboard'&&oc.includes("'dashboard'")) s.classList.add('active');
+    else if(page==='browse'&&oc.includes("'browse'")&&!oc.includes('filterStatus')) s.classList.add('active');
+    else if(page==='approve'&&oc.includes("'approve'")) s.classList.add('active');
+    else if(page==='report'&&oc.includes("'report'")) s.classList.add('active');
+    else if(page==='users'&&oc.includes("'users'")) s.classList.add('active');
+    else if(page==='master'&&oc.includes("'master'")) s.classList.add('active');
+  });
+  if(page==='browse'){renderList();}
+  else if(page==='dashboard'){renderDashboard();}
   else if(page==='form'){setupForm(jobId);}
   else if(page==='detail'){renderDetail();}
   else if(page==='approve'){renderApprove();}
@@ -2214,320 +2294,52 @@ function _showEmailNotif(toEmail, subject, jobTitle, message, extraBody){
 }
 
 function exportUserList(){
-  // Merge current userDir (localStorage) into USER_DIRECTORY format
-  const allUsers = getLiveUserDir();
-  const deleted  = getDeletedUsers();
-
-  // Build new USER_DIRECTORY string
-  let udLines = 'const USER_DIRECTORY = {\n';
-  Object.entries(allUsers).forEach(([k,u])=>{
-    if(deleted.includes(k)) return;
-    const name = (u.name||'').replace(/'/g,"\\'");
-    const role = (u.role||'');
-    const dept = (u.dept||'').replace(/'/g,"\\'");
-    const pw   = u.password ? `,password:'${u.password.replace(/'/g,"\\'")}'` : '';
-    udLines += `  '${k}':{name:'${name}',role:'${role}',dept:'${dept}'${pw}},\n`;
+  var allUsers = getLiveUserDir();
+  var deleted  = getDeletedUsers();
+  var active = {};
+  Object.entries(allUsers).forEach(function(entry){
+    var k=entry[0], u=entry[1];
+    if(!deleted.includes(k)) active[k]=u;
   });
-  udLines += '};';
 
-  // Replace USER_DIRECTORY in current HTML source
-  const htmlContent = document.documentElement.outerHTML;
-  // Find and replace the USER_DIRECTORY block
-  const udStart = htmlContent.indexOf('const USER_DIRECTORY = {');
-  const udEnd   = htmlContent.indexOf('\n};', udStart) + 3;
-  if(udStart === -1){ toast('ไม่พบ USER_DIRECTORY ในไฟล์','error'); return; }
+  function escQ(s){ return (s||'').split("'").join("\'"); }
 
-  const newHtml = htmlContent.substring(0, udStart) + udLines + htmlContent.substring(udEnd);
+  function buildLines(varHead){
+    var out = varHead + '\n';
+    Object.entries(active).forEach(function(entry){
+      var k=entry[0], u=entry[1];
+      var pw = u.password ? ",password:'"+escQ(u.password)+"'" : '';
+      out += "  '"+k+"':{name:'"+escQ(u.name||'')+"',role:'"+(u.role||'')+"',dept:'"+escQ(u.dept||'')+"'"+pw+"},\n";
+    });
+    out += '};';
+    return out;
+  }
 
-  // Download as new HTML file
-  const blob = new Blob([newHtml], {type:'text/html;charset=utf-8'});
-  const a = document.createElement('a');
+  var udHead = "// Email \u2192 user directory (username part before @)\n// \u2605 Canonical built-in users \u2014 merged from all sources \u2605\nconst USER_DIRECTORY = {";
+  var ulHead = "var _USERS_LOGIN = {";
+  var udLines = buildLines(udHead);
+  var ulLines = buildLines(ulHead);
+
+  var html = document.documentElement.outerHTML;
+  var udStart = html.indexOf('const USER_DIRECTORY = {');
+  if(udStart === -1){ toast('\u0e44\u0e21\u0e48\u0e1e\u0e1a USER_DIRECTORY','error'); return; }
+  var udEnd = html.indexOf('\n};', udStart) + 3;
+  html = html.substring(0, udStart) + udLines + html.substring(udEnd);
+  var ulStart = html.indexOf('var _USERS_LOGIN = {');
+  if(ulStart !== -1){
+    var ulEnd = html.indexOf('\n};', ulStart) + 3;
+    html = html.substring(0, ulStart) + ulLines + html.substring(ulEnd);
+  }
+
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'EngineeringService.html';
   a.click();
   URL.revokeObjectURL(a.href);
-
-  // Show instruction modal
-  document.getElementById('modal-title').innerHTML = '📤 Export User List สำเร็จ';
-  document.getElementById('modal-body').innerHTML = `
-    <div style="font-size:13px;line-height:2">
-      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-bottom:12px">
-        ✅ ดาวน์โหลดไฟล์ <b>EngineeringService.html</b> ใหม่แล้ว<br>
-        ไฟล์นี้มีรายชื่อ User ทั้งหมด <b>${Object.keys(allUsers).length} คน</b> ฝังอยู่
-      </div>
-      <b>ขั้นตอนต่อไป:</b><br>
-      1. ไปที่ <b>github.com/kbsengineeringcenter-art/engineering-service</b><br>
-      2. ลบ <b>EngineeringService.html</b> เดิมออก<br>
-      3. Upload ไฟล์ใหม่ที่ดาวน์โหลดไป<br>
-      4. รอ 1-2 นาที → ทุกเครื่องเห็น User ใหม่ทันที ✅
-    </div>`;
-  const btn = document.getElementById('modal-confirm-btn');
-  btn.textContent = 'รับทราบ'; btn.className = 'btn btn-primary';
-  btn.onclick = closeModal;
-  document.getElementById('modal').style.display = 'flex';
+  toast('Export \u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08 '+Object.keys(active).length+' users','success');
 }
 
-// ════════════════════════════════════════════════
-//  WORKFLOW ACTIONS (Permission-enforced)
-// ════════════════════════════════════════════════
-function doAction(action){
-  const j=selectedJob;if(!j)return;
-  const note=(document.getElementById('ap-note')||{}).value||'';
-
-  // ── Permission guard ──
-  const sa=STATUS_ACTIONS[j.status]||{};
-  if(currentRole!=='Admin'&&!sa.roles?.includes(currentRole)){
-    toast('ท่านไม่มีสิทธิ์ดำเนินการในขั้นตอนนี้','error'); return;
-  }
-
-  if(action==='Submit'){
-    updateJobStatus(j,'PendingDeptApproval','ส่งคำร้องเพื่ออนุมัติ');
-    addNotif('ส่งคำร้องแล้ว',`${j.requestNo} รอ Manager Approver`);
-    toast('📧 ส่ง Email แจ้ง Manager Approver แล้ว','success');
-    const approverDir = getLiveUserDir();
-    const approverKey = j.deptApproverEmail.replace('@kbs.co.th','');
-    const approverUser = approverDir[approverKey];
-    _showEmailNotif(j.deptApproverEmail,
-      '[Engineering Service] ขอความอนุเคราะห์อนุมัติคำร้อง — '+j.title,
-      j.requestNo+' — '+j.title,
-      'มีคำร้องรอการอนุมัติจากท่าน กรุณาเข้าระบบเพื่อตรวจสอบและอนุมัติ',
-      'ผู้ขอ: '+j.requesterName+' ('+j.requesterDept+') | ประเภท: '+j.jobType+'\\nบริการ: '+j.serviceTypes+' | ความเร่งด่วน: '+j.urgency
-    );
-
-  } else if(action==='DeptApprove'){
-    // อนุมัติ: ไม่ต้องใส่หมายเหตุ
-    const approveNote = note || 'อนุมัติ';
-    updateJobField(j,{deptApproveResult:'อนุมัติ: '+approveNote});
-    updateJobStatus(j,'OwnerReceive','Manager Approver อนุมัติ'+(note?' — '+note:''));
-    addNotif('อนุมัติคำร้องแล้ว',`${j.requestNo} ส่งให้ Admin รับงาน`);
-    toast('📧 ส่ง Email แจ้ง Admin EC แล้ว','success');
-    _showEmailNotif('lavitra.t@kbs.co.th',
-      '[Engineering Service] มีคำร้องใหม่รอการรับงาน — '+j.title,
-      j.requestNo+' — '+j.title,
-      'Manager Approver อนุมัติคำร้องแล้ว กรุณาเข้าระบบเพื่อรับงาน',
-      'ผู้ขอ: '+j.requesterName+' | บริการ: '+j.serviceTypes+'\nManager Approver: '+currentUser.name
-    );
-
-  } else if(action==='DeptReject'){
-    if(!note){toast('กรุณาระบุเหตุผลการไม่อนุมัติ','error');return;}
-    updateJobField(j,{deptApproveResult:'ไม่อนุมัติ: '+note});
-    updateJobStatus(j,'Rejected','ไม่อนุมัติ: '+note);
-    addNotif('ปฏิเสธคำร้อง',`${j.requestNo} — ${note}`);
-    _showEmailNotif(j.requesterEmail,
-      '[Engineering Service] คำร้องของท่านไม่ได้รับการอนุมัติ — '+j.title,
-      j.requestNo+' — '+j.title,
-      'คำร้องของท่านไม่ได้รับการอนุมัติ เหตุผล: '+note,
-      'กรุณาติดต่อ Manager Approver ('+currentUser.name+') เพื่อสอบถามเพิ่มเติม'
-    );
-    toast('📧 แจ้งผู้ขอ: '+j.requesterEmail,'warn');
-
-  } else if(action==='ReceiveJob'){
-    updateJobStatus(j,'PendingOwnerApproval','Admin รับงาน');
-    addNotif('รับงานแล้ว',`${j.requestNo} รอ Owner Manager อนุมัติ`);
-    toast('📧 ส่ง Email แจ้ง Owner Manager แล้ว','success');
-    _showEmailNotif(j.ownerManagerEmail,'[Engineering Service] ขอความอนุเคราะห์อนุมัติให้ดำเนินการ — '+j.title,
-      j.requestNo+' — '+j.title,'กรุณาเข้าระบบและอนุมัติให้ศูนย์วิศวกรรมดำเนินการ',
-      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
-
-  } else if(action==='OwnerMgrApprove'){
-    updateJobField(j,{ownerApproveResult:'อนุมัติ'+(note?' — '+note:'')});
-    updateJobStatus(j,'Assigned','Owner Manager อนุมัติ'+(note?' — '+note:''));
-    addNotif('อนุมัติให้ดำเนินการแล้ว',`${j.requestNo} รอ Owner มอบหมายวิศวกร`);
-    toast('📧 ส่ง Email แจ้ง Owner (หัวหน้าศูนย์วิศวกรรม) แล้ว','success');
-    _showEmailNotif(j.ownerEmail,'[Engineering Service] ขอให้มอบหมายวิศวกร/ช่าง — '+j.title,
-      j.requestNo+' — '+j.title,'คำร้องนี้ได้รับการอนุมัติแล้ว กรุณาเข้าระบบเพื่อมอบหมายวิศวกร/ช่าง',
-      'ผู้ขอ: '+j.requesterName+' | บริการ: '+j.serviceTypes);
-
-  } else if(action==='Assign'){
-    const sel=document.getElementById('ap-eng-sel');
-    const engEmail=sel?.value||j.assignedEngineerEmail;
-    if(!engEmail){toast('กรุณาเลือกวิศวกร','error');return;}
-    const engUser=Object.entries(getLiveUserDir()).find(([k,u])=>k+'@kbs.co.th'===engEmail);
-    const engName=engUser?engUser[1].name:engEmail;
-    updateJobField(j,{assignedEngineerEmail:engEmail,assignedEngineerName:engName});
-    updateJobStatus(j,'InProgress','มอบหมายให้: '+engName+' ('+engEmail+')');
-    addNotif('มอบหมายงานแล้ว',`${j.requestNo} → ${engName}`);
-    toast('📧 ส่ง Email แจ้งวิศวกร/ช่าง แล้ว','success');
-    _showEmailNotif(engEmail,'[Engineering Service] ท่านได้รับมอบหมายงาน — '+j.title,
-      j.requestNo+' — '+j.title,'กรุณาเข้าระบบเพื่อดำเนินงานและรายงานความคืบหน้า',
-      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
-    toast('📧 แจ้ง Engineer: '+engEmail,'success');
-
-  } else if(action==='AdminAssign'){
-    const sel=document.getElementById('ap-admin-eng');
-    const engEmail=sel?.value||'somchai.w@kbs.co.th';
-    const engUser=Object.entries(getLiveUserDir()).find(([k,u])=>k+'@kbs.co.th'===engEmail);
-    const engName=engUser?engUser[1].name:'วิศวกร';
-    updateJobField(j,{assignedEngineerEmail:engEmail,assignedEngineerName:engName});
-    updateJobStatus(j,'InProgress','Admin มอบหมายให้: '+engName);
-    addNotif('Admin มอบหมายงาน',`${j.requestNo} → ${engName}`);
-    toast('📧 ส่ง Email แจ้งวิศวกร/ช่าง แล้ว','success');
-    _showEmailNotif(engEmail,'[Engineering Service] ท่านได้รับมอบหมายงาน — '+j.title,
-      j.requestNo+' — '+j.title,'กรุณาเข้าระบบเพื่อดำเนินงานและรายงานความคืบหน้า',
-      'ผู้ขอ: '+j.requesterName+' | ประเภท: '+j.jobType+' | บริการ: '+j.serviceTypes);
-
-  } else if(action==='UpdateProgress'){
-    const pct=parseInt((document.getElementById('ap-progress')||{}).value||'0');
-    updateJobField(j,{progressPercent:pct,progressNote:note});
-    addHistory(j.requestNo,'InProgress','อัปเดต '+pct+'% — '+note);
-    saveJobs(jobs);updateCounts();
-    addNotif('อัปเดตความคืบหน้า',`${j.requestNo}: ${pct}%`);
-    toast('บันทึกความคืบหน้า '+pct+'%','success');
-    selectedJob=jobs.find(x=>x.id===j.id);renderDetail();return;
-
-  } else if(action==='Complete'){
-    updateJobField(j,{progressPercent:100,completedDate:nowStr().split(' ')[0]});
-    updateJobStatus(j,'Completed','วิศวกรแจ้งงานเสร็จสมบูรณ์');
-    addNotif('งานเสร็จสิ้น',`${j.requestNo} รอ Owner ตรวจสอบและปิดงาน`);
-    toast('📧 ส่ง Email แจ้ง Owner แล้ว','success');
-    _showEmailNotif(j.ownerEmail,'[Engineering Service] งานเสร็จแล้ว รอตรวจสอบและปิดงาน — '+j.title,
-      j.requestNo+' — '+j.title,'วิศวกรแจ้งงานเสร็จสมบูรณ์แล้ว กรุณาตรวจสอบคุณภาพงานและปิดงาน',
-      'วิศวกรผู้ดำเนินการ: '+j.assignedEngineerName+' | ผู้ขอ: '+j.requesterName);
-
-  } else if(action==='CloseJob'){
-    updateJobField(j,{closedDate:nowStr().split(' ')[0]});
-    updateJobStatus(j,'Closed','ปิดงานเรียบร้อย'+(note?' — '+note:''));
-    addNotif('ปิดงานแล้ว',`${j.requestNo} เสร็จสมบูรณ์`);
-    toast('📧 ส่ง Email แจ้งผู้ขอแล้ว','success');
-    _showEmailNotif(j.requesterEmail,
-      '[Engineering Service] งานของท่านเสร็จสมบูรณ์แล้ว — '+j.title,
-      j.requestNo+' — '+j.title,
-      'งานของท่านได้รับการดำเนินการเสร็จสมบูรณ์และปิดเรียบร้อยแล้ว',
-      'วิศวกรผู้ดำเนินการ: '+j.assignedEngineerName+'\nหากมีข้อสงสัยกรุณาติดต่อศูนย์วิศวกรรม'
-    );
-  }
-  selectedJob=jobs.find(x=>x.id===j.id);renderDetail();updateCounts();
-}
-function updateJobStatus(j,newStatus,note){
-  const idx=jobs.findIndex(x=>x.id===j.id);
-  jobs[idx].status=newStatus;
-  addHistory(j.requestNo,newStatus,note);
-  saveJobs(jobs);
-  toast(STATUS_LABEL[newStatus]||newStatus,'success');
-}
-function updateJobField(j,fields){
-  const idx=jobs.findIndex(x=>x.id===j.id);
-  jobs[idx]={...jobs[idx],...fields};
-  saveJobs(jobs);
-}
-function addHistory(requestNo,step,note){
-  hist.push({requestNo,step,date:nowStr(),by:currentUser.name,role:currentRole,note});
-  saveHist(hist);
-}
-
-// ════════════════════════════════════════════════
-//  APPROVE PAGE (role-aware)
-// ════════════════════════════════════════════════
-function renderApprove(){
-  // Filter items relevant to current role's action scope
-  const roleStatusMap = {
-    ManagerApprover: ['PendingDeptApproval'],
-    Admin:           ['OwnerReceive'],
-    OwnerManager:    ['PendingOwnerApproval'],
-    Owner:           ['Assigned','Completed'],
-    Engineer:        ['InProgress'],
-    Requester:       [],
-  };
-  const myStatuses = currentRole==='Admin'
-    ? ['PendingDeptApproval','OwnerReceive','PendingOwnerApproval','Assigned','InProgress','Completed']
-    : (roleStatusMap[currentRole]||[]);
-  const pending = jobs.filter(j=>myStatuses.includes(j.status));
-  document.getElementById('approve-body').innerHTML=pending.length?
-    pending.map(j=>`<tr onclick="openDetail(${j.id})" style="cursor:pointer">
-      <td style="font-weight:700;color:var(--blue);font-family:var(--mono);font-size:12px">${j.requestNo}</td>
-      <td>${j.title}</td>
-      <td>${j.requesterName}<br><small style="color:var(--gray)">${j.requesterDept}</small></td>
-      <td style="white-space:nowrap;color:var(--gray);font-family:var(--mono);font-size:12px">${j.date}</td>
-      <td>${j.urgency==='เร่งด่วนมาก'?`<span class="b-urgent-high">🔴 ${j.urgency}</span>`:j.urgency==='เร่งด่วน'?`<span class="b-urgent-med">🟡 ${j.urgency}</span>`:j.urgency}</td>
-      <td>${badge(j.status)}</td>
-      <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openDetail(${j.id})">ดำเนินการ →</button></td>
-    </tr>`).join(''):`<tr><td colspan="7"><div class="empty">
-      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
-      <p>ไม่มีรายการที่ต้องดำเนินการ</p><small>ไม่มีงานรอดำเนินการสำหรับ Role: ${ROLE_LABEL[currentRole]||currentRole}</small>
-    </div></td></tr>`;
-}
-
-// ════════════════════════════════════════════════
-//  REPORT PAGE
-// ════════════════════════════════════════════════
-function renderReport(){
-  const vj=visibleJobs();
-  const counts={};
-  vj.forEach(j=>counts[j.status]=(counts[j.status]||0)+1);
-  document.getElementById('report-bars').innerHTML=Object.entries(STATUS_LABEL).map(([st,lbl])=>{
-    const cnt=counts[st]||0;const pct=vj.length?Math.round(cnt/vj.length*100):0;
-    return `<div class="chart-bar-row">
-      <span class="chart-bar-label">${lbl}</span>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
-      <span class="chart-bar-val">${cnt}</span>
-    </div>`;
-  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
-  const typeCounts={};
-  vj.forEach(j=>typeCounts[j.jobType]=(typeCounts[j.jobType]||0)+1);
-  document.getElementById('report-jobtype').innerHTML=Object.entries(typeCounts).map(([t,cnt])=>{
-    const pct=vj.length?Math.round(cnt/vj.length*100):0;
-    return `<div class="chart-bar-row">
-      <span class="chart-bar-label">${t}</span>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--green),#22c55e)"></div></div>
-      <span class="chart-bar-val">${cnt}</span>
-    </div>`;
-  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
-}
-
-// ════════════════════════════════════════════════
-//  DASHBOARD
-// ════════════════════════════════════════════════
-function renderDashboard(){
-  const vj=visibleJobs();
-  // Status bars
-  const counts={};
-  vj.forEach(j=>counts[j.status]=(counts[j.status]||0)+1);
-  document.getElementById('dash-bars').innerHTML=Object.entries(STATUS_LABEL).map(([st,lbl])=>{
-    const cnt=counts[st]||0;const pct=vj.length?Math.round(cnt/vj.length*100):0;
-    return `<div class="chart-bar-row">
-      <span class="chart-bar-label">${lbl}</span>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%"></div></div>
-      <span class="chart-bar-val">${cnt}</span>
-    </div>`;
-  }).join('');
-  // Recent list
-  const recent=vj.slice(0,6);
-  document.getElementById('dash-recent').innerHTML=recent.length?recent.map(j=>`
-    <div class="recent-item" onclick="openDetail(${j.id})">
-      <div class="recent-no">${j.requestNo}</div>
-      <div class="recent-title" title="${j.title}">${j.title}</div>
-      <div class="recent-meta">${badge(j.status)}<br><span style="font-size:10px">${j.date}</span></div>
-    </div>`).join(''):`<div class="empty" style="padding:20px"><p>ยังไม่มีข้อมูล</p></div>`;
-  // Urgency
-  const urg={};
-  vj.forEach(j=>urg[j.urgency]=(urg[j.urgency]||0)+1);
-  const urgColors={'เร่งด่วนมาก':'var(--red)','เร่งด่วน':'#d97706','ปกติ':'var(--blue)','ไม่ระบุ':'var(--gray)'};
-  document.getElementById('dash-urgency').innerHTML=Object.entries(urg).map(([u,cnt])=>{
-    const pct=vj.length?Math.round(cnt/vj.length*100):0;
-    return `<div class="chart-bar-row">
-      <span class="chart-bar-label">${u}</span>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:${urgColors[u]||'var(--blue)'}"></div></div>
-      <span class="chart-bar-val" style="color:${urgColors[u]||'var(--blue)'}">${cnt}</span>
-    </div>`;
-  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
-  // Job type
-  const typeCounts={};
-  vj.forEach(j=>typeCounts[j.jobType]=(typeCounts[j.jobType]||0)+1);
-  document.getElementById('dash-jobtype').innerHTML=Object.entries(typeCounts).map(([t,cnt])=>{
-    const pct=vj.length?Math.round(cnt/vj.length*100):0;
-    return `<div class="chart-bar-row">
-      <span class="chart-bar-label">${t}</span>
-      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#4f46e5,#818cf8)"></div></div>
-      <span class="chart-bar-val" style="color:#4f46e5">${cnt}</span>
-    </div>`;
-  }).join('')||'<p style="color:var(--gray)">ไม่มีข้อมูล</p>';
-  // Sub
-  document.getElementById('dash-sub').textContent=`เข้าสู่ระบบในฐานะ ${currentRole}: ${currentUser?.name||''} — ${vj.length} รายการทั้งหมด`;
-}
-
-// ════════════════════════════════════════════════
-//  EXPORT
-// ════════════════════════════════════════════════
 function exportPDF(){
   const j=selectedJob;if(!j)return;
   toast('กำลังสร้าง PDF...','warn');
@@ -2605,22 +2417,76 @@ function loadUDir(){
   }catch(e){}
   return {...USER_DIRECTORY};
 }
+// ─────────────────────────────────────────────────────
+//  _saveUserEntry: atomic save of a single user to localStorage diff
+//  This is the SAFE way to add/edit one user without risking data loss
+// ─────────────────────────────────────────────────────
+function _saveUserEntry(key, data){
+  try{
+    // Read current diff from localStorage
+    var stored = {};
+    try{ stored = JSON.parse(localStorage.getItem(UDIR_KEY)||'{}'); }catch(e){}
+    // Merge new data: preserve existing password if not being changed
+    var existing = stored[key] || {};
+    var entry = {
+      name: data.name || existing.name || '',
+      role: data.role || existing.role || '',
+      dept: data.dept || existing.dept || '',
+    };
+    // Password handling: keep existing if not explicitly set/cleared
+    if(data.password === ''){ 
+      // Explicit clear (password reset)
+      // don't add password field
+    } else if(data.password){
+      entry.password = data.password;
+    } else if(existing.password){
+      entry.password = existing.password;
+    }
+    stored[key] = entry;
+    localStorage.setItem(UDIR_KEY, JSON.stringify(stored));
+    console.log('[EngService] Saved user:', key, entry);
+  }catch(e){ console.warn('_saveUserEntry error:', e); }
+}
+
+// _removeUserEntry: remove a single user from localStorage diff (for delete)
+function _removeUserEntry(key){
+  try{
+    var stored = {};
+    try{ stored = JSON.parse(localStorage.getItem(UDIR_KEY)||'{}'); }catch(e){}
+    delete stored[key];
+    localStorage.setItem(UDIR_KEY, JSON.stringify(stored));
+  }catch(e){ console.warn('_removeUserEntry error:', e); }
+}
+
 function saveUDir(u){
   try{
-    const toSave = {};
+    // Read current stored diff so we don't lose other changes
+    let existing = {};
+    try{ existing = JSON.parse(localStorage.getItem(UDIR_KEY)||'{}'); }catch(e){}
+    const toSave = Object.assign({}, existing);
     Object.entries(u).forEach(([k,v])=>{
       const base = USER_DIRECTORY[k];
-      // Save if: new user, any field differs, OR has password set
+      // Save diff: new user OR any field differs from built-in OR has password
       if(!base || base.name!==v.name || base.role!==v.role || base.dept!==v.dept || v.password){
-        toSave[k] = v;
+        toSave[k] = {
+          name: v.name||'',
+          role: v.role||'',
+          dept: v.dept||'',
+          ...(v.password ? {password: v.password} : {})
+        };
+      } else {
+        // If user reverted to identical as built-in with no password, remove from diff
+        delete toSave[k];
       }
     });
     localStorage.setItem(UDIR_KEY, JSON.stringify(toSave));
-  }catch(e){}
+  }catch(e){ console.warn('saveUDir error:', e); }
 }
 let userDir=loadUDir();
 
 function renderUserTable(){
+  // Always refresh from canonical source before rendering
+  userDir = getLiveUserDir();
   const q=(document.getElementById('user-search')?.value||'').toLowerCase();
   const rf=document.getElementById('user-role-filter')?.value||'';
   const rows=Object.entries(userDir).filter(([k,u])=>{
@@ -2642,6 +2508,32 @@ function renderUserTable(){
         <button class="btn btn-danger btn-sm" onclick="deleteUser('${k}')" style="margin-left:4px" ${k==='admin.sys'?'disabled title="ไม่สามารถลบ Admin หลัก"':''}>🗑️</button>
       </td>
     </tr>`).join(''):`<tr><td colspan="5"><div class="empty"><p>ไม่พบผู้ใช้</p></div></td></tr>`;
+  // Update user count badge
+  const badge = document.getElementById('user-count-badge');
+  if(badge){
+    const total = Object.keys(userDir).length;
+    badge.textContent = rows.length < total
+      ? `แสดง ${rows.length} จาก ${total} คน`
+      : `${total} คน`;
+  }
+}
+
+function refreshUserTable(){
+  const btn = document.getElementById('btn-refresh-users');
+  if(btn){
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 14 14" style="animation:spin .6s linear infinite"><path d="M12 2.5A5.5 5.5 0 1 1 7 1.5"/><polyline points="9,1 12,1 12,4"/></svg> กำลังโหลด...';
+  }
+  // Re-sync: just reload from localStorage — respect deleted list
+  userDir = getLiveUserDir();
+  renderUserTable();
+  setTimeout(function(){
+    if(btn){
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 14 14"><path d="M12 2.5A5.5 5.5 0 1 1 7 1.5"/><polyline points="9,1 12,1 12,4"/></svg> Refresh';
+    }
+    toast('โหลดข้อมูลผู้ใช้ใหม่แล้ว — '+Object.keys(userDir).length+' คน', 'success');
+  }, 400);
 }
 
 // ════════════════════════════════════════════════
@@ -2763,7 +2655,17 @@ function saveNewUser(){
 
   // Check duplicate using live directory (includes both built-in + stored users)
   const liveDir = getLiveUserDir();
-  if(liveDir[emailUser]){ toast('Username นี้มีอยู่แล้ว','error'); return; }
+  if(liveDir[emailUser]){
+    // If user exists, offer to update their info instead (e.g. name change for built-in user)
+    if(confirm('Username "'+emailUser+'" มีอยู่ในระบบแล้ว\nต้องการอัปเดตข้อมูล (ชื่อ/Role/แผนก) ของ User นี้หรือไม่?')){
+      _saveUserEntry(emailUser, {name, role, dept});
+      userDir = getLiveUserDir();
+      closeModal();
+      renderUserTable();
+      toast('อัปเดตข้อมูล "'+name+'" ('+emailUser+'@kbs.co.th) สำเร็จ', 'success');
+    }
+    return;
+  }
 
   // Auto-add new dept to masterData if not already there
   if(!masterData.dept.includes(dept)){
@@ -2772,16 +2674,12 @@ function saveNewUser(){
     toast(`เพิ่มแผนก "${dept}" ใหม่ในระบบแล้ว`, 'success');
   }
 
-  // Add to userDir and save
-  userDir[emailUser] = {name, role, dept};
-  saveUDir(userDir);
-
-  // Also sync the live dir variable
+  // Direct save: only write this specific new user to localStorage diff
+  _saveUserEntry(emailUser, {name, role, dept});
   userDir = getLiveUserDir();
-
   closeModal();
   renderUserTable();
-  toast(`เพิ่มผู้ใช้ ${name} (${emailUser}@kbs.co.th) สำเร็จ`, 'success');
+  toast(`เพิ่มผู้ใช้ "${name}" (${emailUser}@kbs.co.th) สำเร็จ`, 'success');
 }
 function editUser(key){
   const u=userDir[key];if(!u)return;
@@ -2828,26 +2726,42 @@ function editUser(key){
   const btn=document.getElementById('modal-confirm-btn');
   btn.textContent='บันทึก'; btn.className='btn btn-primary';
   btn.onclick=()=>{
-    const dept=getDeptComboValue('eu-dept');
-    userDir[key].name=document.getElementById('eu-name').value.trim();
-    userDir[key].role=document.getElementById('eu-role').value;
-    userDir[key].dept=dept||u.dept;
-    const rawPw=(document.getElementById('eu-password')?.value||'').trim();
-    if(rawPw==='RESET_PASSWORD'){
-      delete userDir[key].password; // Admin reset: user must set new password on next login
-    } else if(rawPw){
-      userDir[key].password=rawPw; // Admin set new password directly
+    // Re-read live dir to avoid stale closure
+    userDir = getLiveUserDir();
+    if(!userDir[key]){
+      // user might be built-in only — create entry
+      userDir[key] = Object.assign({}, USER_DIRECTORY[key] || {name:'', role:'', dept:''});
     }
-    // If rawPw is empty: keep existing password unchanged
+    const newName = document.getElementById('eu-name').value.trim();
+    const newRole = document.getElementById('eu-role').value;
+    const newDept = getDeptComboValue('eu-dept') || userDir[key].dept;
+    const rawPw   = (document.getElementById('eu-password')?.value||'').trim();
+    // Preserve existing password unless explicitly changed/reset
+    const existingPw = userDir[key].password || '';
+    let finalPw = existingPw;
+    if(rawPw === 'RESET_PASSWORD'){
+      finalPw = ''; // Admin reset: user must set new password on next login
+    } else if(rawPw){
+      finalPw = rawPw;
+    }
+    // Build updated entry — include password field explicitly for reset handling
+    const updated = {name: newName, role: newRole, dept: newDept};
+    if(rawPw === 'RESET_PASSWORD'){
+      updated.password = '';   // explicit empty = tell _saveUserEntry to clear password
+    } else if(finalPw){
+      updated.password = finalPw;
+    }
+    // If no password change: updated has no password field → _saveUserEntry preserves existing
     // Auto-add new dept to masterData
-    if(dept && !masterData.dept.includes(dept)){
-      masterData.dept.push(dept);
+    if(newDept && !masterData.dept.includes(newDept)){
+      masterData.dept.push(newDept);
       saveMaster(masterData);
     }
-    saveUDir(userDir);
+    // Direct save: only write this specific user to localStorage diff
+    _saveUserEntry(key, updated);
     userDir = getLiveUserDir(); // re-sync
     closeModal(); renderUserTable();
-    toast('บันทึกข้อมูลผู้ใช้สำเร็จ','success');
+    toast('บันทึกข้อมูลผู้ใช้ "' + newName + '" สำเร็จ', 'success');
   };
   document.getElementById('modal').style.display='flex';
 }
@@ -2857,18 +2771,8 @@ function resetUserPassword(key){
   const u=userDir[key];
   if(!u){toast('ไม่พบ user','error');return;}
   if(!confirm('Reset รหัสผ่านของ "'+u.name+'" ('+key+'@kbs.co.th)?\nUser จะต้องตั้งรหัสผ่านใหม่ตอน Login ครั้งถัดไป'))return;
-  // Remove password from userDir and localStorage
-  delete userDir[key].password;
-  // Also update localStorage directly
-  try{
-    const stored=JSON.parse(localStorage.getItem('engservice_udir_v1')||'{}');
-    if(stored[key]) delete stored[key].password;
-    // Ensure user exists in stored with current data
-    stored[key]=stored[key]||{};
-    stored[key].name=u.name; stored[key].role=u.role; stored[key].dept=u.dept;
-    localStorage.setItem('engservice_udir_v1',JSON.stringify(stored));
-  }catch(e){}
-  saveUDir(userDir);
+  // Reset password: save user entry without password field
+  _saveUserEntry(key, {name:u.name, role:u.role, dept:u.dept, password:''});
   userDir=getLiveUserDir();
   renderUserTable();
   toast('Reset รหัสผ่าน "'+u.name+'" สำเร็จ — User ต้องตั้งรหัสใหม่ตอน Login','success');
@@ -2876,14 +2780,15 @@ function resetUserPassword(key){
 
 function deleteUser(key){
   if(key==='admin.sys'||key==='lavitra.t'){toast('ไม่สามารถลบ Admin หลักได้','error');return;}
+  userDir = getLiveUserDir(); // refresh
   const u=userDir[key];
-  if(!confirm('ยืนยันลบผู้ใช้ "'+(u?u.name:key)+'" ('+key+'@kbs.co.th)?'))return;
+  if(!u){toast('ไม่พบผู้ใช้นี้ในระบบ','error');return;}
+  if(!confirm('\u0e22\u0e37\u0e19\u0e22\u0e31\u0e19\u0e25\u0e1a\u0e1c\u0e39\u0e49\u0e43\u0e0a\u0e49 "'+u.name+'" ('+key+'@kbs.co.th) - \u0e01\u0e32\u0e23\u0e25\u0e1a\u0e08\u0e30\u0e44\u0e21\u0e48\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e01\u0e39\u0e49\u0e04\u0e37\u0e19\u0e44\u0e14\u0e49'))return;
   addDeletedUser(key);
-  delete userDir[key];
-  saveUDir(userDir);
+  _removeUserEntry(key);   // remove from localStorage diff too
   userDir=getLiveUserDir();
   renderUserTable();
-  toast('ลบผู้ใช้สำเร็จ','success');
+  toast('ลบผู้ใช้ "'+u.name+'" สำเร็จ','success');
 }
 
 function deleteJob(id){
@@ -2991,7 +2896,7 @@ var _USERS_LOGIN = {
   'panida.a':{name:'พนิดา อ่องพิมาย',role:'Requester',dept:'ฝ่ายผลิต'},
   'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'อาชีวอนามัย'},
   'pensuda.p':{name:'เพ็ญสุดา เพียงกระโทก',role:'Requester',dept:'HR'},
-  'mithuna.l':{name:'มิถุนา หล่อสุพรรณเพร',role:'Requester',dept:'ฝ่ายผลิต'},
+  'mithuna.l':{name:'Mithuna Lorsuphanporn',role:'Requester',dept:'ฝ่ายผลิต'},
   'vichai.c':{name:'วิชัย ช่างใจดี',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'mgr.prod':{name:'ผู้จัดการ ฝ่ายผลิต',role:'ManagerApprover',dept:'ฝ่ายผลิต'}
 };
@@ -3102,10 +3007,13 @@ function _doLoginCheck(raw){
     if(hasPw){
       if(pwExist) pwExist.style.display='block';
       if(pwNew) pwNew.style.display='none';
-      if(pwInp) pwInp.focus();
+      // Scroll password field into view smoothly
+      setTimeout(function(){if(pwInp){pwInp.focus();pwInp.scrollIntoView({behavior:'smooth',block:'nearest'});}},50);
     } else {
       if(pwExist) pwExist.style.display='none';
       if(pwNew) pwNew.style.display='block';
+      var pwInpNew=document.getElementById('login-password-new');
+      setTimeout(function(){if(pwInpNew){pwInpNew.focus();pwInpNew.scrollIntoView({behavior:'smooth',block:'nearest'});}},50);
       if(pwInp) pwInp.focus();
     }
   }
@@ -3245,25 +3153,41 @@ function _debugShowUsers(){
   }
 }
 
-// Wire login events
-(function wireLogin(){
+// Wire login events — runs both immediately and on DOMContentLoaded for safety
+function _wireLoginNow(){
   var inp=document.getElementById('login-email-inp');
   var btn=document.getElementById('login-btn');
-  if(!inp||!btn){setTimeout(wireLogin,100);return;}
+  if(!inp||!btn){ return false; }
   inp.oninput=function(){
-    var raw=inp.value.trim().toLowerCase().replace(/@kbs.co.th$/i,'');
-    _doLoginCheck(raw);
+    var raw=inp.value.trim().toLowerCase().replace(/@kbs\.co\.th$/i,'');
+    if(typeof _doLoginCheck==='function') _doLoginCheck(raw);
   };
   inp.onkeydown=function(e){
-    if(e.key==='Enter'&&!btn.disabled) _doLoginSubmit();
+    if(e.key==='Enter'&&!btn.disabled&&typeof _doLoginSubmit==='function') _doLoginSubmit();
   };
-  btn.onclick=_doLoginSubmit;
+  btn.onclick=function(){ if(typeof _doLoginSubmit==='function') _doLoginSubmit(); };
   window.doLogin=_doLoginSubmit;
   window.handleLoginSubmit=_doLoginSubmit;
-  window.onEmailInput=function(el){_doLoginCheck((el?el.value:'').trim().toLowerCase().replace(/@kbs.co.th$/i,''));};
+  window.onEmailInput=function(el){ if(typeof _doLoginCheck==='function') _doLoginCheck((el?el.value:'').trim().toLowerCase().replace(/@kbs\.co\.th$/i,'')); };
   window.getLiveUserDir=_getAllUsersLogin;
+  // If user already typed something (page reload with autofill), trigger check
+  if(inp.value.trim().length>=1){
+    var raw=inp.value.trim().toLowerCase().replace(/@kbs\.co\.th$/i,'');
+    if(typeof _doLoginCheck==='function') _doLoginCheck(raw);
+  }
   console.log('[Engineering Service] Login wired. Users:',Object.keys(_getAllUsersLogin()).length);
-})();
+  return true;
+}
+// Try immediately (script at end of body, DOM is ready)
+if(!_wireLoginNow()){
+  // Fallback: retry on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', function(){
+    var tries=0;
+    var t=setInterval(function(){
+      if(_wireLoginNow()||tries++>20) clearInterval(t);
+    },100);
+  });
+}
 
 // Init — Migrate old userDir storage format if needed
 (function migrateUserDir(){
@@ -3274,10 +3198,11 @@ function _debugShowUsers(){
     // Old format stored ALL users (including USER_DIRECTORY defaults)
     // New format only stores DIFF (additions/edits)
     // Detect old format: if it contains built-in users with unchanged data, strip them out
-    const isOldFormat = Object.keys(USER_DIRECTORY).some(k => {
-      const s = parsed[k], d = USER_DIRECTORY[k];
-      return s && d && s.name===d.name && s.role===d.role && s.dept===d.dept;
-    });
+    // Old format: stored has built-in users with unchanged core fields + no password
+      const isOldFormat = Object.keys(USER_DIRECTORY).some(k => {
+        const s = parsed[k], d = USER_DIRECTORY[k];
+        return s && d && s.name===d.name && s.role===d.role && s.dept===d.dept && !s.password;
+      });
     if(isOldFormat){
       // Convert to new diff-only format
       const diff = {};
@@ -3296,12 +3221,56 @@ function _debugShowUsers(){
 // Clear stale error notifications from previous sessions
 try{
   var notifArr = JSON.parse(localStorage.getItem('engservice_notif_v1')||'[]');
-  notifArr = notifArr.filter(function(n){
-    return !n.title || (!n.title.includes('เฉพาะ Admin') && !n.sub || !n.sub.includes('เฉพาะ Admin'));
-  });
+  notifArr = notifArr.filter(function(n){ return !n.title||n.title.indexOf('Error')===-1; });
   localStorage.setItem('engservice_notif_v1', JSON.stringify(notifArr));
 }catch(e){}
-renderNotifs();
-</script>
 
-</body></html>
+// ════════════════════════════════════════════════
+//  STARTUP SYNC: One-time migration when file version changes
+//  Does NOT restore admin-deleted users on every load
+// ════════════════════════════════════════════════
+(function startupSync(){
+  try{
+    var VERSION_KEY = 'engservice_ud_version';
+    var CURRENT_VERSION = '2026.05.b'; // bump when USER_DIRECTORY names change
+
+    var storedVersion = localStorage.getItem(VERSION_KEY);
+    if(storedVersion === CURRENT_VERSION) return; // already migrated, skip
+
+    // ONE-TIME migration for this version:
+    // 1. Sync changed names from USER_DIRECTORY to localStorage
+    try{
+      var stored = JSON.parse(localStorage.getItem('engservice_udir_v1')||'{}');
+      var changed = false;
+      Object.entries(USER_DIRECTORY).forEach(function(entry){
+        var k = entry[0], ud = entry[1];
+        var ls = stored[k];
+        if(ls && ls.role === ud.role && ls.dept === ud.dept && ls.name !== ud.name){
+          stored[k] = Object.assign({}, ls, {name: ud.name});
+          changed = true;
+          console.log('[EngService] Name sync:', k, ls.name, '->', ud.name);
+        }
+      });
+      if(changed) localStorage.setItem('engservice_udir_v1', JSON.stringify(stored));
+    }catch(e){}
+
+    // 2. One-time only: remove 'mithuna.l' from deleted list
+    //    (was incorrectly added in old versions due to a bug)
+    try{
+      var deleted = JSON.parse(localStorage.getItem('engservice_deleted_v1')||'[]');
+      var bugsToFix = ['mithuna.l'];
+      var fixed = deleted.filter(function(k){ return !bugsToFix.includes(k); });
+      if(fixed.length !== deleted.length){
+        localStorage.setItem('engservice_deleted_v1', JSON.stringify(fixed));
+        console.log('[EngService] One-time fix: removed mithuna.l from deleted list');
+      }
+    }catch(e){}
+
+    localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+    console.log('[EngService] Startup sync v'+CURRENT_VERSION+' complete');
+  }catch(e){ console.warn('[EngService] startupSync error:', e); }
+})();
+
+</script>
+</body>
+</html>
