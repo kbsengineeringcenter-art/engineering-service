@@ -1,4 +1,4 @@
-<html lang="th"><plasmo-csui></plasmo-csui><head>
+<html lang="th"><head></head><body><plasmo-csui></plasmo-csui>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Engineering Service — ระบบใบขอใช้บริการ ศูนย์วิศวกรรม</title>
@@ -365,103 +365,14 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 /* ROLE INFO BAR */
 .role-info-bar{background:linear-gradient(90deg,var(--blue2),#fff);border:1px solid var(--blue3);border-radius:var(--radius);padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:12px}
 .role-badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
-</style></head>
-<body>
+</style>
+
 
 <!-- ═══ LOGIN SCREEN ═══ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="login-logo-icon">
-        <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="1.8" viewBox="0 0 22 22">
-          <rect x="2" y="2" width="18" height="18" rx="3"></rect>
-          <path d="M6 8h10M6 12h7M6 16h4"></path>
-        </svg>
-      </div>
-      <div>
-        <div class="login-logo-text">Engineering Service</div>
-        <div class="login-logo-sub">ระบบใบขอใช้บริการ ศูนย์วิศวกรรม</div>
-      </div>
-    </div>
-    <div class="login-title">เข้าสู่ระบบ</div>
-    <div class="login-sub">กรอกอีเมล KBS ของท่านเพื่อดำเนินการต่อ</div>
 
-    <div class="login-field">
-      <label class="login-label">อีเมล</label>
-      <div class="login-input-wrap">
-        <input class="login-input" id="login-email-inp" type="text"
-          placeholder="firstname.l"
-          autocomplete="username"
-          oninput="if(typeof _doLoginCheck==='function')_doLoginCheck(this.value.trim().toLowerCase().replace(/@kbs\.co\.th$/i,''))">
-        <span class="login-domain">@kbs.co.th</span>
-      </div>
-      <div class="login-error" id="login-error"></div>
-    </div>
-
-    <!-- User preview card (shown when email matches) -->
-    <div class="login-user-preview" id="login-preview">
-      <div class="login-user-avatar" id="preview-avatar">?</div>
-      <div>
-        <div class="login-user-name" id="preview-name"></div>
-        <div class="login-user-role" id="preview-role"></div>
-        <div class="login-user-dept" id="preview-dept"></div>
-      </div>
-    </div>
-
-    <!-- Password field (shown after email match) -->
-    <div id="login-password-field" style="display:none">
-      <!-- Existing password -->
-      <div id="login-pw-existing" style="display:none">
-        <div class="login-field">
-          <label class="login-label">รหัสผ่าน</label>
-          <input class="login-input" id="login-password-inp" type="password"
-            placeholder="กรอกรหัสผ่านของท่าน"
-            autocomplete="current-password"
-            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
-        </div>
-        <div style="font-size:11px;color:var(--blue);cursor:pointer;margin-top:4px;text-align:right"
-          onclick="if(typeof _showChangePassword==='function')_showChangePassword()">
-          🔑 เปลี่ยนรหัสผ่าน
-        </div>
-      </div>
-      <!-- New / set password -->
-      <div id="login-pw-new" style="display:none">
-        <div class="login-field">
-          <label class="login-label">ตั้งรหัสผ่านใหม่ <span style="font-weight:400;color:var(--gray)">(ครั้งแรก)</span></label>
-          <input class="login-input" id="login-password-new" type="password"
-            placeholder="ตั้งรหัสผ่าน (ตัวอักษร + ตัวเลข รวม ≥ 6)"
-            autocomplete="new-password"
-            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
-        </div>
-        <div class="login-field" style="margin-top:8px">
-          <label class="login-label">ยืนยันรหัสผ่าน</label>
-          <input class="login-input" id="login-password-confirm" type="password"
-            placeholder="กรอกรหัสผ่านอีกครั้ง"
-            autocomplete="new-password"
-            onkeydown="if(event.key==='Enter'&&typeof _doLoginSubmit==='function')_doLoginSubmit()">
-        </div>
-        <div style="font-size:11px;color:var(--gray);margin-top:4px">
-          รหัสผ่านต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว และยาวอย่างน้อย 6 ตัวอักษร
-        </div>
-      </div>
-      <div class="login-error" id="login-pass-error" style="margin-top:6px"></div>
-    </div>
-
-    <!-- Not found message -->
-    <div class="login-not-found" id="login-not-found"></div>
-
-    <button class="login-btn" id="login-btn" onclick="if(typeof _doLoginSubmit==='function')_doLoginSubmit()" disabled>
-      เข้าสู่ระบบ →
-    </button>
-    <div class="login-demo-note">
-      ระบบ Engineering Service | ศูนย์วิศวกรรม KBS<br>
-      ติดต่อผู้ดูแลระบบ: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e525f48574a4c5f104a7e555c4d105d51104a56">[email&#160;protected]</a>
-    </div>
-  </div>
-</div>
 
 <!-- ═══ APP SHELL ═══ -->
-<div id="app-shell" style="display:none;">
+<div id="app-shell" style="display: block;">
 
 <!-- NAV -->
 <nav class="nav">
@@ -475,11 +386,11 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   </div>
   <div class="nav-sep"></div>
   <div class="nav-tabs">
-    <button class="nav-tab" onclick="goPage('browse')">📋 รายการ</button>
+    <button class="nav-tab active" onclick="goPage('browse')">📋 รายการ</button>
     <button class="nav-tab" onclick="goPage('dashboard')">📊 Dashboard</button>
     <button class="nav-tab" onclick="goPage('form',null)">+ สร้างใบขอ</button>
     <button class="nav-tab" onclick="goPage('approve')">
-      รออนุมัติ<span class="nav-badge" id="nb-pending">0</span>
+      รออนุมัติ<span class="nav-badge" id="nb-pending" style="display: none;">0</span>
     </button>
     <button class="nav-tab" onclick="goPage('report')">รายงาน</button>
     <button class="nav-tab nav-tab-admin" onclick="goPage('users')" style="">👥 จัดการผู้ใช้</button>
@@ -493,10 +404,10 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       <div class="notif-dot" id="notif-dot"></div>
     </button>
     <div class="nav-user">
-      <div class="avatar" id="nav-avatar">?</div>
+      <div class="avatar" id="nav-avatar">ล</div>
       <div style="line-height:1.3">
-        <div id="nav-username" style="font-size:12px;font-weight:600;color:#fff">—</div>
-        <div id="nav-role-label" style="font-size:10px;color:rgba(255,255,255,.6)">—</div>
+        <div id="nav-username" style="font-size:12px;font-weight:600;color:#fff">ลวิตรา ธรรมตะคุ</div>
+        <div id="nav-role-label" style="font-size:10px;color:rgba(255,255,255,.6)">ผู้ดูแลระบบ EC · lavitra.t@kbs.co.th</div>
       </div>
     </div>
     <button class="logout-btn" onclick="doLogout()">ออกจากระบบ</button>
@@ -509,7 +420,22 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <span class="notif-title">🔔 การแจ้งเตือน</span>
     <button class="notif-clear" onclick="clearNotifs()">ล้างทั้งหมด</button>
   </div>
-  <div class="notif-list" id="notif-list"><div class="notif-empty">ไม่มีการแจ้งเตือน</div></div>
+  <div class="notif-list" id="notif-list">
+    <div class="notif-item " onclick="markRead(1774076445344)">
+      <div class="notif-item-title">ยินดีต้อนรับ ลวิตรา ธรรมตะคุ</div>
+      <div class="notif-item-sub">เข้าสู่ระบบในฐานะ ผู้ดูแลระบบ EC</div>
+      <div class="notif-item-time">21/03/2026 14:00</div>
+    </div>
+    <div class="notif-item " onclick="markRead(1774076095913)">
+      <div class="notif-item-title">ยินดีต้อนรับ ลวิตรา ธรรมตะคุ</div>
+      <div class="notif-item-sub">เข้าสู่ระบบในฐานะ ผู้ดูแลระบบ EC</div>
+      <div class="notif-item-time">21/03/2026 13:54</div>
+    </div>
+    <div class="notif-item " onclick="markRead(1774074470826)">
+      <div class="notif-item-title">ยินดีต้อนรับ ลวิตรา ธรรมตะคุ</div>
+      <div class="notif-item-sub">เข้าสู่ระบบในฐานะ ผู้ดูแลระบบ EC</div>
+      <div class="notif-item-time">21/03/2026 13:27</div>
+    </div></div>
 </div>
 
 <div class="app">
@@ -524,7 +450,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="sb-label">ใบขอของฉัน</div>
     <div class="sb-item" onclick="filterStatus('');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="1.5" width="12" height="12" rx="2"></rect><path d="M4 5h7M4 8h5M4 11h3"></path></svg>
-      ทั้งหมด <span class="sb-count" id="sb-all">2</span>
+      ทั้งหมด <span class="sb-count" id="sb-all">0</span>
     </div>
     <div class="sb-item" onclick="filterStatus('Draft');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M2 4h11M2 8h7M2 11h5"></path></svg>
@@ -536,7 +462,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     </div>
     <div class="sb-item" onclick="filterStatus('Completed');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><path d="M3 8l3 3 6-6"></path></svg>
-      เสร็จสิ้น <span class="sb-count green" id="sb-done">1</span>
+      เสร็จสิ้น <span class="sb-count green" id="sb-done">0</span>
     </div>
     <div class="sb-item" onclick="filterStatus('Rejected');goPage('browse')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"></circle><path d="M5 10l5-5M10 10L5 5"></path></svg>
@@ -548,7 +474,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="sb-label">การดำเนินการ</div>
     <div class="sb-item" onclick="goPage('approve')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="6"></circle><path d="M5 7.5l2 2 3-3"></path></svg>
-      รออนุมัติ <span class="sb-count amber" id="sb-pending">1</span>
+      รออนุมัติ <span class="sb-count amber" id="sb-pending">0</span>
     </div>
     <div class="sb-item" onclick="goPage('report')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 15 15"><rect x="1.5" y="5" width="3" height="8.5" rx="1"></rect><rect x="6" y="2" width="3" height="11.5" rx="1"></rect><rect x="10.5" y="7" width="3" height="6.5" rx="1"></rect></svg>
@@ -585,11 +511,11 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="stat-row">
       <div class="stat-card blue">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#1a5fa8" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M7 9h10M7 13h7M7 17h5"></path></svg>
-        <div class="stat-num" id="s-total">2</div><div class="stat-lbl">ใบขอทั้งหมด</div>
+        <div class="stat-num" id="s-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div>
       </div>
       <div class="stat-card amber">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#d97706" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
-        <div class="stat-num" id="s-pending">1</div><div class="stat-lbl">รออนุมัติ</div>
+        <div class="stat-num" id="s-pending">0</div><div class="stat-lbl">รออนุมัติ</div>
       </div>
       <div class="stat-card indigo">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#4f46e5" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg>
@@ -597,7 +523,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       </div>
       <div class="stat-card green">
         <svg class="stat-icon" width="32" height="32" fill="none" stroke="#2e7d32" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-5"></path></svg>
-        <div class="stat-num" id="s-done">1</div><div class="stat-lbl">เสร็จ/ปิดงาน</div>
+        <div class="stat-num" id="s-done">0</div><div class="stat-lbl">เสร็จ/ปิดงาน</div>
       </div>
     </div>
     <div class="dash-grid2 dash-section">
@@ -635,7 +561,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
   </div>
 
   <!-- ═══ BROWSE PAGE ═══ -->
-  <div class="page" id="page-browse">
+  <div class="page active" id="page-browse">
     <div class="role-info-bar" id="role-info-bar">
       <span id="role-info-badge" class="role-badge" style="background: rgb(252, 235, 235); color: rgb(163, 45, 45);">ผู้ดูแลระบบ EC</span>
       <span id="role-info-text" style="color:#374151;flex:1">ท่านรับงาน / ปิดงาน / จัดการ Master Data / ผู้ใช้ และดำเนินการทุกขั้นตอน</span>
@@ -708,7 +634,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
         </table>
       </div>
       <div class="pagination">
-        <span id="pg-info">แสดง 1–2 จาก 2 รายการ</span>
+        <span id="pg-info">ไม่พบรายการ</span>
         <div class="pg-btns" id="pg-btns"></div>
       </div>
     </div>
@@ -891,7 +817,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
       <div class="sec-title">📈 รายงาน / สถิติ</div>
     </div>
     <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
-      <div class="stat-card blue"><div class="stat-num" id="r-total">2</div><div class="stat-lbl">ใบขอทั้งหมด</div></div>
+      <div class="stat-card blue"><div class="stat-num" id="r-total">0</div><div class="stat-lbl">ใบขอทั้งหมด</div></div>
       <div class="stat-card green"><div class="stat-num" id="r-closed">0</div><div class="stat-lbl">ปิดงานแล้ว</div></div>
       <div class="stat-card red"><div class="stat-num" id="r-reject">0</div><div class="stat-lbl">ปฏิเสธ</div></div>
     </div>
@@ -912,10 +838,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
     <div class="sec-header">
       <div><div class="sec-title">👥 จัดการผู้ใช้งานระบบ</div><div class="sec-sub">เพิ่ม / แก้ไข / ลบ User และกำหนด Role</div></div>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-sec btn-sm" onclick="refreshUserTable()" id="btn-refresh-users" title="โหลดข้อมูลผู้ใช้ใหม่">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 14 14"><path d="M12 2.5A5.5 5.5 0 1 1 7 1.5"/><polyline points="9,1 12,1 12,4"/></svg>
-          Refresh
-        </button>
+        <button class="btn btn-sec btn-sm" onclick="refreshUserTable()" id="btn-refresh-users" title="โหลดข้อมูลผู้ใช้ใหม่"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 14 14"><path d="M12 2.5A5.5 5.5 0 1 1 7 1.5"></path><polyline points="9,1 12,1 12,4"></polyline></svg> Refresh</button>
         <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">+ เพิ่มผู้ใช้ใหม่</button>
         <button class="btn btn-success btn-sm" onclick="exportUserList()" title="อัปเดต User List ลงในไฟล์ใหม่เพื่อ Upload GitHub">📤 Export User List</button>
       </div>
@@ -935,7 +858,7 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
           <option value="Engineer">Engineer</option>
           <option value="Admin">Admin</option>
         </select>
-        <span id="user-count-badge" style="font-size:12px;color:var(--gray);margin-left:4px"></span>
+        <span id="user-count-badge" style="font-size:12px;color:var(--gray);margin-left:4px">24 คน</span>
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
@@ -945,13 +868,266 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
           <tbody id="user-table-body">
     <tr>
       <td><strong>ลวิตรา ธรรมตะคุ</strong></td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ef2ffe8f7eaecffb0eadef5fcedb0fdf1b0eaf6">[email&#160;protected]</a></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">lavitra.t@kbs.co.th</td>
       <td><span class="badge" style="background:#fcebeb;color:#a32d2d">ผู้ดูแลระบบ EC</span></td>
       <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
       <td>
         <button class="btn btn-sec btn-sm" onclick="editUser('lavitra.t')">✏️ แก้ไข</button>
         <button class="btn btn-sec btn-sm" onclick="resetUserPassword('lavitra.t')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
         <button class="btn btn-danger btn-sm" onclick="deleteUser('lavitra.t')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Admin ระบบ</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">admin.sys@kbs.co.th</td>
+      <td><span class="badge" style="background:#fcebeb;color:#a32d2d">ผู้ดูแลระบบ EC</span></td>
+      <td style="font-size:12px;color:var(--gray)">IT</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('admin.sys')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('admin.sys')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('admin.sys')" style="margin-left:4px" disabled="" title="ไม่สามารถลบ Admin หลัก">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Pimonpan Sookkratok</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">pimonpan.s@kbs.co.th</td>
+      <td><span class="badge" style="background:#f3e8ff;color:#6d28d9">หัวหน้าศูนย์วิศวกรรม</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('pimonpan.s')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('pimonpan.s')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('pimonpan.s')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Amon Taweechuensakul</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">amon.t@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ/ผู้อำนวยการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('amon.t')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('amon.t')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('amon.t')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Anuwat Phanhom</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">anuwat.p@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('anuwat.p')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('anuwat.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('anuwat.p')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Sidapon Pangjan</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">sidapon.p@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('sidapon.p')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('sidapon.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('sidapon.p')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Rattanapat Chatvachiraphruek</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">chairat.c@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('chairat.c')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('chairat.c')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('chairat.c')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Thanchanok Pookaew</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">thanchanok.p@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('thanchanok.p')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('thanchanok.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('thanchanok.p')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Mongkon tumngoen</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">mongkon.tu@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('mongkon.tu')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('mongkon.tu')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('mongkon.tu')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Krasae Doungjinda</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">krasae.d@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('krasae.d')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('krasae.d')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('krasae.d')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Kantapat Vongchayanon</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">kantapat.v@kbs.co.th</td>
+      <td><span class="badge" style="background:#eaf3de;color:#2e7d32">วิศวกร/ช่าง</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('kantapat.v')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('kantapat.v')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('kantapat.v')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>ธัญญาศิริ สุ่มมาตย์</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">thanya.s@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('thanya.s')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('thanya.s')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('thanya.s')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>พนิดา อ่องพิมาย</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">panida.a@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('panida.a')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('panida.a')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('panida.a')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>อโนมา สุภาชัยวัฒน์</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">anoma.s@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายอาชีวอนามัยฯ</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('anoma.s')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('anoma.s')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('anoma.s')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>เพ็ญสุดา เพียงกระโทก</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">pensuda.p@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายทรัพยากรบุคคล</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('pensuda.p')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('pensuda.p')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('pensuda.p')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Mithuna Lorsuphanporn</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">mithuna.l@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('mithuna.l')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('mithuna.l')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('mithuna.l')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Kullaya Mangsombat</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">kullaya.m@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('kullaya.m')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('kullaya.m')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('kullaya.m')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Piya Siriputtha</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">piya.s@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('piya.s')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('piya.s')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('piya.s')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Sathid Jhanthong</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">sathid.j@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('sathid.j')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('sathid.j')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('sathid.j')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Thanyasiri Summat</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">thanyasiri.s@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายผลิต</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('thanyasiri.s')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('thanyasiri.s')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('thanyasiri.s')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Supansa Kitthaisong</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">supansa.k@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายโลจิสติกส์</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('supansa.k')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('supansa.k')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('supansa.k')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Teerawong  Meechuen</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">teerawong.m@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายอาชีวอนามัยฯ</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('teerawong.m')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('teerawong.m')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('teerawong.m')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Piyapong Kunsaen</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">piyapong.k@kbs.co.th</td>
+      <td><span class="badge" style="background:#fff8e6;color:#9a6200">ผู้จัดการ (อนุมัติ)</span></td>
+      <td style="font-size:12px;color:var(--gray)">ฝ่ายทรัพยากรบุคคล</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('piyapong.k')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('piyapong.k')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('piyapong.k')" style="margin-left:4px">🗑️</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Thanet Koysamran</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--blue)">thanet.k@kbs.co.th</td>
+      <td><span class="badge" style="background:#e6f1fb;color:#1a5fa8">ผู้ขอใช้บริการ</span></td>
+      <td style="font-size:12px;color:var(--gray)">ศูนย์วิศวกรรม</td>
+      <td>
+        <button class="btn btn-sec btn-sm" onclick="editUser('thanet.k')">✏️ แก้ไข</button>
+        <button class="btn btn-sec btn-sm" onclick="resetUserPassword('thanet.k')" style="margin-left:4px;font-size:10px" title="Reset Password">🔄</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser('thanet.k')" style="margin-left:4px">🗑️</button>
       </td>
     </tr></tbody>
         </table>
@@ -1050,13 +1226,55 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 </div><!-- /app-shell -->
 
 <!-- MODAL -->
-<div class="modal-overlay" id="modal" style="display:none;">
+<div class="modal-overlay" id="modal" style="display: none;">
   <div class="modal">
-    <div class="modal-title" id="modal-title"></div>
-    <div id="modal-body"></div>
+    <div class="modal-title" id="modal-title">✏️ แก้ไขผู้ใช้: พิมลพรรณ สุกกระโทก</div>
+    <div id="modal-body">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="form-group">
+        <label class="form-label">ชื่อ-สกุล</label>
+        <input class="form-input" id="eu-name" value="พิมลพรรณ สุกกระโทก">
+      </div>
+      <div class="form-group">
+        <label class="form-label">อีเมล</label>
+        <input class="form-input" value="pimonpan.s@kbs.co.th" readonly="" style="background:var(--gray2);color:var(--gray)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="eu-role">
+          <option value="Requester">ผู้ขอใช้บริการ (Requester)</option><option value="ManagerApprover">ผู้จัดการ (อนุมัติ) (ManagerApprover)</option><option value="Owner" selected="">หัวหน้าศูนย์วิศวกรรม (Owner)</option><option value="OwnerManager">ผู้จัดการ/ผู้อำนวยการ (OwnerManager)</option><option value="Engineer">วิศวกร/ช่าง (Engineer)</option><option value="Admin">ผู้ดูแลระบบ EC (Admin)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">รหัสผ่าน <span style="font-weight:400;color:var(--gray)">(ไม่บังคับ)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="form-input" id="eu-password" type="password" placeholder="กรอกเพื่อตั้ง/เปลี่ยนรหัสผ่าน" style="flex:1">
+          <button type="button" onclick="document.getElementById('eu-password').value='RESET_PASSWORD';document.getElementById('eu-pw-reset-notice').style.display='block'" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:var(--font)">
+            🔄 Reset
+          </button>
+        </div>
+        <div id="eu-pw-reset-notice" style="display:none;margin-top:4px;font-size:11px;color:#dc2626;font-weight:600">
+          ⚠ Password จะถูก Reset — User ต้องตั้งรหัสผ่านใหม่ตอน Login ครั้งถัดไป
+        </div>
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน | กด Reset เพื่อให้ User ตั้งรหัสผ่านใหม่</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">แผนก/หน่วยงาน</label>
+        
+    <div class="combo-wrap" id="wrap-eu-dept">
+      <input class="combo-input" id="eu-dept" autocomplete="off" placeholder="พิมพ์หรือเลือกแผนก..." value="ศูนย์วิศวกรรม" oninput="filterDeptCombo('eu-dept')" onfocus="openDeptCombo('eu-dept')" onblur="setTimeout(()=&gt;closeDeptCombo('eu-dept'),180)">
+      <span class="combo-arrow">▾</span>
+      <div class="combo-dropdown" id="drop-eu-dept">
+      <div class="combo-option selected" onmousedown="selectDeptCombo('eu-dept','ศูนย์วิศวกรรม')">
+        ศูนย์วิศวกรรม <span style="font-size:10px;color:var(--green)">✓</span>
+      </div></div>
+    </div>
+        <div style="font-size:11px;color:var(--gray);margin-top:3px">เลือกจากรายการ หรือพิมพ์เพื่อเพิ่มแผนกใหม่</div>
+      </div>
+    </div></div>
     <div class="modal-footer">
       <button class="btn btn-sec" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn btn-primary" id="modal-confirm-btn" onclick="confirmModal()">ตกลง</button>
+      <button class="btn btn-primary" id="modal-confirm-btn" onclick="confirmModal()">บันทึก</button>
     </div>
   </div>
 </div>
@@ -1070,8 +1288,8 @@ body{font-family:var(--font);font-size:14px;background:var(--body);color:#1f2937
 //  DATA STORE
 // ════════════════════════════════════════════════
 const STORE_KEY = 'engservice_prod_v1';
-const EMBEDDED_JOBS = null;
-const EMBEDDED_HIST = null;
+const EMBEDDED_JOBS = [];
+const EMBEDDED_HIST = [];
 const API_URL  = 'https://script.google.com/macros/s/AKfycbz5j4daPlfiUwReE_-rTBTcJ5Ji_4jNoPZnDgWC1taYhgN7JGys5iqLhAAQPA6oVtjb/exec'; // Google Sheets backend
 let   _apiReady = false; // true เมื่อ sync กับ Google Sheets ได้
 const HIST_KEY  = 'engservice_hist_v1';
@@ -1264,16 +1482,10 @@ const ROLE_USERS = {
 // Email → user directory (username part before @)
 // ★ Canonical built-in users — merged from all sources ★
 const USER_DIRECTORY = {
-  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม'},
+  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม',password:'koy2026'},
   'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
-  'pimonpan.s':{name:'พิมลพรรณ สุกกระโทก',role:'Owner',dept:'ศูนย์วิศวกรรม'},
-  'vipa.c':{name:'วิภา เจริญกิจ',role:'Owner',dept:'ศูนย์วิศวกรรม'},
-  'amon.t':{name:'อมร แตวเชือนสกุล',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
-  'manager.eng':{name:'ผู้จัดการ วิศวกรรม',role:'OwnerManager',dept:'ผู้บริหาร'},
-  'sompong.t':{name:'สมพงษ์ ธุรกิจดี',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
-  'mgr.prod':{name:'ผู้จัดการ ฝ่ายผลิต',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
-  'somchai.w':{name:'สมชาย วิศวกร',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
-  'vichai.c':{name:'วิชัย ช่างใจดี',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'pimonpan.s':{name:'Pimonpan Sookkratok',role:'Owner',dept:'ศูนย์วิศวกรรม'},
+  'amon.t':{name:'Amon Taweechuensakul',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
   'anuwat.p':{name:'Anuwat Phanhom',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'sidapon.p':{name:'Sidapon Pangjan',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'chairat.c':{name:'Rattanapat Chatvachiraphruek',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
@@ -1283,10 +1495,17 @@ const USER_DIRECTORY = {
   'kantapat.v':{name:'Kantapat Vongchayanon',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'thanya.s':{name:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',dept:'ฝ่ายผลิต'},
   'panida.a':{name:'พนิดา อ่องพิมาย',role:'Requester',dept:'ฝ่ายผลิต'},
-  'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'อาชีวอนามัย'},
+  'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'ฝ่ายอาชีวอนามัยฯ'},
   'pensuda.p':{name:'เพ็ญสุดา เพียงกระโทก',role:'Requester',dept:'ฝ่ายทรัพยากรบุคคล'},
   'mithuna.l':{name:'Mithuna Lorsuphanporn',role:'Requester',dept:'ฝ่ายผลิต'},
   'kullaya.m':{name:'Kullaya Mangsombat',role:'Requester',dept:'ฝ่ายผลิต'},
+  'piya.s':{name:'Piya Siriputtha',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'sathid.j':{name:'Sathid Jhanthong',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'thanyasiri.s':{name:'Thanyasiri Summat',role:'Requester',dept:'ฝ่ายผลิต'},
+  'supansa.k':{name:'Supansa Kitthaisong',role:'ManagerApprover',dept:'ฝ่ายโลจิสติกส์'},
+  'teerawong.m':{name:'Teerawong  Meechuen',role:'ManagerApprover',dept:'ฝ่ายอาชีวอนามัยฯ'},
+  'piyapong.k':{name:'Piyapong Kunsaen',role:'ManagerApprover',dept:'ฝ่ายทรัพยากรบุคคล'},
+  'thanet.k':{name:'Thanet Koysamran',role:'Requester',dept:'ศูนย์วิศวกรรม'},
 };
 
 // ════════════════════════════════════════════════
@@ -2900,16 +3119,10 @@ function renderPermissions(){
 //  LOGIN WIRING (inside main script scope)
 // ═══════════════════════════════════════════════
 var _USERS_LOGIN = {
-  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม'},
+  'lavitra.t':{name:'ลวิตรา ธรรมตะคุ',role:'Admin',dept:'ศูนย์วิศวกรรม',password:'koy2026'},
   'admin.sys':{name:'Admin ระบบ',role:'Admin',dept:'IT'},
-  'pimonpan.s':{name:'พิมลพรรณ สุกกระโทก',role:'Owner',dept:'ศูนย์วิศวกรรม'},
-  'vipa.c':{name:'วิภา เจริญกิจ',role:'Owner',dept:'ศูนย์วิศวกรรม'},
-  'amon.t':{name:'อมร แตวเชือนสกุล',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
-  'manager.eng':{name:'ผู้จัดการ วิศวกรรม',role:'OwnerManager',dept:'ผู้บริหาร'},
-  'sompong.t':{name:'สมพงษ์ ธุรกิจดี',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
-  'mgr.prod':{name:'ผู้จัดการ ฝ่ายผลิต',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
-  'somchai.w':{name:'สมชาย วิศวกร',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
-  'vichai.c':{name:'วิชัย ช่างใจดี',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
+  'pimonpan.s':{name:'Pimonpan Sookkratok',role:'Owner',dept:'ศูนย์วิศวกรรม'},
+  'amon.t':{name:'Amon Taweechuensakul',role:'OwnerManager',dept:'ศูนย์วิศวกรรม'},
   'anuwat.p':{name:'Anuwat Phanhom',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'sidapon.p':{name:'Sidapon Pangjan',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'chairat.c':{name:'Rattanapat Chatvachiraphruek',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
@@ -2919,10 +3132,17 @@ var _USERS_LOGIN = {
   'kantapat.v':{name:'Kantapat Vongchayanon',role:'Engineer',dept:'ศูนย์วิศวกรรม'},
   'thanya.s':{name:'ธัญญาศิริ สุ่มมาตย์',role:'Requester',dept:'ฝ่ายผลิต'},
   'panida.a':{name:'พนิดา อ่องพิมาย',role:'Requester',dept:'ฝ่ายผลิต'},
-  'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'อาชีวอนามัย'},
+  'anoma.s':{name:'อโนมา สุภาชัยวัฒน์',role:'Requester',dept:'ฝ่ายอาชีวอนามัยฯ'},
   'pensuda.p':{name:'เพ็ญสุดา เพียงกระโทก',role:'Requester',dept:'ฝ่ายทรัพยากรบุคคล'},
   'mithuna.l':{name:'Mithuna Lorsuphanporn',role:'Requester',dept:'ฝ่ายผลิต'},
   'kullaya.m':{name:'Kullaya Mangsombat',role:'Requester',dept:'ฝ่ายผลิต'},
+  'piya.s':{name:'Piya Siriputtha',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'sathid.j':{name:'Sathid Jhanthong',role:'ManagerApprover',dept:'ฝ่ายผลิต'},
+  'thanyasiri.s':{name:'Thanyasiri Summat',role:'Requester',dept:'ฝ่ายผลิต'},
+  'supansa.k':{name:'Supansa Kitthaisong',role:'ManagerApprover',dept:'ฝ่ายโลจิสติกส์'},
+  'teerawong.m':{name:'Teerawong  Meechuen',role:'ManagerApprover',dept:'ฝ่ายอาชีวอนามัยฯ'},
+  'piyapong.k':{name:'Piyapong Kunsaen',role:'ManagerApprover',dept:'ฝ่ายทรัพยากรบุคคล'},
+  'thanet.k':{name:'Thanet Koysamran',role:'Requester',dept:'ศูนย์วิศวกรรม'},
 };
 
 function _normalizeUser(u){
@@ -3297,5 +3517,5 @@ try{
 })();
 
 </script>
-</body>
-</html>
+
+</body></html>
