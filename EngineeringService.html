@@ -3256,7 +3256,7 @@ try{
 (function startupSync(){
   try{
     var VERSION_KEY = 'engservice_ud_version';
-    var CURRENT_VERSION = '2026.03.final'; // bump when USER_DIRECTORY names change
+    var CURRENT_VERSION = '2026.03.v2'; // bump when USER_DIRECTORY names change
 
     var storedVersion = localStorage.getItem(VERSION_KEY);
     if(storedVersion === CURRENT_VERSION) return; // already migrated, skip
@@ -3278,15 +3278,16 @@ try{
       if(changed) localStorage.setItem('engservice_udir_v1', JSON.stringify(stored));
     }catch(e){}
 
-    // 2. One-time only: remove 'mithuna.l' from deleted list
-    //    (was incorrectly added in old versions due to a bug)
+    // 2. One-time: clear ALL built-in users from deleted list
+    //    (stale deletions from old version should not hide built-in users on new version)
     try{
       var deleted = JSON.parse(localStorage.getItem('engservice_deleted_v1')||'[]');
-      var bugsToFix = ['mithuna.l'];
-      var fixed = deleted.filter(function(k){ return !bugsToFix.includes(k); });
-      if(fixed.length !== deleted.length){
-        localStorage.setItem('engservice_deleted_v1', JSON.stringify(fixed));
-        console.log('[EngService] One-time fix: removed mithuna.l from deleted list');
+      var builtInKeys = Object.keys(USER_DIRECTORY);
+      var cleaned = deleted.filter(function(k){ return builtInKeys.indexOf(k) === -1; });
+      if(cleaned.length !== deleted.length){
+        localStorage.setItem('engservice_deleted_v1', JSON.stringify(cleaned));
+        console.log('[EngService] One-time: cleared '+
+          (deleted.length-cleaned.length)+' built-in users from deleted list');
       }
     }catch(e){}
 
